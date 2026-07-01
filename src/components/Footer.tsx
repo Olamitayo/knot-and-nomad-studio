@@ -1,0 +1,109 @@
+import { Link } from "@tanstack/react-router";
+import { Instagram, Facebook } from "lucide-react";
+import { useState } from "react";
+import { SITE, whatsappLink } from "@/lib/site";
+import logo from "@/assets/knot-nomad-monogram.png";
+import { useServerFn } from "@tanstack/react-start";
+import { subscribeNewsletter } from "@/lib/orders.functions";
+import { toast } from "sonner";
+
+export function Footer() {
+  const subscribe = useServerFn(subscribeNewsletter);
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function onSubscribe(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const res = await subscribe({ data: { email } });
+      if (res.ok) {
+        toast.success("Welcome to the Nomad Circle.");
+        setEmail("");
+      } else {
+        toast.error(res.error || "Try again");
+      }
+    } catch {
+      toast.error("Please enter a valid email.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <footer className="bg-foreground text-primary-foreground mt-32">
+      <div className="mx-auto max-w-7xl px-6 lg:px-10 py-20">
+        <div className="grid lg:grid-cols-12 gap-12">
+          <div className="lg:col-span-5">
+            <div className="flex items-center gap-4">
+              <img src={logo} alt={SITE.name} width={48} height={48} className="h-12 w-12 object-contain" />
+              <div>
+                <div className="font-display text-2xl tracking-tight">{SITE.name}</div>
+                <div className="eyebrow text-primary-foreground/70">{SITE.tagline}</div>
+              </div>
+            </div>
+            <p className="mt-6 max-w-md text-sm text-primary-foreground/70 leading-relaxed">
+              A custom apparel studio for individuals, creatives and brands —
+              translating identity into considered, wearable pieces. Rooted in
+              culture. Designed for movement.
+            </p>
+            <form onSubmit={onSubscribe} className="mt-8 flex max-w-md">
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Join the Nomad Circle"
+                className="flex-1 bg-transparent border border-primary-foreground/30 px-4 py-3 text-sm placeholder:text-primary-foreground/50 focus:outline-none focus:border-accent"
+              />
+              <button
+                disabled={loading}
+                className="bg-accent text-accent-foreground px-5 text-xs uppercase tracking-[0.2em] disabled:opacity-60"
+              >
+                {loading ? "…" : "Join"}
+              </button>
+            </form>
+          </div>
+
+          <div className="lg:col-span-3">
+            <div className="eyebrow text-primary-foreground/60">Explore</div>
+            <ul className="mt-5 space-y-3 text-sm">
+              {[
+                ["/", "Home"],
+                ["/about", "About"],
+                ["/collection", "Collection"],
+                ["/lookbook", "Lookbook"],
+                ["/custom-order", "Custom Order"],
+                ["/contact", "Contact"],
+              ].map(([to, label]) => (
+                <li key={to}>
+                  <Link to={to} className="hover:text-accent transition">{label}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="lg:col-span-4">
+            <div className="eyebrow text-primary-foreground/60">Reach Us</div>
+            <ul className="mt-5 space-y-3 text-sm">
+              <li><a href={`mailto:${SITE.email}`} className="hover:text-accent">{SITE.email}</a></li>
+              <li><a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="hover:text-accent">WhatsApp us</a></li>
+            </ul>
+            <div className="eyebrow mt-8 text-primary-foreground/60">Follow</div>
+            <div className="mt-5 flex gap-4">
+              <a href={SITE.socials.instagram} aria-label="Instagram" target="_blank" rel="noopener noreferrer" className="hover:text-accent"><Instagram size={20} /></a>
+              <a href={SITE.socials.tiktok} aria-label="TikTok" target="_blank" rel="noopener noreferrer" className="hover:text-accent">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.5 2h2.7a5.5 5.5 0 0 0 5 5.2v2.7a8 8 0 0 1-5-1.7v6.6a5.8 5.8 0 1 1-5.8-5.8c.3 0 .6 0 .9.1v2.8a3 3 0 1 0 2.2 2.9V2z"/></svg>
+              </a>
+              <a href={SITE.socials.facebook} aria-label="Facebook" target="_blank" rel="noopener noreferrer" className="hover:text-accent"><Facebook size={20} /></a>
+            </div>
+          </div>
+        </div>
+        <div className="mt-16 pt-8 border-t border-primary-foreground/15 flex flex-col sm:flex-row justify-between gap-4 text-xs text-primary-foreground/60">
+          <span>© {new Date().getFullYear()} {SITE.name}. All rights reserved.</span>
+          <span className="tracking-[0.3em] uppercase">{SITE.tagline}</span>
+        </div>
+      </div>
+    </footer>
+  );
+}

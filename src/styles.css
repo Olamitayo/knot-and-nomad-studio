@@ -1,0 +1,221 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-cream: var(--cream);
+  --color-sand: var(--sand);
+  --color-charcoal: var(--charcoal);
+  --color-gold: var(--gold);
+  --font-display: "Cormorant Garamond", "Times New Roman", serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+}
+
+:root {
+  --radius: 0.125rem;
+
+  /* Knot & Nomad palette */
+  --cream: oklch(0.982 0.004 100);
+  --sand: oklch(0.912 0.008 115);
+  --charcoal: oklch(0.16 0.006 250);
+  --gold: oklch(0.67 0.105 78);
+
+  --background: oklch(0.982 0.004 100);
+  --foreground: oklch(0.145 0.006 250);
+
+  --card: oklch(0.998 0.001 100);
+  --card-foreground: oklch(0.145 0.006 250);
+  --popover: oklch(0.998 0.001 100);
+  --popover-foreground: oklch(0.145 0.006 250);
+
+  --primary: oklch(0.145 0.006 250);
+  --primary-foreground: oklch(0.982 0.004 100);
+
+  --secondary: oklch(0.918 0.012 145);
+  --secondary-foreground: oklch(0.18 0.012 145);
+
+  --muted: oklch(0.94 0.006 115);
+  --muted-foreground: oklch(0.43 0.01 210);
+
+  --accent: oklch(0.5 0.075 150);
+  --accent-foreground: oklch(0.982 0.004 100);
+
+  --destructive: oklch(0.55 0.2 27);
+  --destructive-foreground: oklch(0.985 0.008 85);
+
+  --border: oklch(0.855 0.006 115);
+  --input: oklch(0.855 0.006 115);
+  --ring: oklch(0.5 0.075 150);
+
+  --chart-1: oklch(0.5 0.075 150);
+  --chart-2: oklch(0.67 0.105 78);
+  --chart-3: oklch(0.145 0.006 250);
+  --chart-4: oklch(0.918 0.012 145);
+  --chart-5: oklch(0.982 0.004 100);
+
+  --sidebar: oklch(0.982 0.004 100);
+  --sidebar-foreground: oklch(0.145 0.006 250);
+  --sidebar-primary: oklch(0.145 0.006 250);
+  --sidebar-primary-foreground: oklch(0.982 0.004 100);
+  --sidebar-accent: oklch(0.918 0.012 145);
+  --sidebar-accent-foreground: oklch(0.18 0.012 145);
+  --sidebar-border: oklch(0.855 0.006 115);
+  --sidebar-ring: oklch(0.5 0.075 150);
+}
+
+.dark {
+  --background: oklch(0.14 0.005 60);
+  --foreground: oklch(0.972 0.012 85);
+  --card: oklch(0.18 0.008 60);
+  --card-foreground: oklch(0.972 0.012 85);
+  --popover: oklch(0.18 0.008 60);
+  --popover-foreground: oklch(0.972 0.012 85);
+  --primary: oklch(0.972 0.012 85);
+  --primary-foreground: oklch(0.18 0.008 60);
+  --secondary: oklch(0.25 0.01 60);
+  --secondary-foreground: oklch(0.972 0.012 85);
+  --muted: oklch(0.25 0.01 60);
+  --muted-foreground: oklch(0.7 0.012 75);
+  --accent: oklch(0.62 0.09 150);
+  --accent-foreground: oklch(0.12 0.006 250);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 16%);
+  --ring: oklch(0.62 0.09 150);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "ss01", "cv11";
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: 0;
+    font-feature-settings: "liga", "dlig", "ss01";
+  }
+
+  h1 { letter-spacing: 0; }
+
+  .font-display { font-family: var(--font-display); font-feature-settings: "liga", "dlig"; }
+
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+
+  /* Reveal-on-scroll utility (paired with useReveal hook) */
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(28px);
+    transition:
+      opacity 1.1s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
+  }
+  [data-reveal].revealed {
+    opacity: 1;
+    transform: none;
+  }
+  [data-reveal-delay="1"].revealed { transition-delay: 80ms; }
+  [data-reveal-delay="2"].revealed { transition-delay: 160ms; }
+  [data-reveal-delay="3"].revealed { transition-delay: 240ms; }
+  [data-reveal-delay="4"].revealed { transition-delay: 320ms; }
+  [data-reveal-delay="5"].revealed { transition-delay: 400ms; }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal] { opacity: 1; transform: none; transition: none; }
+    .marquee, .fade-up { animation: none !important; }
+  }
+
+  /* Subtle image hover-lift utility */
+  .img-lift {
+    overflow: hidden;
+  }
+  .img-lift > img {
+    transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1), filter 0.6s ease;
+  }
+  .img-lift:hover > img {
+    transform: scale(1.04);
+  }
+
+  /* Refined link underline used on body links */
+  .link-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    transition: background-size 0.4s ease;
+  }
+  .link-underline:hover { background-size: 100% 1px; }
+
+  .grain::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: radial-gradient(rgba(0,0,0,0.06) 1px, transparent 1px);
+    background-size: 3px 3px;
+    opacity: 0.35;
+    mix-blend-mode: multiply;
+  }
+
+  .fade-up {
+    animation: fadeUp 0.9s ease-out both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .marquee {
+    animation: marquee 40s linear infinite;
+  }
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+}
