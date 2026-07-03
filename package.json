@@ -97,5 +97,6 @@
     "overrides": {
       "entities": "4.5.0"
     }
-  }
+  },
+  "packageManager": "pnpm@11.7.0"
 }
