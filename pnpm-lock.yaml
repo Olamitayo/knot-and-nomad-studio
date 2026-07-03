@@ -228,6 +228,9 @@ importers:
       globals:
         specifier: ^15.15.0
         version: 15.15.0
+      nitro:
+        specifier: 3.0.260610-beta
+        version: 3.0.260610-beta(chokidar@5.0.0)(jiti@1.21.7)(lru-cache@11.5.1)(miniflare@4.20260623.0)(rollup@4.62.2)(vite@7.3.6(@types/node@22.20.0)(jiti@1.21.7)(lightningcss@1.32.0))(wrangler@4.104.0)
       prettier:
         specifier: ^3.7.3
         version: 3.8.4
@@ -3486,6 +3489,37 @@ packages:
       giget: '*'
       jiti: ^2.6.1
       rollup: ^4.60.2
+      vite: ^7 || ^8
+      xml2js: ^0.6.2
+      zephyr-agent: ^0.2.0
+    peerDependenciesMeta:
+      '@vercel/queue':
+        optional: true
+      dotenv:
+        optional: true
+      giget:
+        optional: true
+      jiti:
+        optional: true
+      rollup:
+        optional: true
+      vite:
+        optional: true
+      xml2js:
+        optional: true
+      zephyr-agent:
+        optional: true
+
+  nitro@3.0.260610-beta:
+    resolution: {integrity: sha512-KPb4L5yaF/Rx/xoGMpgHRJvZhbhGiqbRKOwwPLCH9jKTKTsEUHLjnJas85AeCzaswqa8Wi52eQBtRsODC4PS0Q==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    hasBin: true
+    peerDependencies:
+      '@vercel/queue': ^0.3.0
+      dotenv: '*'
+      giget: '*'
+      jiti: ^2.7.0
+      rollup: ^4.61.1
       vite: ^7 || ^8
       xml2js: ^0.6.2
       zephyr-agent: ^0.2.0
@@ -7322,6 +7356,58 @@ snapshots:
   nf3@0.3.17: {}
 
   nitro@3.0.260429-beta(chokidar@5.0.0)(jiti@1.21.7)(lru-cache@11.5.1)(miniflare@4.20260623.0)(rollup@4.62.2)(vite@7.3.6(@types/node@22.20.0)(jiti@1.21.7)(lightningcss@1.32.0))(wrangler@4.104.0):
+    dependencies:
+      consola: 3.4.2
+      crossws: 0.4.6(srvx@0.11.17)
+      db0: 0.3.4
+      env-runner: 0.1.14(miniflare@4.20260623.0)(wrangler@4.104.0)
+      h3: 2.0.1-rc.22(crossws@0.4.6(srvx@0.11.17))
+      hookable: 6.1.1
+      nf3: 0.3.17
+      ocache: 0.1.5
+      ofetch: 2.0.0-alpha.3
+      ohash: 2.0.11
+      rolldown: 1.1.3
+      srvx: 0.11.17
+      unenv: 2.0.0-rc.24
+      unstorage: 2.0.0-alpha.7(chokidar@5.0.0)(db0@0.3.4)(lru-cache@11.5.1)(ofetch@2.0.0-alpha.3)
+    optionalDependencies:
+      jiti: 1.21.7
+      rollup: 4.62.2
+      vite: 7.3.6(@types/node@22.20.0)(jiti@1.21.7)(lightningcss@1.32.0)
+    transitivePeerDependencies:
+      - '@azure/app-configuration'
+      - '@azure/cosmos'
+      - '@azure/data-tables'
+      - '@azure/identity'
+      - '@azure/keyvault-secrets'
+      - '@azure/storage-blob'
+      - '@capacitor/preferences'
+      - '@deno/kv'
+      - '@electric-sql/pglite'
+      - '@libsql/client'
+      - '@netlify/blobs'
+      - '@netlify/runtime'
+      - '@planetscale/database'
+      - '@upstash/redis'
+      - '@vercel/blob'
+      - '@vercel/functions'
+      - '@vercel/kv'
+      - aws4fetch
+      - better-sqlite3
+      - chokidar
+      - drizzle-orm
+      - idb-keyval
+      - ioredis
+      - lru-cache
+      - miniflare
+      - mongodb
+      - mysql2
+      - sqlite3
+      - uploadthing
+      - wrangler
+
+  nitro@3.0.260610-beta(chokidar@5.0.0)(jiti@1.21.7)(lru-cache@11.5.1)(miniflare@4.20260623.0)(rollup@4.62.2)(vite@7.3.6(@types/node@22.20.0)(jiti@1.21.7)(lightningcss@1.32.0))(wrangler@4.104.0):
     dependencies:
       consola: 3.4.2
       crossws: 0.4.6(srvx@0.11.17)
