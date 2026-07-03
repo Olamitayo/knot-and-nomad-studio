@@ -1,7 +1,11 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "tanstack-start-app",
+  "name": "knot-and-nomad-studio",
   "compatibility_date": "2025-09-24",
   "compatibility_flags": ["nodejs_compat"],
   "main": "src/server.ts",
+  "routes": [
+    { "pattern": "knotnomad.com", "custom_domain": true },
+    { "pattern": "www.knotnomad.com", "custom_domain": true }
+  ],
 }
