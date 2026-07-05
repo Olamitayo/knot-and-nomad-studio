@@ -25,7 +25,7 @@ function About() {
       <section className="mx-auto max-w-7xl px-6 lg:px-10 pt-24 lg:pt-36 pb-12" data-reveal>
         <div className="eyebrow">About the studio</div>
         <h1 className="mt-5 font-display text-5xl lg:text-7xl xl:text-8xl leading-[1.02] max-w-5xl">
-          A studio for those who carry their <em className="italic text-accent">roots</em> wherever they go.
+          A studio for those who carry their <span className="text-accent">roots</span> wherever they go.
         </h1>
       </section>
 
@@ -66,7 +66,7 @@ function About() {
           <div data-reveal data-reveal-delay="2">
             <div className="eyebrow">Our practice</div>
             <h2 className="mt-3 font-display text-4xl lg:text-5xl xl:text-6xl leading-[1.05]">
-              Considered. Crafted. <em className="italic text-accent">Cared for.</em>
+              Considered. Crafted. <span className="text-accent">Cared for.</span>
             </h2>
             <ul className="mt-10 space-y-6">
               {[
@@ -81,7 +81,7 @@ function About() {
                 </li>
               ))}
             </ul>
-            <Link to="/custom-order" className="mt-12 inline-flex items-center gap-2 bg-foreground text-primary-foreground px-7 py-4 text-xs uppercase tracking-[0.28em] hover:bg-accent hover:text-accent-foreground transition-colors duration-500">
+            <Link to="/custom-order" className="btn-pill mt-12 inline-flex items-center gap-2 bg-foreground text-primary-foreground px-7 py-4 text-xs font-bold uppercase tracking-[0.28em] hover:bg-accent hover:text-accent-foreground transition-colors duration-500">
               Start your piece <ArrowRight size={16} />
             </Link>
           </div>

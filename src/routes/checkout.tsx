@@ -240,11 +240,11 @@ function CheckoutPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="mt-6 w-full bg-foreground text-primary-foreground py-4 text-xs uppercase tracking-[0.25em] hover:bg-accent hover:text-accent-foreground transition disabled:opacity-50"
+                className="btn-pill mt-6 w-full bg-foreground text-primary-foreground py-4 text-xs font-bold uppercase tracking-[0.25em] hover:bg-accent hover:text-accent-foreground transition disabled:opacity-50"
               >
                 {submitting ? "Placing order…" : "Place order"}
               </button>
-              <Link to="/cart" className="mt-3 block text-center text-xs uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground">
+              <Link to="/cart" className="mt-3 block text-center text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground">
                 Edit cart
               </Link>
             </div>

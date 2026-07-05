@@ -156,7 +156,7 @@ function AdminOrders() {
               </div>
             </div>
 
-            <button onClick={() => setOpen(null)} className="mt-6 w-full border border-border py-3 text-xs uppercase tracking-[0.25em]">Close</button>
+            <button onClick={() => setOpen(null)} className="mt-6 w-full border border-border py-3 text-xs font-bold uppercase tracking-[0.25em]">Close</button>
           </div>
         </div>
       )}

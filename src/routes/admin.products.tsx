@@ -76,7 +76,7 @@ function AdminProducts() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="font-display text-2xl">Products</h2>
-        <button onClick={() => setEditing({ ...blank })} className="bg-foreground text-primary-foreground px-4 py-2 text-xs uppercase tracking-[0.25em] hover:bg-accent hover:text-accent-foreground transition flex items-center gap-2">
+        <button onClick={() => setEditing({ ...blank })} className="bg-foreground text-primary-foreground px-4 py-2 text-xs font-bold uppercase tracking-[0.25em] hover:bg-accent hover:text-accent-foreground transition flex items-center gap-2">
           <Plus size={14} /> New
         </button>
       </div>
@@ -161,7 +161,7 @@ function AdminProducts() {
                   <button type="button" onClick={() => {
                     const el = document.getElementById("urlinput") as HTMLInputElement;
                     if (el?.value) { setEditing({ ...editing, images: [...editing.images, el.value] }); el.value = ""; }
-                  }} className="border border-border px-3 text-xs uppercase tracking-[0.25em]">Add</button>
+                  }} className="border border-border px-3 text-xs font-bold uppercase tracking-[0.25em]">Add</button>
                 </div>
               </div>
               <div className="sm:col-span-2 grid grid-cols-2 gap-2">
@@ -173,8 +173,8 @@ function AdminProducts() {
               </div>
             </div>
             <div className="flex gap-3 mt-8">
-              <button onClick={save} className="flex-1 bg-foreground text-primary-foreground py-3 text-xs uppercase tracking-[0.25em]">Save</button>
-              <button onClick={() => setEditing(null)} className="flex-1 border border-border py-3 text-xs uppercase tracking-[0.25em]">Cancel</button>
+              <button onClick={save} className="flex-1 bg-foreground text-primary-foreground py-3 text-xs font-bold uppercase tracking-[0.25em]">Save</button>
+              <button onClick={() => setEditing(null)} className="flex-1 border border-border py-3 text-xs font-bold uppercase tracking-[0.25em]">Cancel</button>
             </div>
           </div>
         </div>

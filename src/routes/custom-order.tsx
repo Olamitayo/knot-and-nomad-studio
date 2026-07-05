@@ -107,10 +107,10 @@ function CustomOrder() {
         </p>
         <div className="mt-10 flex flex-wrap gap-3 justify-center">
           <a href={whatsappLink()} target="_blank" rel="noopener noreferrer"
-             className="inline-flex items-center gap-2 bg-foreground text-primary-foreground px-7 py-4 text-xs uppercase tracking-[0.25em] hover:bg-accent hover:text-accent-foreground transition">
+             className="btn-pill inline-flex items-center gap-2 bg-foreground text-primary-foreground px-7 py-4 text-xs font-bold uppercase tracking-[0.25em] hover:bg-accent hover:text-accent-foreground transition">
             <MessageCircle size={16}/> Continue on WhatsApp
           </a>
-          <a href="/" className="inline-flex items-center gap-2 border border-foreground px-7 py-4 text-xs uppercase tracking-[0.25em] hover:bg-foreground hover:text-primary-foreground transition">
+          <a href="/" className="btn-pill inline-flex items-center gap-2 border-2 border-foreground px-7 py-4 text-xs font-bold uppercase tracking-[0.25em] hover:bg-foreground hover:text-primary-foreground transition">
             Back home
           </a>
         </div>
@@ -123,7 +123,7 @@ function CustomOrder() {
       <section className="mx-auto max-w-7xl px-6 lg:px-10 pt-24 lg:pt-32 pb-12">
         <div className="eyebrow">Custom order</div>
         <h1 className="mt-4 font-display text-5xl lg:text-7xl leading-[1.05] max-w-4xl">
-          Create your <em className="italic text-accent">custom</em> design.
+          Create your <span className="text-accent">custom</span> design.
         </h1>
         <p className="mt-6 max-w-2xl text-muted-foreground">
           Tell us what you want to make. The more detail, the better — we'll follow up on
@@ -139,7 +139,7 @@ function CustomOrder() {
             <h2 className="mt-2 font-display text-2xl">Describe your dream apparel.</h2>
             <p className="mt-2 text-sm text-muted-foreground">
               In plain words — colours, materials, vibe, references. Example:
-              <em> "Black oversized tee, gold embroidered logo on the chest, bold quote on the back in serif type."</em>
+              <span className="italic"> "Black oversized tee, gold embroidered logo on the chest, bold quote on the back in serif type."</span>
             </p>
           </div>
         </div>
@@ -195,7 +195,7 @@ function CustomOrder() {
           </Group>
 
           <button disabled={loading || uploading}
-                  className="group inline-flex items-center gap-2 bg-foreground text-primary-foreground px-9 py-5 text-xs uppercase tracking-[0.3em] hover:bg-accent hover:text-accent-foreground transition disabled:opacity-60">
+                  className="btn-pill group inline-flex items-center gap-2 bg-foreground text-primary-foreground px-9 py-5 text-xs font-bold uppercase tracking-[0.3em] hover:bg-accent hover:text-accent-foreground transition disabled:opacity-60">
             {loading ? "Submitting…" : "Submit custom request"} <ArrowRight size={16} className="group-hover:translate-x-1 transition"/>
           </button>
           <p className="text-xs text-muted-foreground">By submitting, you agree to be contacted by our studio via WhatsApp or email.</p>

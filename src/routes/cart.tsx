@@ -20,7 +20,7 @@ function CartPage() {
         <ShoppingBag size={32} className="mx-auto text-muted-foreground" />
         <h1 className="font-display text-4xl mt-6">Your cart is empty</h1>
         <p className="text-muted-foreground mt-3">Begin building your edit.</p>
-        <Link to="/shop" className="mt-8 inline-block bg-foreground text-primary-foreground px-8 py-4 text-xs uppercase tracking-[0.25em] hover:bg-accent hover:text-accent-foreground transition">
+        <Link to="/shop" className="btn-pill mt-8 inline-block bg-foreground text-primary-foreground px-8 py-4 text-xs font-bold uppercase tracking-[0.25em] hover:bg-accent hover:text-accent-foreground transition">
           Browse the shop
         </Link>
       </div>
@@ -89,11 +89,11 @@ function CartPage() {
             </div>
             <Link
               to="/checkout"
-              className="mt-6 w-full block text-center bg-foreground text-primary-foreground py-4 text-xs uppercase tracking-[0.25em] hover:bg-accent hover:text-accent-foreground transition"
+              className="btn-pill mt-6 w-full block text-center bg-foreground text-primary-foreground py-4 text-xs font-bold uppercase tracking-[0.25em] hover:bg-accent hover:text-accent-foreground transition"
             >
               Proceed to checkout
             </Link>
-            <Link to="/shop" className="mt-4 block text-center text-xs uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground">
+            <Link to="/shop" className="mt-4 block text-center text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground">
               Continue shopping
             </Link>
           </div>

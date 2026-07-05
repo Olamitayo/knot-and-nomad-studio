@@ -85,7 +85,7 @@ function ProductDetail() {
         <h1 className="font-display text-4xl">Piece not found</h1>
         <Link
           to="/shop"
-          className="mt-6 inline-flex items-center gap-2 border border-foreground px-5 py-3 text-xs uppercase tracking-[0.22em] transition hover:bg-foreground hover:text-primary-foreground"
+          className="btn-pill mt-6 inline-flex items-center gap-2 border-2 border-foreground px-5 py-3 text-xs font-bold uppercase tracking-[0.22em] transition hover:bg-foreground hover:text-primary-foreground"
         >
           <ArrowLeft size={14} />
           Back to shop
@@ -146,12 +146,12 @@ function ProductDetail() {
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-6 py-5 lg:px-10">
           <Link
             to="/shop"
-            className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.22em] text-muted-foreground transition hover:text-foreground"
+            className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.22em] text-muted-foreground transition hover:text-foreground"
           >
             <ArrowLeft size={14} />
             Back to shop
           </Link>
-          <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">
+          <p className="text-xs font-bold uppercase tracking-[0.22em] text-muted-foreground">
             Priced in Nigerian Naira
           </p>
         </div>
@@ -164,7 +164,7 @@ function ProductDetail() {
               <img src={selectedImage} alt={product.name} className="aspect-[4/5] h-full w-full object-cover" />
             ) : (
               <div className="flex aspect-[4/5] items-center justify-center bg-[linear-gradient(135deg,var(--muted),var(--card))] px-6 text-center">
-                <span className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
+                <span className="text-xs font-bold uppercase tracking-[0.24em] text-muted-foreground">
                   Image coming soon
                 </span>
               </div>
@@ -325,14 +325,14 @@ function ProductDetail() {
             <button
               onClick={onAdd}
               disabled={product.is_sold_out || uploading}
-              className="inline-flex min-h-14 items-center justify-center gap-2 bg-foreground px-6 text-xs uppercase tracking-[0.22em] text-primary-foreground transition hover:bg-accent hover:text-accent-foreground disabled:opacity-50"
+              className="inline-flex min-h-14 items-center justify-center gap-2 bg-foreground px-6 text-xs font-bold uppercase tracking-[0.22em] text-primary-foreground transition hover:bg-accent hover:text-accent-foreground disabled:opacity-50"
             >
               <ShoppingBag size={15} />
               {product.is_sold_out ? "Sold out" : uploading ? "Uploading..." : "Add to cart"}
             </button>
             <button
               onClick={onWhatsApp}
-              className="inline-flex min-h-14 items-center justify-center gap-2 border border-foreground px-6 text-xs uppercase tracking-[0.22em] transition hover:bg-foreground hover:text-primary-foreground"
+              className="btn-pill inline-flex min-h-14 items-center justify-center gap-2 border-2 border-foreground px-6 text-xs font-bold uppercase tracking-[0.22em] transition hover:bg-foreground hover:text-primary-foreground"
             >
               <MessageCircle size={15} />
               WhatsApp inquiry
@@ -341,7 +341,7 @@ function ProductDetail() {
 
           <button
             onClick={() => navigate({ to: "/cart" })}
-            className="mt-5 inline-flex items-center gap-2 text-xs uppercase tracking-[0.22em] text-muted-foreground transition hover:text-foreground"
+            className="mt-5 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.22em] text-muted-foreground transition hover:text-foreground"
           >
             View cart
             <ArrowRight size={14} />
@@ -371,7 +371,7 @@ function TrustItem({
         {icon}
         {!muted && <CheckCircle2 size={14} className="text-accent" />}
       </div>
-      <span className="text-xs uppercase tracking-[0.18em]">{label}</span>
+      <span className="text-xs font-bold uppercase tracking-[0.18em]">{label}</span>
     </div>
   );
 }

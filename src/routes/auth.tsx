@@ -50,14 +50,14 @@ function AuthPage() {
           <span className="eyebrow mb-2 block">Password</span>
           <input type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} className="w-full bg-background border border-border px-3 py-3 text-sm" />
         </label>
-        <button disabled={busy} className="w-full bg-foreground text-primary-foreground py-4 text-xs uppercase tracking-[0.25em] hover:bg-accent hover:text-accent-foreground transition disabled:opacity-50">
+        <button disabled={busy} className="btn-pill w-full bg-foreground text-primary-foreground py-4 text-xs font-bold uppercase tracking-[0.25em] hover:bg-accent hover:text-accent-foreground transition disabled:opacity-50">
           {busy ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}
         </button>
       </form>
-      <button onClick={() => setMode(mode === "signin" ? "signup" : "signin")} className="mt-6 text-xs uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground">
+      <button onClick={() => setMode(mode === "signin" ? "signup" : "signin")} className="mt-6 text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground">
         {mode === "signin" ? "Need an account? Sign up" : "Have an account? Sign in"}
       </button>
-      <Link to="/" className="mt-4 block text-xs uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground">← Back home</Link>
+      <Link to="/" className="mt-4 block text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground">← Back home</Link>
     </div>
   );
 }

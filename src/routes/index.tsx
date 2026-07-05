@@ -75,21 +75,21 @@ function Home() {
               <span className="block h-px w-10 bg-accent" />
               <span className="eyebrow text-foreground/80">Premium custom apparel — Est. Worldwide</span>
             </div>
-            <h1 className="mt-7 font-display text-[2.6rem] sm:text-6xl lg:text-7xl xl:text-[7.5rem] leading-[0.98] max-w-5xl tracking-tight">
-              Fashion <em className="italic text-accent">rooted</em><br/>in motion.
+            <h1 className="mt-7 font-display uppercase text-[2.8rem] sm:text-6xl lg:text-7xl xl:text-[7.5rem] leading-[0.92] max-w-5xl">
+              Fashion <span className="text-accent">rooted</span><br/>in motion.
             </h1>
             <p className="mt-7 max-w-xl text-base lg:text-lg text-muted-foreground leading-relaxed">
               A premium custom apparel studio for individuals, creatives and brands —
               translating identity into considered, wearable pieces.
             </p>
             <div className="mt-10 flex flex-wrap gap-3">
-              <Link to="/custom-order" className="group inline-flex items-center gap-2 bg-foreground text-primary-foreground px-7 py-4 text-xs uppercase tracking-[0.28em] hover:bg-accent hover:text-accent-foreground transition-colors duration-500">
+              <Link to="/custom-order" className="btn-pill group inline-flex items-center gap-2 bg-foreground text-primary-foreground px-7 py-4 text-xs font-bold uppercase tracking-[0.2em] hover:bg-accent hover:text-accent-foreground transition-colors duration-300">
                 Start Custom Order <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
               </Link>
-              <Link to="/collection" className="inline-flex items-center gap-2 border border-foreground px-7 py-4 text-xs uppercase tracking-[0.28em] hover:bg-foreground hover:text-primary-foreground transition-colors duration-500">
+              <Link to="/collection" className="btn-pill inline-flex items-center gap-2 border-2 border-foreground px-7 py-4 text-xs font-bold uppercase tracking-[0.2em] hover:bg-foreground hover:text-primary-foreground transition-colors duration-300">
                 Explore Collection
               </Link>
-              <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-5 py-4 text-xs uppercase tracking-[0.28em] text-foreground/80 hover:text-accent transition">
+              <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-5 py-4 text-xs font-bold uppercase tracking-[0.2em] text-foreground/80 hover:text-accent transition">
                 <MessageCircle size={16}/> Chat on WhatsApp
               </a>
             </div>
@@ -99,13 +99,13 @@ function Home() {
 
       {/* MARQUEE */}
       <div className="border-y border-border py-6 overflow-hidden bg-secondary">
-        <div className="marquee flex gap-12 whitespace-nowrap font-display text-2xl">
+        <div className="marquee flex gap-12 whitespace-nowrap font-display uppercase text-2xl">
           {Array.from({ length: 2 }).map((_, i) => (
             <div key={i} className="flex gap-12 pr-12 items-center">
               <span>Rooted in Motion</span><span className="text-accent">✦</span>
-              <span className="italic">Custom Apparel Studio</span><span className="text-accent">✦</span>
+              <span>Custom Apparel Studio</span><span className="text-accent">✦</span>
               <span>Designed Around You</span><span className="text-accent">✦</span>
-              <span className="italic">Limited. Considered. Crafted.</span><span className="text-accent">✦</span>
+              <span>Limited. Considered. Crafted.</span><span className="text-accent">✦</span>
             </div>
           ))}
         </div>
@@ -116,7 +116,7 @@ function Home() {
         <div className="lg:col-span-5" data-reveal>
           <div className="eyebrow">About the brand</div>
           <h2 className="mt-5 font-display text-4xl lg:text-5xl xl:text-6xl leading-[1.05]">
-            For people who carry their <em className="italic text-accent">roots</em> wherever they go.
+            For people who carry their <span className="text-accent">roots</span> wherever they go.
           </h2>
         </div>
         <div className="lg:col-span-6 lg:col-start-7 space-y-5 text-muted-foreground leading-[1.75]" data-reveal data-reveal-delay="2">
@@ -132,7 +132,7 @@ function Home() {
           <p>
             Every garment begins as a story. Yours.
           </p>
-          <Link to="/about" className="inline-flex items-center gap-2 text-foreground hover:text-accent transition text-sm tracking-[0.25em] uppercase pt-2">
+          <Link to="/about" className="inline-flex items-center gap-2 text-foreground hover:text-accent transition text-sm font-bold tracking-[0.15em] uppercase pt-2">
             Read our story <ArrowRight size={14}/>
           </Link>
         </div>
@@ -146,7 +146,7 @@ function Home() {
               <div className="eyebrow">The Studio</div>
               <h2 className="mt-3 font-display text-4xl lg:text-6xl">Categories.</h2>
             </div>
-            <Link to="/collection" className="hidden md:inline-flex items-center gap-2 text-sm tracking-[0.25em] uppercase hover:text-accent transition">
+            <Link to="/collection" className="hidden md:inline-flex items-center gap-2 text-sm font-bold tracking-[0.15em] uppercase hover:text-accent transition">
               View all <ArrowRight size={14}/>
             </Link>
           </div>
@@ -156,17 +156,17 @@ function Home() {
                 <div className="relative aspect-[4/5] overflow-hidden img-lift">
                   <img src={c.img} alt={c.name} loading="lazy" width={1024} height={1280}
                        className="w-full h-full object-cover" />
-                  <span className="absolute top-4 left-4 bg-background/85 backdrop-blur-sm text-[0.6rem] tracking-[0.3em] uppercase px-3 py-1.5 font-medium">
+                  <span className="absolute top-4 left-4 bg-background/85 backdrop-blur-sm text-[0.62rem] font-bold tracking-[0.2em] uppercase px-3 py-1.5">
                     {c.label}
                   </span>
                 </div>
                 <div className="p-7">
                   <div className="flex items-baseline justify-between gap-3">
-                    <h3 className="font-display text-2xl tracking-tight">{c.name}</h3>
-                    <span className="text-[0.6rem] tracking-[0.3em] uppercase text-muted-foreground">0{i+1}</span>
+                    <h3 className="font-display text-2xl">{c.name}</h3>
+                    <span className="text-[0.62rem] font-bold tracking-[0.2em] uppercase text-muted-foreground">0{i+1}</span>
                   </div>
                   <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{c.desc}</p>
-                  <Link to="/custom-order" className="mt-6 inline-flex items-center gap-2 text-xs tracking-[0.28em] uppercase border-b border-foreground pb-1 hover:text-accent hover:border-accent transition">
+                  <Link to="/custom-order" className="mt-6 inline-flex items-center gap-2 text-xs font-bold tracking-[0.18em] uppercase border-b-2 border-foreground pb-1 hover:text-accent hover:border-accent transition">
                     Request this style <ArrowRight size={14} />
                   </Link>
                 </div>
@@ -181,17 +181,17 @@ function Home() {
         <div data-reveal>
           <div className="eyebrow">Process</div>
           <h2 className="mt-3 font-display text-4xl lg:text-6xl max-w-3xl leading-[1.05]">
-            From idea to wearable, in <em className="italic text-accent">six</em> steps.
+            From idea to wearable, in <span className="text-accent">six</span> steps.
           </h2>
         </div>
         <div className="mt-16 grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-border">
           {steps.map((s, i) => (
             <div key={s.title} className="relative p-8 lg:p-10 bg-background hover:bg-card transition-colors duration-500 group" data-reveal data-reveal-delay={String((i % 3) + 1)}>
               <div className="flex items-baseline justify-between">
-                <s.icon size={26} className="text-accent" strokeWidth={1.25} />
+                <s.icon size={26} className="text-accent" strokeWidth={2} />
                 <span className="font-display text-3xl text-foreground/15 group-hover:text-accent/40 transition-colors">0{i+1}</span>
               </div>
-              <h3 className="mt-8 font-display text-2xl tracking-tight">{s.title}</h3>
+              <h3 className="mt-8 font-display text-2xl">{s.title}</h3>
               <p className="mt-3 text-sm text-muted-foreground leading-relaxed">{s.text}</p>
             </div>
           ))}
@@ -203,15 +203,15 @@ function Home() {
         <img src={monogram} alt="" aria-hidden className="absolute -right-20 -bottom-20 w-[36rem] opacity-[0.06] pointer-events-none select-none" />
         <div className="relative mx-auto max-w-5xl px-6 lg:px-10 text-center" data-reveal>
           <div className="eyebrow text-primary-foreground/60">AI design assistant</div>
-          <h2 className="mt-4 font-display text-4xl lg:text-7xl leading-[1.05]">
-            Describe it. <em className="italic text-accent">We'll craft it.</em>
+          <h2 className="mt-4 font-display uppercase text-4xl lg:text-7xl leading-[0.98]">
+            Describe it. <span className="text-accent">We'll craft it.</span>
           </h2>
           <p className="mt-7 max-w-2xl mx-auto text-primary-foreground/70 leading-relaxed text-lg">
             Tell us your dream apparel in plain words — "a black oversized tee with a
             gold chest logo and a bold quote on the back." Our studio turns your
             description into a real, premium garment.
           </p>
-          <Link to="/custom-order" className="mt-10 inline-flex items-center gap-2 bg-accent text-accent-foreground px-9 py-5 text-xs uppercase tracking-[0.3em] hover:bg-cream hover:text-foreground transition-colors duration-500">
+          <Link to="/custom-order" className="btn-pill mt-10 inline-flex items-center gap-2 bg-accent text-accent-foreground px-9 py-5 text-xs font-bold uppercase tracking-[0.2em] hover:bg-cream hover:text-foreground transition-colors duration-300">
             Describe your idea <ArrowRight size={16} />
           </Link>
         </div>
@@ -224,7 +224,7 @@ function Home() {
             <div className="eyebrow">Lookbook</div>
             <h2 className="mt-3 font-display text-4xl lg:text-6xl">In the wild.</h2>
           </div>
-          <Link to="/lookbook" className="hidden md:inline-flex items-center gap-2 text-sm tracking-[0.25em] uppercase hover:text-accent transition">
+          <Link to="/lookbook" className="hidden md:inline-flex items-center gap-2 text-sm font-bold tracking-[0.15em] uppercase hover:text-accent transition">
             View gallery <ArrowRight size={14}/>
           </Link>
         </div>

@@ -47,18 +47,18 @@ export function Footer() {
               translating identity into considered, wearable pieces. Rooted in
               culture. Designed for movement.
             </p>
-            <form onSubmit={onSubscribe} className="mt-8 flex max-w-md">
+            <form onSubmit={onSubscribe} className="mt-8 flex gap-3 max-w-md">
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Join the Nomad Circle"
-                className="flex-1 bg-transparent border border-primary-foreground/30 px-4 py-3 text-sm placeholder:text-primary-foreground/50 focus:outline-none focus:border-accent"
+                className="btn-pill flex-1 bg-transparent border-2 border-primary-foreground/30 px-5 py-3 text-sm placeholder:text-primary-foreground/50 focus:outline-none focus:border-accent"
               />
               <button
                 disabled={loading}
-                className="bg-accent text-accent-foreground px-5 text-xs uppercase tracking-[0.2em] disabled:opacity-60"
+                className="btn-pill bg-accent text-accent-foreground px-6 text-xs font-bold uppercase tracking-[0.14em] disabled:opacity-60"
               >
                 {loading ? "…" : "Join"}
               </button>
@@ -67,7 +67,7 @@ export function Footer() {
 
           <div className="lg:col-span-3">
             <div className="eyebrow text-primary-foreground/60">Explore</div>
-            <ul className="mt-5 space-y-3 text-sm">
+            <ul className="mt-5 space-y-3 text-sm font-bold uppercase tracking-[0.08em]">
               {[
                 ["/", "Home"],
                 ["/about", "About"],
@@ -85,7 +85,7 @@ export function Footer() {
 
           <div className="lg:col-span-4">
             <div className="eyebrow text-primary-foreground/60">Reach Us</div>
-            <ul className="mt-5 space-y-3 text-sm">
+            <ul className="mt-5 space-y-3 text-sm font-bold uppercase tracking-[0.08em]">
               <li><a href={`mailto:${SITE.email}`} className="hover:text-accent">{SITE.email}</a></li>
               <li><a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="hover:text-accent">WhatsApp us</a></li>
             </ul>
