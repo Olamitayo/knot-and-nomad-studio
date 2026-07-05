@@ -16,9 +16,9 @@ function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="font-display text-7xl">404</h1>
+        <h1 className="font-display text-8xl">404</h1>
         <p className="mt-4 text-muted-foreground">This page got lost on its journey.</p>
-        <a href="/" className="mt-8 inline-block bg-foreground text-primary-foreground px-6 py-3 text-xs uppercase tracking-[0.25em]">Back home</a>
+        <a href="/" className="btn-pill mt-8 inline-block bg-foreground text-primary-foreground px-7 py-3.5 text-xs font-bold uppercase tracking-[0.2em] hover:bg-accent hover:text-accent-foreground transition-colors">Back home</a>
       </div>
     </div>
   );
@@ -30,11 +30,11 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="font-display text-3xl">Something went wrong</h1>
+        <h1 className="font-display text-4xl">Something went wrong</h1>
         <p className="mt-3 text-sm text-muted-foreground">{error.message}</p>
         <button
           onClick={() => { router.invalidate(); reset(); }}
-          className="mt-6 bg-foreground text-primary-foreground px-6 py-3 text-xs uppercase tracking-[0.25em]"
+          className="btn-pill mt-6 bg-foreground text-primary-foreground px-7 py-3.5 text-xs font-bold uppercase tracking-[0.2em] hover:bg-accent hover:text-accent-foreground transition-colors"
         >Try again</button>
       </div>
     </div>
@@ -68,7 +68,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "apple-touch-icon", href: "/favicon.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" },
+      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,600;0,700;0,800;0,900;1,700&family=Inter:wght@300;400;500;600;700&display=swap" },
     ],
   }),
   shellComponent: RootShell,

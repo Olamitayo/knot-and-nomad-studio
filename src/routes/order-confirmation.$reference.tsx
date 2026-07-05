@@ -109,7 +109,7 @@ function ConfirmationPage() {
             </div>
             <button
               onClick={() => copy(order.reference)}
-              className="text-xs uppercase tracking-[0.25em] flex items-center gap-2 hover:text-accent"
+              className="text-xs font-bold uppercase tracking-[0.25em] flex items-center gap-2 hover:text-accent"
             >
               <Copy size={12} /> Copy
             </button>
@@ -154,7 +154,7 @@ function ConfirmationPage() {
                 </label>
               </label>
               {order.receipt_url && (
-                <a href={order.receipt_url} target="_blank" rel="noopener noreferrer" className="text-xs uppercase tracking-[0.25em] underline">
+                <a href={order.receipt_url} target="_blank" rel="noopener noreferrer" className="text-xs font-bold uppercase tracking-[0.25em] underline">
                   View uploaded receipt
                 </a>
               )}
@@ -162,7 +162,7 @@ function ConfirmationPage() {
                 href={whatsappLink(whatsappMsg)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full block text-center bg-foreground text-primary-foreground py-4 text-xs uppercase tracking-[0.25em] hover:bg-accent hover:text-accent-foreground transition"
+                className="btn-pill w-full block text-center bg-foreground text-primary-foreground py-4 text-xs font-bold uppercase tracking-[0.25em] hover:bg-accent hover:text-accent-foreground transition"
               >
                 <span className="inline-flex items-center gap-2"><MessageCircle size={14} /> Confirm via WhatsApp</span>
               </a>
@@ -171,7 +171,7 @@ function ConfirmationPage() {
         )}
 
         <div className="text-center">
-          <Link to="/shop" className="text-xs uppercase tracking-[0.25em] underline-offset-4 hover:underline">
+          <Link to="/shop" className="text-xs font-bold uppercase tracking-[0.25em] underline-offset-4 hover:underline">
             Continue shopping
           </Link>
         </div>

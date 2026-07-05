@@ -120,13 +120,13 @@ function Lookbook() {
           <div>
             <div className="eyebrow">Lookbook · Vol. 01</div>
             <h1 className="mt-5 font-display text-5xl lg:text-7xl xl:text-8xl leading-[1.02] max-w-5xl">
-              An editorial of <em className="italic text-accent">motion</em>.
+              An editorial of <span className="text-accent">motion</span>.
             </h1>
             <p className="mt-6 max-w-xl text-muted-foreground leading-relaxed">
               Considered silhouettes, honest fabrics, and personal stories — captured between the studio and the street.
             </p>
           </div>
-          <div className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
+          <div className="text-xs font-bold uppercase tracking-[0.3em] text-muted-foreground">
             <div>SS Capsule</div>
             <div className="mt-1">7 Looks · 1 Story</div>
           </div>
@@ -139,7 +139,7 @@ function Lookbook() {
           <FilterRow label="Clothing" options={typeOptions} value={type} onChange={(v) => setParam("type", v)} />
           <FilterRow label="Tone" options={toneOptions} value={tone} onChange={(v) => setParam("tone", v)} />
           <FilterRow label="Print" options={printOptions} value={print} onChange={(v) => setParam("print", v)} />
-          <div className="flex items-center justify-between pt-1 text-xs uppercase tracking-[0.25em] text-muted-foreground">
+          <div className="flex items-center justify-between pt-1 text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">
             <span>
               {filtered.length} of {shots.length} looks
             </span>
@@ -157,7 +157,7 @@ function Lookbook() {
         {filtered.length === 0 ? (
           <div className="py-24 text-center text-muted-foreground">
             <p className="font-display text-3xl text-foreground">No looks match those filters.</p>
-            <button onClick={reset} className="mt-6 text-xs uppercase tracking-[0.28em] border-b border-foreground pb-1 hover:text-accent hover:border-accent transition">
+            <button onClick={reset} className="mt-6 text-xs font-bold uppercase tracking-[0.28em] border-b border-foreground pb-1 hover:text-accent hover:border-accent transition">
               Clear and see all
             </button>
           </div>
@@ -182,10 +182,10 @@ function Lookbook() {
                 </div>
                 <figcaption className="absolute inset-x-0 bottom-0 p-5 lg:p-6 flex items-end justify-between gap-4 bg-gradient-to-t from-black/60 via-black/10 to-transparent text-primary-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                   <div>
-                    <div className="text-[10px] uppercase tracking-[0.3em] opacity-80">{s.tag}</div>
+                    <div className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-80">{s.tag}</div>
                     <div className="font-display text-xl lg:text-2xl mt-1">{s.caption}</div>
                   </div>
-                  <div className="text-[10px] uppercase tracking-[0.3em] opacity-80">
+                  <div className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-80">
                     {String(i + 1).padStart(2, "0")} / {String(filtered.length).padStart(2, "0")}
                   </div>
                 </figcaption>
@@ -199,7 +199,7 @@ function Lookbook() {
       <section className="border-t border-border">
         <div className="mx-auto max-w-7xl px-6 lg:px-10 py-20 lg:py-28 grid lg:grid-cols-2 gap-10 items-center">
           <h2 className="font-display text-4xl lg:text-6xl leading-[1.05]" data-reveal>
-            See a piece you'd want — <em className="italic text-accent">made yours</em>?
+            See a piece you'd want — <span className="text-accent">made yours</span>?
           </h2>
           <div className="flex flex-col items-start gap-4" data-reveal data-reveal-delay="2">
             <p className="text-muted-foreground max-w-md">
@@ -207,7 +207,7 @@ function Lookbook() {
             </p>
             <Link
               to="/custom-order"
-              className="inline-flex items-center gap-2 bg-foreground text-primary-foreground px-7 py-4 text-xs uppercase tracking-[0.28em] hover:bg-accent hover:text-accent-foreground transition-colors duration-500"
+              className="btn-pill inline-flex items-center gap-2 bg-foreground text-primary-foreground px-7 py-4 text-xs font-bold uppercase tracking-[0.28em] hover:bg-accent hover:text-accent-foreground transition-colors duration-500"
             >
               Start your piece <ArrowRight size={16} />
             </Link>
@@ -231,7 +231,7 @@ function FilterRow({
 }) {
   return (
     <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-      <div className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground w-20 shrink-0">
+      <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground w-20 shrink-0">
         {label}
       </div>
       <div className="flex flex-wrap gap-2">
@@ -242,7 +242,7 @@ function FilterRow({
               key={opt.value}
               onClick={() => onChange(opt.value)}
               className={cn(
-                "px-4 py-2 text-[11px] uppercase tracking-[0.25em] border transition-colors duration-300",
+                "px-4 py-2 text-[11px] font-bold uppercase tracking-[0.25em] border transition-colors duration-300",
                 active
                   ? "bg-foreground text-primary-foreground border-foreground"
                   : "border-border text-muted-foreground hover:text-foreground hover:border-foreground",

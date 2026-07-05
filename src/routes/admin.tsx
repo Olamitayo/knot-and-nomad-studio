@@ -35,7 +35,7 @@ function AdminLayout() {
 VALUES ('${user.id}', 'admin');`}
         </pre>
         <p className="mt-4 text-xs text-muted-foreground">After running, refresh this page.</p>
-        <button onClick={() => supabase.auth.signOut().then(() => navigate({ to: "/auth" }))} className="mt-6 text-xs uppercase tracking-[0.25em] underline">
+        <button onClick={() => supabase.auth.signOut().then(() => navigate({ to: "/auth" }))} className="mt-6 text-xs font-bold uppercase tracking-[0.25em] underline">
           Sign out
         </button>
       </div>
@@ -56,7 +56,7 @@ VALUES ('${user.id}', 'admin');`}
           <p className="eyebrow mb-2">Admin</p>
           <h1 className="font-display text-3xl">Knot & Nomad Studio</h1>
         </div>
-        <button onClick={() => supabase.auth.signOut().then(() => navigate({ to: "/" }))} className="text-xs uppercase tracking-[0.25em] hover:text-accent">
+        <button onClick={() => supabase.auth.signOut().then(() => navigate({ to: "/" }))} className="text-xs font-bold uppercase tracking-[0.25em] hover:text-accent">
           Sign out
         </button>
       </div>
@@ -67,7 +67,7 @@ VALUES ('${user.id}', 'admin');`}
             <Link
               key={t.to}
               to={t.to}
-              className={`px-4 py-3 text-xs uppercase tracking-[0.25em] border-b-2 transition ${active ? "border-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}
+              className={`px-4 py-3 text-xs font-bold uppercase tracking-[0.25em] border-b-2 transition ${active ? "border-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}
             >
               {t.label}
             </Link>

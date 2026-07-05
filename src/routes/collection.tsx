@@ -34,7 +34,7 @@ function Collection() {
       <section className="mx-auto max-w-7xl px-6 lg:px-10 pt-24 lg:pt-32 pb-16">
         <div className="eyebrow">Collection — Vol. 01</div>
         <h1 className="mt-4 font-display text-5xl lg:text-7xl xl:text-8xl leading-[1.02] max-w-4xl tracking-tight">
-          Every category, <em className="italic text-accent">custom-built</em>.
+          Every category, <span className="text-accent">custom-built</span>.
         </h1>
         <p className="mt-7 max-w-xl text-muted-foreground leading-relaxed">
           A working catalogue of our studio's silhouettes. Every piece below can be

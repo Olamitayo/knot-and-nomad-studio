@@ -184,7 +184,7 @@ function ShopPage() {
             <h1 className="font-display text-5xl leading-[0.98] sm:text-6xl lg:text-7xl">
               Premium pieces.
               <br />
-              Cut for motion.
+              Cut for <span className="text-accent">motion</span>.
             </h1>
             <p className="mt-6 max-w-xl text-sm leading-7 text-primary-foreground/70 sm:text-base">
               Ready-to-wear essentials and customisable studio pieces, priced in Nigerian
@@ -193,13 +193,13 @@ function ShopPage() {
             <div className="mt-9 flex flex-wrap gap-3">
               <a
                 href="#shop-grid"
-                className="inline-flex items-center gap-2 bg-primary-foreground px-6 py-3 text-xs uppercase tracking-[0.22em] text-foreground transition hover:bg-accent hover:text-accent-foreground"
+                className="btn-pill inline-flex items-center gap-2 bg-primary-foreground px-6 py-3 text-xs font-bold uppercase tracking-[0.22em] text-foreground transition hover:bg-accent hover:text-accent-foreground"
               >
                 Shop pieces <ArrowRight size={15} />
               </a>
               <Link
                 to="/custom-order"
-                className="inline-flex items-center gap-2 border border-primary-foreground/35 px-6 py-3 text-xs uppercase tracking-[0.22em] text-primary-foreground transition hover:border-accent hover:text-accent"
+                className="btn-pill inline-flex items-center gap-2 border-2 border-primary-foreground/35 px-6 py-3 text-xs font-bold uppercase tracking-[0.22em] text-primary-foreground transition hover:border-accent hover:text-accent"
               >
                 Custom order
               </Link>
@@ -223,7 +223,7 @@ function ShopPage() {
               <button
                 key={item}
                 onClick={() => setCategory(item)}
-                className={`shrink-0 border px-4 py-2 text-xs uppercase tracking-[0.18em] transition ${
+                className={`shrink-0 border px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] transition ${
                   category === item
                     ? "border-foreground bg-foreground text-primary-foreground"
                     : "border-border bg-background text-muted-foreground hover:border-foreground hover:text-foreground"
@@ -265,7 +265,7 @@ function ShopPage() {
             </select>
             <button
               onClick={() => setShowFilters((v) => !v)}
-              className="inline-flex h-12 items-center justify-center gap-2 border border-foreground px-5 text-xs uppercase tracking-[0.22em] transition hover:bg-foreground hover:text-primary-foreground lg:hidden"
+              className="btn-pill inline-flex h-12 items-center justify-center gap-2 border-2 border-foreground px-5 text-xs font-bold uppercase tracking-[0.22em] transition hover:bg-foreground hover:text-primary-foreground lg:hidden"
             >
               <Filter size={14} />
               Filters
@@ -340,7 +340,7 @@ function ShopPage() {
                   ))}
                 <button
                   onClick={resetFilters}
-                  className="inline-flex items-center gap-1 px-2 py-1.5 text-xs uppercase tracking-[0.18em] text-muted-foreground transition hover:text-foreground"
+                  className="inline-flex items-center gap-1 px-2 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-muted-foreground transition hover:text-foreground"
                 >
                   <X size={13} />
                   Clear
@@ -359,7 +359,7 @@ function ShopPage() {
                 </p>
                 <button
                   onClick={resetFilters}
-                  className="mt-6 border border-foreground px-5 py-3 text-xs uppercase tracking-[0.22em] transition hover:bg-foreground hover:text-primary-foreground"
+                  className="btn-pill mt-6 border-2 border-foreground px-5 py-3 text-xs font-bold uppercase tracking-[0.22em] transition hover:bg-foreground hover:text-primary-foreground"
                 >
                   Reset filters
                 </button>
@@ -427,7 +427,7 @@ function ShopFilters({
       </div>
       <button
         onClick={onReset}
-        className="w-full border border-border py-3 text-xs uppercase tracking-[0.2em] text-muted-foreground transition hover:border-foreground hover:text-foreground"
+        className="w-full border border-border py-3 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground transition hover:border-foreground hover:text-foreground"
       >
         Reset all
       </button>
@@ -497,13 +497,13 @@ function ProductCard({ p }: { p: Product }) {
             </>
           ) : (
             <div className="flex h-full w-full items-center justify-center bg-[linear-gradient(135deg,var(--muted),var(--card))] px-6 text-center">
-              <span className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
+              <span className="text-xs font-bold uppercase tracking-[0.24em] text-muted-foreground">
                 Image coming soon
               </span>
             </div>
           )}
           <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 bg-gradient-to-t from-foreground/80 to-transparent p-4 opacity-0 transition duration-300 group-hover:opacity-100">
-            <span className="text-xs uppercase tracking-[0.2em] text-primary-foreground">
+            <span className="text-xs font-bold uppercase tracking-[0.2em] text-primary-foreground">
               View piece
             </span>
             <ArrowRight size={16} className="text-primary-foreground" />
@@ -515,7 +515,7 @@ function ProductCard({ p }: { p: Product }) {
           </div>
           {p.is_sold_out && (
             <div className="absolute inset-0 flex items-center justify-center bg-background/75">
-              <span className="border border-foreground bg-background px-4 py-2 text-xs uppercase tracking-[0.24em]">
+              <span className="border border-foreground bg-background px-4 py-2 text-xs font-bold uppercase tracking-[0.24em]">
                 Sold out
               </span>
             </div>
@@ -588,7 +588,7 @@ function Badge({
 
   return (
     <span
-      className={`inline-flex items-center gap-1 px-2.5 py-1 text-[0.62rem] uppercase tracking-[0.2em] shadow-sm backdrop-blur ${toneClass}`}
+      className={`inline-flex items-center gap-1 px-2.5 py-1 text-[0.62rem] font-bold uppercase tracking-[0.2em] shadow-sm backdrop-blur ${toneClass}`}
     >
       {icon}
       {label}

@@ -44,7 +44,7 @@ function AdminSettings() {
         <Field label="Account name" value={s.account_name} onChange={(v) => setS({ ...s, account_name: v })} />
         <Field label="Account number" value={s.account_number} onChange={(v) => setS({ ...s, account_number: v })} />
         <Field label="Delivery fee (NGN)" type="number" value={String(s.delivery_fee_ngn)} onChange={(v) => setS({ ...s, delivery_fee_ngn: Number(v) || 0 })} />
-        <button onClick={save} disabled={busy} className="bg-foreground text-primary-foreground px-6 py-3 text-xs uppercase tracking-[0.25em] disabled:opacity-50">
+        <button onClick={save} disabled={busy} className="bg-foreground text-primary-foreground px-6 py-3 text-xs font-bold uppercase tracking-[0.25em] disabled:opacity-50">
           {busy ? "Saving…" : "Save settings"}
         </button>
       </div>

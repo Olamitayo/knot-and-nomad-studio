@@ -64,7 +64,7 @@ function Contact() {
           <div>
             <div className="eyebrow">WhatsApp</div>
             <a href={whatsappLink()} target="_blank" rel="noopener noreferrer"
-               className="mt-2 inline-flex items-center gap-2 bg-foreground text-primary-foreground px-6 py-3 text-xs uppercase tracking-[0.25em] hover:bg-accent hover:text-accent-foreground transition">
+               className="btn-pill mt-2 inline-flex items-center gap-2 bg-foreground text-primary-foreground px-6 py-3 text-xs font-bold uppercase tracking-[0.25em] hover:bg-accent hover:text-accent-foreground transition">
               <MessageCircle size={16}/> Chat on WhatsApp
             </a>
           </div>
@@ -107,7 +107,7 @@ function Contact() {
                       className="mt-3 w-full bg-background border border-border px-4 py-3 text-sm focus:outline-none focus:border-accent"/>
           </div>
           <button disabled={loading}
-                  className="bg-foreground text-primary-foreground px-8 py-4 text-xs uppercase tracking-[0.3em] hover:bg-accent hover:text-accent-foreground transition disabled:opacity-60">
+                  className="btn-pill bg-foreground text-primary-foreground px-8 py-4 text-xs font-bold uppercase tracking-[0.3em] hover:bg-accent hover:text-accent-foreground transition disabled:opacity-60">
             {loading ? "Sending…" : "Send message"}
           </button>
         </form>
