@@ -6,6 +6,7 @@ import { formatNaira, makeOrderReference } from "@/lib/format";
 import { supabase } from "@/integrations/supabase/client";
 import { openPaystackCheckout } from "@/lib/paystack";
 import { verifyPaystackPayment, notifyNewOrder } from "@/lib/payments.functions";
+import { NIGERIA_STATES } from "@/lib/nigeria-states";
 import { toast } from "sonner";
 import { CreditCard, Banknote, Lock, MessageCircle, Truck, Wand2, ShieldCheck } from "lucide-react";
 
@@ -220,7 +221,19 @@ function CheckoutPage() {
                 <Field label="Delivery address *" value={form.address} onChange={set("address")} />
                 <div className="grid sm:grid-cols-2 gap-4">
                   <Field label="City *" value={form.city} onChange={set("city")} />
-                  <Field label="State *" value={form.state} onChange={set("state")} />
+                  <div>
+                    <label className="eyebrow mb-2 block">State *</label>
+                    <select
+                      value={form.state}
+                      onChange={set("state")}
+                      className="w-full bg-background border border-border px-3 py-3 text-sm"
+                    >
+                      <option value="">Select your state…</option>
+                      {NIGERIA_STATES.map((st) => (
+                        <option key={st} value={st}>{st}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
                 <div>
                   <label className="eyebrow mb-2 block">Delivery option</label>
