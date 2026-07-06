@@ -6,6 +6,7 @@ import { formatNaira, makeOrderReference } from "@/lib/format";
 import { supabase } from "@/integrations/supabase/client";
 import { openPaystackCheckout } from "@/lib/paystack";
 import { verifyPaystackPayment, notifyNewOrder } from "@/lib/payments.functions";
+import { NIGERIA_STATES } from "@/lib/nigeria-states";
 import { toast } from "sonner";
 import { CreditCard, Banknote, Lock, MessageCircle, Truck, Wand2, ShieldCheck } from "lucide-react";
 
@@ -21,6 +22,12 @@ interface Settings {
   delivery_fee_ngn: number;
 }
 
+interface DeliveryZone {
+  id: string;
+  area_name: string;
+  fee_ngn: number;
+}
+
 function CheckoutPage() {
   const items = useCart((s) => s.items);
   const clear = useCart((s) => s.clear);
@@ -30,6 +37,8 @@ function CheckoutPage() {
   const subtotal = cartSubtotal(items);
 
   const [settings, setSettings] = useState<Settings | null>(null);
+  const [zones, setZones] = useState<DeliveryZone[]>([]);
+  const [deliveryArea, setDeliveryArea] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<"transfer" | "card">("transfer");
   const [submitting, setSubmitting] = useState(false);
   const [pendingOrder, setPendingOrder] = useState<{ id: string; reference: string } | null>(null);
@@ -49,6 +58,9 @@ function CheckoutPage() {
     supabase.from("app_settings").select("*").limit(1).maybeSingle().then(({ data }) => {
       if (data) setSettings(data as Settings);
     });
+    supabase.from("delivery_zones").select("id, area_name, fee_ngn").order("sort_order").order("area_name").then(({ data }) => {
+      setZones((data as DeliveryZone[]) ?? []);
+    });
   }, []);
 
   useEffect(() => {
@@ -57,7 +69,12 @@ function CheckoutPage() {
     }
   }, [items.length, submitting, navigate]);
 
-  const deliveryFee = settings?.delivery_fee_ngn ?? 0;
+  const isPickup = form.delivery_option === "pickup";
+  const isLagos = form.state.trim().toLowerCase() === "lagos";
+  const selectedZone = zones.find((z) => z.area_name === deliveryArea);
+
+  const deliveryFee = isPickup ? 0 : isLagos ? (selectedZone?.fee_ngn ?? 0) : 0;
+  const deliveryFeeConfirmed = isPickup || isLagos;
   const total = subtotal + deliveryFee;
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
@@ -95,6 +112,9 @@ function CheckoutPage() {
     if (!form.full_name || !form.email || !form.phone || !form.whatsapp || !form.address || !form.city || !form.state) {
       return toast.error("Please fill all required fields.");
     }
+    if (isLagos && !isPickup && !deliveryArea) {
+      return toast.error("Please select your delivery area.");
+    }
 
     setSubmitting(true);
 
@@ -113,6 +133,8 @@ function CheckoutPage() {
       .insert({
         reference,
         ...form,
+        delivery_area: isPickup ? null : isLagos ? deliveryArea : null,
+        delivery_fee_status: deliveryFeeConfirmed ? "confirmed" : "pending_negotiation",
         subtotal_ngn: subtotal,
         delivery_fee_ngn: deliveryFee,
         total_ngn: total,
@@ -153,6 +175,15 @@ function CheckoutPage() {
 
     notifyOrder({ data: { reference: order.reference } }).catch((err) => console.error(err));
 
+    // Delivery fee isn't known yet (outside Lagos) — skip payment entirely.
+    // The customer negotiates via WhatsApp, then pays from the confirmation
+    // page once an admin confirms the fee.
+    if (!deliveryFeeConfirmed) {
+      clear();
+      navigate({ to: "/order-confirmation/$reference", params: { reference } });
+      return;
+    }
+
     if (paymentMethod === "card") {
       setPendingOrder({ id: order.id, reference: order.reference });
       payWithCard({ id: order.id, reference: order.reference });
@@ -190,7 +221,19 @@ function CheckoutPage() {
                 <Field label="Delivery address *" value={form.address} onChange={set("address")} />
                 <div className="grid sm:grid-cols-2 gap-4">
                   <Field label="City *" value={form.city} onChange={set("city")} />
-                  <Field label="State *" value={form.state} onChange={set("state")} />
+                  <div>
+                    <label className="eyebrow mb-2 block">State *</label>
+                    <select
+                      value={form.state}
+                      onChange={set("state")}
+                      className="w-full bg-background border border-border px-3 py-3 text-sm"
+                    >
+                      <option value="">Select your state…</option>
+                      {NIGERIA_STATES.map((st) => (
+                        <option key={st} value={st}>{st}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
                 <div>
                   <label className="eyebrow mb-2 block">Delivery option</label>
@@ -204,6 +247,29 @@ function CheckoutPage() {
                     <option value="pickup">Pickup in Lagos</option>
                   </select>
                 </div>
+                {isLagos && !isPickup && (
+                  <div>
+                    <label className="eyebrow mb-2 block">Delivery area (Lagos) *</label>
+                    <select
+                      value={deliveryArea}
+                      onChange={(e) => setDeliveryArea(e.target.value)}
+                      className="w-full bg-background border border-border px-3 py-3 text-sm"
+                    >
+                      <option value="">Select your area…</option>
+                      {zones.map((z) => (
+                        <option key={z.id} value={z.area_name}>
+                          {z.area_name} — {formatNaira(z.fee_ngn)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+                {!isLagos && !isPickup && form.state && (
+                  <p className="text-sm text-muted-foreground border border-border bg-muted/40 p-4">
+                    We deliver outside Lagos too — the delivery fee for {form.state} will be confirmed with you via WhatsApp
+                    right after you place this order, before any payment is taken.
+                  </p>
+                )}
                 <div>
                   <label className="eyebrow mb-2 block">Order notes (optional)</label>
                   <textarea
@@ -236,7 +302,13 @@ function CheckoutPage() {
                 />
               </div>
 
-              {paymentMethod === "transfer" && settings && (
+              {!deliveryFeeConfirmed && (
+                <p className="mt-6 text-sm text-muted-foreground border border-border bg-muted/40 p-4">
+                  Payment happens after your delivery fee is confirmed — placing this order now just saves your details and starts the conversation on WhatsApp.
+                </p>
+              )}
+
+              {deliveryFeeConfirmed && paymentMethod === "transfer" && settings && (
                 <div className="mt-6 border border-border bg-muted/40 p-6 text-sm space-y-2">
                   <p className="eyebrow mb-2">Pay to</p>
                   <p><span className="text-muted-foreground">Bank: </span>{settings.bank_name}</p>
@@ -278,9 +350,9 @@ function CheckoutPage() {
               </div>
               <div className="space-y-2 text-sm border-t border-border pt-4">
                 <Row label="Subtotal" value={formatNaira(subtotal)} />
-                <Row label="Delivery" value={formatNaira(deliveryFee)} />
+                <Row label="Delivery" value={deliveryFeeConfirmed ? formatNaira(deliveryFee) : "To be confirmed"} />
                 <div className="h-px bg-border my-2" />
-                <Row label="Total" value={formatNaira(total)} bold />
+                <Row label="Total" value={deliveryFeeConfirmed ? formatNaira(total) : `${formatNaira(subtotal)} + delivery`} bold />
               </div>
               <button
                 type="submit"
@@ -288,8 +360,8 @@ function CheckoutPage() {
                 className="btn-pill mt-6 w-full bg-foreground text-primary-foreground py-4 text-xs font-bold uppercase tracking-[0.25em] hover:bg-accent hover:text-accent-foreground transition disabled:opacity-50"
               >
                 {submitting
-                  ? paymentMethod === "card" ? "Opening secure checkout…" : "Placing order…"
-                  : paymentMethod === "card" ? "Pay now" : "Place order"}
+                  ? deliveryFeeConfirmed && paymentMethod === "card" ? "Opening secure checkout…" : "Placing order…"
+                  : deliveryFeeConfirmed && paymentMethod === "card" ? "Pay now" : "Place order"}
               </button>
               <Link to="/cart" className="mt-3 block text-center text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground">
                 Edit cart

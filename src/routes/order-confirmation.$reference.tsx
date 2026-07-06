@@ -19,9 +19,13 @@ interface Order {
   full_name: string;
   email: string;
   whatsapp: string;
+  city: string;
+  state: string;
+  subtotal_ngn: number;
   total_ngn: number;
   payment_method: string;
   payment_status: string;
+  delivery_fee_status: string;
   receipt_url: string | null;
 }
 
@@ -43,7 +47,7 @@ function ConfirmationPage() {
   const reload = () =>
     supabase
       .from("orders")
-      .select("id, reference, full_name, email, whatsapp, total_ngn, payment_method, payment_status, receipt_url")
+      .select("id, reference, full_name, email, whatsapp, city, state, subtotal_ngn, total_ngn, payment_method, payment_status, delivery_fee_status, receipt_url")
       .eq("reference", reference)
       .maybeSingle()
       .then(({ data }) => setOrder(data as Order | null));
@@ -114,12 +118,17 @@ function ConfirmationPage() {
     ? `Hi Knot & Nomad, I just placed order ${order.reference} (total ${formatNaira(order.total_ngn)}). Sending my payment receipt now.`
     : "";
 
+  const deliveryWhatsappMsg = order
+    ? `Hi Knot & Nomad, I'd like to confirm my delivery fee for order ${order.reference} — my delivery address is in ${order.city}, ${order.state}.`
+    : "";
+
   if (!order) {
     return <div className="mx-auto max-w-3xl px-6 py-24 text-center text-muted-foreground">Loading order…</div>;
   }
 
-  const isTransfer = order.payment_method === "transfer";
-  const isCardPending = order.payment_method === "card" && order.payment_status !== "paid";
+  const awaitingDeliveryFee = order.delivery_fee_status === "pending_negotiation";
+  const isTransfer = order.payment_method === "transfer" && !awaitingDeliveryFee;
+  const isCardPending = order.payment_method === "card" && order.payment_status !== "paid" && !awaitingDeliveryFee;
   const isCardPaid = order.payment_method === "card" && order.payment_status === "paid";
 
   return (
@@ -131,6 +140,7 @@ function ConfirmationPage() {
           <h1 className="font-display text-4xl lg:text-5xl">Thank you, {order.full_name.split(" ")[0]}.</h1>
           <p className="mt-4 text-muted-foreground">
             Your order has been received.{" "}
+            {awaitingDeliveryFee && "We'll confirm your delivery fee via WhatsApp before any payment is taken. "}
             {isTransfer && "Kindly send your payment receipt via WhatsApp for confirmation. "}
             {isCardPending && "Your card payment hasn't completed yet — pay below to confirm your order. "}
             Our team will contact you shortly.
@@ -152,12 +162,32 @@ function ConfirmationPage() {
           </div>
           <div className="h-px bg-border my-4" />
           <div className="grid sm:grid-cols-2 gap-3 text-sm">
-            <div><span className="text-muted-foreground">Total: </span>{formatNaira(order.total_ngn)}</div>
-            <div><span className="text-muted-foreground">Payment: </span>{isTransfer ? "Bank transfer" : "Card"}</div>
-            <div><span className="text-muted-foreground">Status: </span>{order.payment_status.replace(/_/g, " ")}</div>
+            <div>
+              <span className="text-muted-foreground">Total: </span>
+              {awaitingDeliveryFee ? `${formatNaira(order.subtotal_ngn)} + delivery (tbc)` : formatNaira(order.total_ngn)}
+            </div>
+            <div><span className="text-muted-foreground">Payment: </span>{order.payment_method === "transfer" ? "Bank transfer" : "Card"}</div>
+            <div><span className="text-muted-foreground">Status: </span>{awaitingDeliveryFee ? "awaiting delivery fee" : order.payment_status.replace(/_/g, " ")}</div>
             <div><span className="text-muted-foreground">Email: </span>{order.email}</div>
           </div>
         </div>
+
+        {awaitingDeliveryFee && (
+          <div className="border border-border p-6 lg:p-8 mb-8 text-center">
+            <p className="eyebrow mb-3">Delivery fee</p>
+            <p className="text-sm text-muted-foreground mb-6">
+              Since your delivery address is outside Lagos, we'll confirm the delivery fee with you directly. Once agreed, refresh this page (or reopen this link) to complete payment.
+            </p>
+            <a
+              href={whatsappLink(deliveryWhatsappMsg)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-pill inline-flex items-center gap-2 bg-foreground text-primary-foreground px-7 py-4 text-xs font-bold uppercase tracking-[0.25em] hover:bg-accent hover:text-accent-foreground transition"
+            >
+              <MessageCircle size={16} /> Discuss delivery on WhatsApp
+            </a>
+          </div>
+        )}
 
         {isCardPending && (
           <div className="border border-border p-6 lg:p-8 mb-8 text-center">
