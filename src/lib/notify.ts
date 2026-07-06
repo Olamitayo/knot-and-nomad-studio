@@ -1,7 +1,7 @@
 // Sends internal notification emails (new contact messages, custom orders) via Resend.
 // Silently no-ops if RESEND_API_KEY isn't configured, so form submissions never fail
 // just because email notifications aren't set up yet.
-const NOTIFY_TO = "hello@knotandnomad.com";
+const NOTIFY_TO = ["hello@knotnomad.com", "support@knotnomad.com"];
 
 function escapeHtml(value: string): string {
   const map: Record<string, string> = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };

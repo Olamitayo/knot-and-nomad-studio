@@ -2,7 +2,7 @@
 export const SITE = {
   name: "Knot & Nomad",
   tagline: "Rooted in Motion",
-  email: "hello@knotandnomad.com",
+  email: "hello@knotnomad.com",
   // Replace with your full WhatsApp number (digits only, with country code).
   whatsappNumber: "2348129894036",
   whatsappMessage: "Hi Knot & Nomad, I'd like to discuss a custom apparel idea.",
