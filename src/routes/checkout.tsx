@@ -1,8 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { useCart, cartSubtotal } from "@/lib/cart";
 import { formatNaira, makeOrderReference } from "@/lib/format";
 import { supabase } from "@/integrations/supabase/client";
+import { openPaystackCheckout } from "@/lib/paystack";
+import { verifyPaystackPayment, notifyNewOrder } from "@/lib/payments.functions";
 import { toast } from "sonner";
 import { CreditCard, Banknote, Lock, MessageCircle, Truck, Wand2, ShieldCheck } from "lucide-react";
 
@@ -22,11 +25,14 @@ function CheckoutPage() {
   const items = useCart((s) => s.items);
   const clear = useCart((s) => s.clear);
   const navigate = useNavigate();
+  const verifyPayment = useServerFn(verifyPaystackPayment);
+  const notifyOrder = useServerFn(notifyNewOrder);
   const subtotal = cartSubtotal(items);
 
   const [settings, setSettings] = useState<Settings | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<"transfer" | "card">("transfer");
   const [submitting, setSubmitting] = useState(false);
+  const [pendingOrder, setPendingOrder] = useState<{ id: string; reference: string } | null>(null);
   const [form, setForm] = useState({
     full_name: "",
     email: "",
@@ -57,17 +63,49 @@ function CheckoutPage() {
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
 
+  const payWithCard = (order: { id: string; reference: string }) => {
+    openPaystackCheckout({
+      email: form.email,
+      amountNgn: total,
+      reference: order.reference,
+      onSuccess: async () => {
+        try {
+          await verifyPayment({ data: { reference: order.reference } });
+        } catch (err) {
+          console.error(err);
+          // Webhook will still catch it if this verification call fails.
+        }
+        clear();
+        setSubmitting(false);
+        navigate({ to: "/order-confirmation/$reference", params: { reference: order.reference } });
+      },
+      onClose: () => {
+        setSubmitting(false);
+        toast.info("Payment cancelled — you can try again whenever you're ready.");
+      },
+    }).catch((err) => {
+      console.error(err);
+      setSubmitting(false);
+      toast.error(err instanceof Error ? err.message : "Could not open card checkout.");
+    });
+  };
+
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (paymentMethod === "card") {
-      toast.info("Card payment coming soon — please use bank transfer for now.");
-      return;
-    }
     if (!form.full_name || !form.email || !form.phone || !form.whatsapp || !form.address || !form.city || !form.state) {
       return toast.error("Please fill all required fields.");
     }
 
     setSubmitting(true);
+
+    // If a card order was already created (e.g. the customer closed the
+    // Paystack popup last time), reopen payment for it instead of creating
+    // a duplicate order.
+    if (pendingOrder) {
+      payWithCard(pendingOrder);
+      return;
+    }
+
     const reference = makeOrderReference();
 
     const { data: order, error } = await supabase
@@ -110,6 +148,14 @@ function CheckoutPage() {
       console.error(itemsError);
       toast.error("Order created but items failed to save.");
       setSubmitting(false);
+      return;
+    }
+
+    notifyOrder({ data: { reference: order.reference } }).catch((err) => console.error(err));
+
+    if (paymentMethod === "card") {
+      setPendingOrder({ id: order.id, reference: order.reference });
+      payWithCard({ id: order.id, reference: order.reference });
       return;
     }
 
@@ -186,8 +232,7 @@ function CheckoutPage() {
                   onClick={() => setPaymentMethod("card")}
                   icon={<CreditCard size={18} />}
                   title="Card payment"
-                  desc="Visa · Mastercard · Verve (coming soon)."
-                  disabled
+                  desc="Visa · Mastercard · Verve — instant, secure."
                 />
               </div>
 
@@ -242,7 +287,9 @@ function CheckoutPage() {
                 disabled={submitting}
                 className="btn-pill mt-6 w-full bg-foreground text-primary-foreground py-4 text-xs font-bold uppercase tracking-[0.25em] hover:bg-accent hover:text-accent-foreground transition disabled:opacity-50"
               >
-                {submitting ? "Placing order…" : "Place order"}
+                {submitting
+                  ? paymentMethod === "card" ? "Opening secure checkout…" : "Placing order…"
+                  : paymentMethod === "card" ? "Pay now" : "Place order"}
               </button>
               <Link to="/cart" className="mt-3 block text-center text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground">
                 Edit cart

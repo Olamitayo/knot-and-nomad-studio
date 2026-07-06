@@ -1,10 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { formatNaira } from "@/lib/format";
 import { whatsappLink } from "@/lib/site";
+import { openPaystackCheckout } from "@/lib/paystack";
+import { verifyPaystackPayment, notifyReceiptSubmitted } from "@/lib/payments.functions";
 import { toast } from "sonner";
-import { CheckCircle2, Copy, MessageCircle, Upload } from "lucide-react";
+import { CheckCircle2, Copy, CreditCard, MessageCircle, Upload } from "lucide-react";
 
 export const Route = createFileRoute("/order-confirmation/$reference")({
   component: ConfirmationPage,
@@ -33,6 +36,9 @@ function ConfirmationPage() {
   const [order, setOrder] = useState<Order | null>(null);
   const [settings, setSettings] = useState<Settings | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [paying, setPaying] = useState(false);
+  const verifyPayment = useServerFn(verifyPaystackPayment);
+  const notifyReceipt = useServerFn(notifyReceiptSubmitted);
 
   const reload = () =>
     supabase
@@ -69,6 +75,7 @@ function ConfirmationPage() {
       toast.error("Could not attach receipt");
     } else {
       toast.success("Receipt uploaded — please confirm via WhatsApp.");
+      notifyReceipt({ data: { reference: order.reference } }).catch((err) => console.error(err));
       reload();
     }
     setUploading(false);
@@ -77,6 +84,30 @@ function ConfirmationPage() {
   const copy = (txt: string) => {
     navigator.clipboard.writeText(txt);
     toast.success("Copied");
+  };
+
+  const retryCardPayment = () => {
+    if (!order) return;
+    setPaying(true);
+    openPaystackCheckout({
+      email: order.email,
+      amountNgn: order.total_ngn,
+      reference: order.reference,
+      onSuccess: async () => {
+        try {
+          await verifyPayment({ data: { reference: order.reference } });
+        } catch (err) {
+          console.error(err);
+        }
+        setPaying(false);
+        reload();
+      },
+      onClose: () => setPaying(false),
+    }).catch((err) => {
+      console.error(err);
+      setPaying(false);
+      toast.error(err instanceof Error ? err.message : "Could not open card checkout.");
+    });
   };
 
   const whatsappMsg = order
@@ -88,6 +119,8 @@ function ConfirmationPage() {
   }
 
   const isTransfer = order.payment_method === "transfer";
+  const isCardPending = order.payment_method === "card" && order.payment_status !== "paid";
+  const isCardPaid = order.payment_method === "card" && order.payment_status === "paid";
 
   return (
     <div className="bg-background">
@@ -97,7 +130,10 @@ function ConfirmationPage() {
           <p className="eyebrow mt-6 mb-3">Order received</p>
           <h1 className="font-display text-4xl lg:text-5xl">Thank you, {order.full_name.split(" ")[0]}.</h1>
           <p className="mt-4 text-muted-foreground">
-            Your order has been received. {isTransfer && "Kindly send your payment receipt via WhatsApp for confirmation."} Our team will contact you shortly.
+            Your order has been received.{" "}
+            {isTransfer && "Kindly send your payment receipt via WhatsApp for confirmation. "}
+            {isCardPending && "Your card payment hasn't completed yet — pay below to confirm your order. "}
+            Our team will contact you shortly.
           </p>
         </div>
 
@@ -122,6 +158,29 @@ function ConfirmationPage() {
             <div><span className="text-muted-foreground">Email: </span>{order.email}</div>
           </div>
         </div>
+
+        {isCardPending && (
+          <div className="border border-border p-6 lg:p-8 mb-8 text-center">
+            <p className="eyebrow mb-3">Card payment</p>
+            <p className="text-sm text-muted-foreground mb-6">
+              Your payment wasn't completed. Click below to open secure checkout and finish paying — your order is already saved.
+            </p>
+            <button
+              onClick={retryCardPayment}
+              disabled={paying}
+              className="btn-pill inline-flex items-center gap-2 bg-foreground text-primary-foreground px-7 py-4 text-xs font-bold uppercase tracking-[0.25em] hover:bg-accent hover:text-accent-foreground transition disabled:opacity-50"
+            >
+              <CreditCard size={16} /> {paying ? "Opening secure checkout…" : "Pay now"}
+            </button>
+          </div>
+        )}
+
+        {isCardPaid && (
+          <div className="border border-accent/40 bg-accent/5 p-6 lg:p-8 mb-8 text-center">
+            <CheckCircle2 size={28} className="mx-auto text-accent mb-3" />
+            <p className="text-sm">Payment confirmed — thank you.</p>
+          </div>
+        )}
 
         {isTransfer && settings && (
           <div className="border border-border p-6 lg:p-8 mb-8">

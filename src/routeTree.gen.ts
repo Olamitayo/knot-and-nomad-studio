@@ -21,6 +21,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as WebhooksPaystackRouteImport } from './routes/webhooks/paystack'
 import { Route as ShopSlugRouteImport } from './routes/shop.$slug'
 import { Route as OrderConfirmationReferenceRouteImport } from './routes/order-confirmation.$reference'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
@@ -90,6 +91,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
+const WebhooksPaystackRoute = WebhooksPaystackRouteImport.update({
+  id: '/webhooks/paystack',
+  path: '/webhooks/paystack',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ShopSlugRoute = ShopSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -150,6 +156,7 @@ export interface FileRoutesByFullPath {
   '/admin/settings': typeof AdminSettingsRoute
   '/order-confirmation/$reference': typeof OrderConfirmationReferenceRoute
   '/shop/$slug': typeof ShopSlugRoute
+  '/webhooks/paystack': typeof WebhooksPaystackRoute
   '/admin/': typeof AdminIndexRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -171,6 +178,7 @@ export interface FileRoutesByTo {
   '/admin/settings': typeof AdminSettingsRoute
   '/order-confirmation/$reference': typeof OrderConfirmationReferenceRoute
   '/shop/$slug': typeof ShopSlugRoute
+  '/webhooks/paystack': typeof WebhooksPaystackRoute
   '/admin': typeof AdminIndexRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -194,6 +202,7 @@ export interface FileRoutesById {
   '/admin/settings': typeof AdminSettingsRoute
   '/order-confirmation/$reference': typeof OrderConfirmationReferenceRoute
   '/shop/$slug': typeof ShopSlugRoute
+  '/webhooks/paystack': typeof WebhooksPaystackRoute
   '/admin/': typeof AdminIndexRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -218,6 +227,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/order-confirmation/$reference'
     | '/shop/$slug'
+    | '/webhooks/paystack'
     | '/admin/'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -239,6 +249,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/order-confirmation/$reference'
     | '/shop/$slug'
+    | '/webhooks/paystack'
     | '/admin'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -261,6 +272,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/order-confirmation/$reference'
     | '/shop/$slug'
+    | '/webhooks/paystack'
     | '/admin/'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -280,6 +292,7 @@ export interface RootRouteChildren {
   LookbookRoute: typeof LookbookRoute
   ShopRoute: typeof ShopRouteWithChildren
   OrderConfirmationReferenceRoute: typeof OrderConfirmationReferenceRoute
+  WebhooksPaystackRoute: typeof WebhooksPaystackRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
@@ -370,6 +383,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/webhooks/paystack': {
+      id: '/webhooks/paystack'
+      path: '/webhooks/paystack'
+      fullPath: '/webhooks/paystack'
+      preLoaderRoute: typeof WebhooksPaystackRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/shop/$slug': {
       id: '/shop/$slug'
@@ -469,6 +489,7 @@ const rootRouteChildren: RootRouteChildren = {
   LookbookRoute: LookbookRoute,
   ShopRoute: ShopRouteWithChildren,
   OrderConfirmationReferenceRoute: OrderConfirmationReferenceRoute,
+  WebhooksPaystackRoute: WebhooksPaystackRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,

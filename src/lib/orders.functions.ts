@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { sendNotificationEmail } from "@/lib/notify";
 
 const customOrderSchema = z.object({
   full_name: z.string().trim().min(1).max(120),
@@ -28,6 +29,23 @@ export const submitCustomOrder = createServerFn({ method: "POST" })
       console.error("custom order insert failed", error);
       return { ok: false, error: "We couldn't save your request. Please try again." };
     }
+    await sendNotificationEmail(`New custom order from ${data.full_name}`, [
+      ["Name", data.full_name],
+      ["Email", data.email],
+      ["WhatsApp", data.whatsapp],
+      ["Clothing type", data.clothing_type],
+      ["Preferred color", data.preferred_color],
+      ["Size", data.size],
+      ["Quantity", data.quantity],
+      ["Print position", data.print_position],
+      ["Print text", data.print_text],
+      ["Design description", data.design_description],
+      ["Design file", data.design_file_url],
+      ["Deadline", data.deadline],
+      ["Budget", data.budget],
+      ["AI idea", data.ai_idea],
+      ["Additional notes", data.additional_notes],
+    ]);
     return { ok: true };
   });
 
@@ -46,6 +64,12 @@ export const submitContact = createServerFn({ method: "POST" })
       console.error("contact insert failed", error);
       return { ok: false, error: "We couldn't send your message. Please try again." };
     }
+    await sendNotificationEmail(`New contact message from ${data.name}`, [
+      ["Name", data.name],
+      ["Email", data.email],
+      ["Phone", data.phone],
+      ["Message", data.message],
+    ]);
     return { ok: true };
   });
 
