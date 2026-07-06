@@ -18,6 +18,10 @@ interface Order {
   address: string;
   city: string;
   state: string;
+  subtotal_ngn: number;
+  delivery_fee_ngn: number;
+  delivery_fee_status: string;
+  delivery_area: string | null;
   total_ngn: number;
   payment_method: string;
   payment_status: string;
@@ -41,6 +45,8 @@ function AdminOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [open, setOpen] = useState<Order | null>(null);
   const [items, setItems] = useState<Item[]>([]);
+  const [deliveryFeeInput, setDeliveryFeeInput] = useState("");
+  const [confirmingFee, setConfirmingFee] = useState(false);
 
   const reload = () => supabase.from("orders").select("*").order("created_at", { ascending: false }).then(({ data }) => setOrders((data as Order[]) ?? []));
   useEffect(() => { reload(); }, []);
@@ -48,6 +54,7 @@ function AdminOrders() {
   useEffect(() => {
     if (!open) { setItems([]); return; }
     supabase.from("order_items").select("*").eq("order_id", open.id).then(({ data }) => setItems((data as Item[]) ?? []));
+    setDeliveryFeeInput("");
   }, [open]);
 
   const updateStatus = async (id: string, payment_status?: string, status?: string) => {
@@ -57,6 +64,24 @@ function AdminOrders() {
     const { error } = await supabase.from("orders").update(patch).eq("id", id);
     if (error) toast.error(error.message);
     else { toast.success("Updated"); reload(); if (open?.id === id) setOpen({ ...open, ...patch }); }
+  };
+
+  const confirmDeliveryFee = async () => {
+    if (!open) return;
+    const fee = Number(deliveryFeeInput);
+    if (!Number.isFinite(fee) || fee < 0) return toast.error("Enter a valid delivery fee.");
+    setConfirmingFee(true);
+    const patch = {
+      delivery_fee_ngn: fee,
+      total_ngn: open.subtotal_ngn + fee,
+      delivery_fee_status: "confirmed",
+    };
+    const { error } = await supabase.from("orders").update(patch).eq("id", open.id);
+    setConfirmingFee(false);
+    if (error) return toast.error(error.message);
+    toast.success("Delivery fee confirmed — let the customer know on WhatsApp so they can complete payment.");
+    reload();
+    setOpen({ ...open, ...patch });
   };
 
   return (
@@ -80,7 +105,14 @@ function AdminOrders() {
                 <td className="p-3 font-mono text-xs">{o.reference}</td>
                 <td className="p-3">{o.full_name}<div className="text-xs text-muted-foreground">{o.email}</div></td>
                 <td className="p-3">{formatNaira(o.total_ngn)}</td>
-                <td className="p-3 text-xs capitalize">{o.payment_method} · {o.payment_status.replace(/_/g, " ")}</td>
+                <td className="p-3 text-xs capitalize">
+                  {o.payment_method} · {o.payment_status.replace(/_/g, " ")}
+                  {o.delivery_fee_status === "pending_negotiation" && (
+                    <span className="ml-2 inline-block bg-accent/15 text-accent px-2 py-0.5 text-[0.65rem] font-bold uppercase tracking-wide normal-case">
+                      Delivery fee needed
+                    </span>
+                  )}
+                </td>
                 <td className="p-3 text-xs capitalize">{o.status}</td>
                 <td className="p-3 text-xs text-muted-foreground">{new Date(o.created_at).toLocaleDateString()}</td>
               </tr>
@@ -103,12 +135,50 @@ function AdminOrders() {
               <Detail label="Phone" value={open.phone} />
               <Detail label="WhatsApp" value={open.whatsapp} />
               <Detail label="City / State" value={`${open.city}, ${open.state}`} />
+              <Detail label="Subtotal" value={formatNaira(open.subtotal_ngn)} />
+              <Detail
+                label="Delivery"
+                value={
+                  open.delivery_fee_status === "pending_negotiation"
+                    ? "Awaiting negotiation"
+                    : open.delivery_area
+                      ? `${formatNaira(open.delivery_fee_ngn)} (${open.delivery_area})`
+                      : formatNaira(open.delivery_fee_ngn)
+                }
+              />
               <Detail label="Total" value={formatNaira(open.total_ngn)} />
             </div>
             <div className="mt-3 text-sm">
               <Detail label="Address" value={open.address} />
               {open.notes && <Detail label="Notes" value={open.notes} />}
             </div>
+
+            {open.delivery_fee_status === "pending_negotiation" && (
+              <div className="mt-6 border border-accent/40 bg-accent/5 p-4">
+                <p className="eyebrow mb-3">Confirm negotiated delivery fee</p>
+                <div className="flex items-end gap-3">
+                  <label className="flex-1 block">
+                    <span className="text-xs text-muted-foreground mb-2 block">Delivery fee (NGN)</span>
+                    <input
+                      type="number"
+                      value={deliveryFeeInput}
+                      onChange={(e) => setDeliveryFeeInput(e.target.value)}
+                      className="w-full bg-background border border-border px-3 py-2 text-sm"
+                    />
+                  </label>
+                  <button
+                    onClick={confirmDeliveryFee}
+                    disabled={confirmingFee}
+                    className="bg-foreground text-primary-foreground px-4 py-2 text-xs font-bold uppercase tracking-[0.25em] hover:bg-accent hover:text-accent-foreground transition disabled:opacity-50"
+                  >
+                    {confirmingFee ? "Confirming…" : "Confirm"}
+                  </button>
+                </div>
+                <p className="text-xs text-muted-foreground mt-2">
+                  New total will be {formatNaira(open.subtotal_ngn)} + this fee. Let the customer know via WhatsApp afterward — they'll see the updated total and payment options on their order confirmation page.
+                </p>
+              </div>
+            )}
 
             <div className="mt-6">
               <p className="eyebrow mb-3">Items</p>

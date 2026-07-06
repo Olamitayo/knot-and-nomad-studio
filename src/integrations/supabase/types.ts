@@ -12,6 +12,31 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       app_settings: {
@@ -125,6 +150,33 @@ export type Database = {
           quantity?: number | null
           size?: string | null
           whatsapp?: string
+        }
+        Relationships: []
+      }
+      delivery_zones: {
+        Row: {
+          area_name: string
+          created_at: string
+          fee_ngn: number
+          id: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          area_name: string
+          created_at?: string
+          fee_ngn?: number
+          id?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          area_name?: string
+          created_at?: string
+          fee_ngn?: number
+          id?: string
+          sort_order?: number
+          updated_at?: string
         }
         Relationships: []
       }
@@ -295,7 +347,9 @@ export type Database = {
           address: string
           city: string
           created_at: string
+          delivery_area: string | null
           delivery_fee_ngn: number
+          delivery_fee_status: string
           delivery_option: string
           email: string
           full_name: string
@@ -317,7 +371,9 @@ export type Database = {
           address: string
           city: string
           created_at?: string
+          delivery_area?: string | null
           delivery_fee_ngn?: number
+          delivery_fee_status?: string
           delivery_option?: string
           email: string
           full_name: string
@@ -339,7 +395,9 @@ export type Database = {
           address?: string
           city?: string
           created_at?: string
+          delivery_area?: string | null
           delivery_fee_ngn?: number
+          delivery_fee_status?: string
           delivery_option?: string
           email?: string
           full_name?: string
@@ -632,6 +690,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       app_role: ["admin", "user"],
