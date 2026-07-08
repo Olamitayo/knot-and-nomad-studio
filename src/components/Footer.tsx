@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Instagram, Facebook } from "lucide-react";
 import { useState } from "react";
 import { SITE, whatsappLink } from "@/lib/site";
-import logo from "@/assets/knot-nomad-monogram.png";
+import logo from "@/assets/knot-nomad-monogram-white.png";
 import { useServerFn } from "@tanstack/react-start";
 import { subscribeNewsletter } from "@/lib/orders.functions";
 import { toast } from "sonner";

@@ -7,7 +7,7 @@ import hero1 from "@/assets/hero-1.jpg";
 import hero2 from "@/assets/hero-2.jpg";
 import hero3 from "@/assets/hero-3.jpg";
 import hero4 from "@/assets/hero-4.jpg";
-import monogram from "@/assets/knot-nomad-monogram.png";
+import monogram from "@/assets/knot-nomad-monogram-white.png";
 import { HeroSlideshow } from "@/components/HeroSlideshow";
 import catTshirt from "@/assets/cat-tshirt.jpg";
 import catCap from "@/assets/cat-cap.jpg";
