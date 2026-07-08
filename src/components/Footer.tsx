@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Instagram, Facebook } from "lucide-react";
 import { useState } from "react";
 import { SITE, whatsappLink } from "@/lib/site";
-import logo from "@/assets/knot-nomad-monogram-white.png";
+import { KnotIcon } from "@/components/KnotIcon";
 import { useServerFn } from "@tanstack/react-start";
 import { subscribeNewsletter } from "@/lib/orders.functions";
 import { toast } from "sonner";
@@ -36,7 +36,7 @@ export function Footer() {
         <div className="grid lg:grid-cols-12 gap-12">
           <div className="lg:col-span-5">
             <div className="flex items-center gap-4">
-              <img src={logo} alt={SITE.name} width={48} height={48} className="h-12 w-12 object-contain" />
+              <KnotIcon className="h-12 w-12" />
               <div>
                 <div className="font-display text-2xl tracking-tight">{SITE.name}</div>
                 <div className="eyebrow text-primary-foreground/70">{SITE.tagline}</div>

@@ -7,8 +7,8 @@ import hero1 from "@/assets/hero-1.jpg";
 import hero2 from "@/assets/hero-2.jpg";
 import hero3 from "@/assets/hero-3.jpg";
 import hero4 from "@/assets/hero-4.jpg";
-import monogram from "@/assets/knot-nomad-monogram-white.png";
 import { HeroSlideshow } from "@/components/HeroSlideshow";
+import { KnotIcon } from "@/components/KnotIcon";
 import catTshirt from "@/assets/cat-tshirt.jpg";
 import catCap from "@/assets/cat-cap.jpg";
 import catHoodie from "@/assets/cat-hoodie.jpg";
@@ -200,7 +200,7 @@ function Home() {
 
       {/* AI ASSIST CTA */}
       <section className="relative bg-foreground text-primary-foreground py-28 lg:py-36 overflow-hidden">
-        <img src={monogram} alt="" aria-hidden className="absolute -right-20 -bottom-20 w-[36rem] opacity-[0.06] pointer-events-none select-none" />
+        <KnotIcon className="absolute -right-20 -bottom-20 w-[36rem] opacity-[0.06] pointer-events-none select-none" />
         <div className="relative mx-auto max-w-5xl px-6 lg:px-10 text-center" data-reveal>
           <div className="eyebrow text-primary-foreground/60">AI design assistant</div>
           <h2 className="mt-4 font-display uppercase text-4xl lg:text-7xl leading-[0.98]">
