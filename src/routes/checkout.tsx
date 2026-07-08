@@ -41,7 +41,11 @@ function CheckoutPage() {
   const [deliveryArea, setDeliveryArea] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<"transfer" | "card">("transfer");
   const [submitting, setSubmitting] = useState(false);
-  const [pendingOrder, setPendingOrder] = useState<{ id: string; reference: string } | null>(null);
+  const [pendingOrder, setPendingOrder] = useState<{
+    id: string;
+    reference: string;
+    total: number;
+  } | null>(null);
   const [form, setForm] = useState({
     full_name: "",
     email: "",
@@ -63,11 +67,21 @@ function CheckoutPage() {
     });
   }, []);
 
+  // Cart items come from persisted localStorage, which zustand rehydrates
+  // asynchronously after mount. Reading `useCart.getState()` directly (rather
+  // than the `items` prop above) guarantees we see the post-rehydration value
+  // instead of racing a stale empty array from before rehydration finished.
   useEffect(() => {
-    if (items.length === 0 && !submitting) {
-      navigate({ to: "/shop" });
+    if (submitting) return;
+    const redirectIfEmpty = () => {
+      if (useCart.getState().items.length === 0) navigate({ to: "/shop" });
+    };
+    if (useCart.persist?.hasHydrated() ?? true) {
+      redirectIfEmpty();
+      return;
     }
-  }, [items.length, submitting, navigate]);
+    return useCart.persist.onFinishHydration(redirectIfEmpty);
+  }, [submitting, navigate]);
 
   const isPickup = form.delivery_option === "pickup";
   const isLagos = form.state.trim().toLowerCase() === "lagos";
@@ -80,10 +94,10 @@ function CheckoutPage() {
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
 
-  const payWithCard = (order: { id: string; reference: string }) => {
+  const payWithCard = (order: { id: string; reference: string; total: number }) => {
     openPaystackCheckout({
       email: form.email,
-      amountNgn: total,
+      amountNgn: order.total,
       reference: order.reference,
       onSuccess: async () => {
         try {
@@ -185,8 +199,9 @@ function CheckoutPage() {
     }
 
     if (paymentMethod === "card") {
-      setPendingOrder({ id: order.id, reference: order.reference });
-      payWithCard({ id: order.id, reference: order.reference });
+      const pending = { id: order.id, reference: order.reference, total: order.total_ngn };
+      setPendingOrder(pending);
+      payWithCard(pending);
       return;
     }
 
