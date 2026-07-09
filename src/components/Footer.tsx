@@ -80,6 +80,10 @@ export function Footer() {
                   <Link to={to} className="hover:text-accent transition">{label}</Link>
                 </li>
               ))}
+              {/* Static page served outside the SPA router — must be a full page load */}
+              <li>
+                <a href="/laundry" className="hover:text-accent transition">Laundry</a>
+              </li>
             </ul>
           </div>
 
