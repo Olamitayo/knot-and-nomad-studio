@@ -39,6 +39,13 @@ export function Header() {
               {n.label}
             </Link>
           ))}
+          {/* Static page served outside the SPA router — must be a full page load */}
+          <a
+            href="/laundry"
+            className="text-xs font-bold uppercase tracking-[0.12em] text-muted-foreground hover:text-accent transition-colors"
+          >
+            Laundry
+          </a>
         </nav>
         <div className="flex items-center gap-2 lg:gap-3">
           <Link to="/cart" className="relative p-2 hover:text-accent transition" aria-label="Cart">
@@ -81,6 +88,9 @@ export function Header() {
                 {n.label}
               </Link>
             ))}
+            <a href="/laundry" className="py-2 text-sm font-bold uppercase tracking-[0.1em]">
+              Laundry
+            </a>
             <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="py-2 text-sm font-bold uppercase tracking-[0.1em] text-accent">
               WhatsApp us
             </a>
