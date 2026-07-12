@@ -315,6 +315,18 @@
   .form-note{margin-top:14px;font-size:12.5px;color:var(--stone);text-align:center}
   .form-success{display:none;background:#EAF6EE;border:1px solid #BFE3CC;color:#1c6b3a;border-radius:12px;padding:14px 16px;font-size:14.5px;font-weight:600;margin-bottom:6px}
   .form-success.show{display:block}
+  .form-error{display:none;background:#FFF0EE;border:1px solid #F1C1BA;color:#8B2D20;border-radius:12px;padding:14px 16px;font-size:14px;margin-bottom:12px}
+  .form-error.show{display:block}
+  .garment-title{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:26px 0 12px}
+  .garment-title h4{font-size:15px;color:var(--ink)}
+  .garment-title span{font-size:12px;color:var(--stone)}
+  .garment-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  .garment{display:grid;grid-template-columns:1fr 76px;align-items:center;gap:10px;background:var(--cream);border:1px solid var(--line);border-radius:11px;padding:10px 12px}
+  .garment label{margin:0;font-size:14px}
+  .garment input{padding:9px 8px;text-align:center;background:#fff}
+  .garment-total{display:flex;justify-content:space-between;align-items:center;margin:14px 0 20px;padding:13px 15px;border-radius:11px;background:var(--ink);color:#fff;font-size:14px}
+  .garment-total strong{color:var(--gold);font-size:18px}
+  .website-field{position:absolute!important;left:-10000px!important;width:1px!important;height:1px!important;overflow:hidden!important}
 
   /* ---------- CTA band ---------- */
   .cta-band{background:linear-gradient(160deg,#232019,#141310);border-radius:26px;padding:clamp(40px,5vw,64px);text-align:center;position:relative;overflow:hidden}
@@ -361,7 +373,7 @@
     .nav-links.open{display:flex;position:absolute;top:72px;left:0;right:0;flex-direction:column;background:var(--cream);border-bottom:1px solid var(--line);padding:18px 28px;gap:6px;box-shadow:var(--shadow-md)}
     .nav-links.open a{padding:12px 0;border-bottom:1px solid var(--line-soft);width:100%}
     .nav-links.open .btn{display:inline-flex;margin-top:10px;width:100%}
-    .svc-grid,.price-grid,.quotes,.row2,.stats .container,.foot-grid{grid-template-columns:1fr}
+    .svc-grid,.price-grid,.quotes,.row2,.stats .container,.foot-grid,.garment-grid{grid-template-columns:1fr}
     .stat:not(:last-child)::after{display:none}
     .topbar .tb-right span:first-child{display:none}
     .care-card{padding:24px 18px 22px}
@@ -841,16 +853,30 @@
     </div>
 
     <form class="book reveal" id="bookForm" novalidate>
-      <div class="form-success" id="formSuccess">Thanks! Your pickup request has been noted — we'll confirm by text shortly. ✨</div>
-      <h3>Request a pickup</h3>
-      <p class="sub">Fill this in and we'll be in touch within the hour during opening times.</p>
+      <div class="form-success" id="formSuccess"></div>
+      <div class="form-error" id="formError"></div>
+      <h3>Build your laundry order</h3>
+      <p class="sub">Add your garments and pickup details. We'll email your official quote for approval before collection.</p>
       <div class="row2">
         <div class="field"><label for="name">Full name</label><input id="name" name="name" type="text" placeholder="Your name" required></div>
         <div class="field"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" placeholder="Best number to reach you" required></div>
       </div>
+      <div class="field"><label for="email">Email address</label><input id="email" name="email" type="email" placeholder="you@example.com" required></div>
+      <div class="garment-title"><h4>What are we caring for?</h4><span>Enter a quantity for each item</span></div>
+      <div class="garment-grid" id="garmentGrid">
+        <div class="garment"><label for="qty-shirt">Shirts / T-shirts</label><input id="qty-shirt" type="number" min="0" max="500" value="0" data-item="Shirts / T-shirts"></div>
+        <div class="garment"><label for="qty-trouser">Trousers / Jeans</label><input id="qty-trouser" type="number" min="0" max="500" value="0" data-item="Trousers / Jeans"></div>
+        <div class="garment"><label for="qty-short">Shorts</label><input id="qty-short" type="number" min="0" max="500" value="0" data-item="Shorts"></div>
+        <div class="garment"><label for="qty-dress">Dresses / Gowns</label><input id="qty-dress" type="number" min="0" max="500" value="0" data-item="Dresses / Gowns"></div>
+        <div class="garment"><label for="qty-suit">Suits / Blazers</label><input id="qty-suit" type="number" min="0" max="500" value="0" data-item="Suits / Blazers"></div>
+        <div class="garment"><label for="qty-native">Native wear</label><input id="qty-native" type="number" min="0" max="500" value="0" data-item="Native wear"></div>
+        <div class="garment"><label for="qty-bedding">Bedding / Towels</label><input id="qty-bedding" type="number" min="0" max="500" value="0" data-item="Bedding / Towels"></div>
+        <div class="garment"><label for="qty-other">Other items</label><input id="qty-other" type="number" min="0" max="500" value="0" data-item="Other items"></div>
+      </div>
+      <div class="garment-total"><span>Estimated number of pieces</span><strong id="pieceTotal">0</strong></div>
       <div class="row2">
         <div class="field"><label for="service">Service</label>
-          <select id="service" name="service">
+          <select id="service" name="service" required>
             <option>Wash &amp; Fold</option>
             <option>Dry Cleaning</option>
             <option>Ironing &amp; Pressing</option>
@@ -858,12 +884,17 @@
             <option>Bulk / Commercial</option>
           </select>
         </div>
-        <div class="field"><label for="date">Preferred pickup date</label><input id="date" name="date" type="date"></div>
+        <div class="field"><label for="date">Preferred pickup date</label><input id="date" name="date" type="date" required></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label for="pickupWindow">Pickup time</label><select id="pickupWindow" name="pickupWindow" required><option value="">Select a window</option><option>7am – 10am</option><option>10am – 1pm</option><option>1pm – 4pm</option><option>4pm – 7pm</option></select></div>
+        <div class="field"><label for="turnaround">Turnaround</label><select id="turnaround" name="turnaround" required><option>Standard (48 hours)</option><option>Express (24 hours)</option><option>Flexible / no rush</option></select></div>
       </div>
       <div class="field"><label for="address">Pickup address</label><input id="address" name="address" type="text" placeholder="Street, area, city" required></div>
       <div class="field"><label for="notes">Notes <span style="color:var(--stone);font-weight:400">(optional)</span></label><textarea id="notes" name="notes" placeholder="Delicates, stains to treat, special instructions…"></textarea></div>
-      <button type="submit" class="btn btn-primary btn-lg">Request my pickup</button>
-      <p class="form-note">By submitting you agree to be contacted about your order. No spam, ever.</p>
+      <div class="website-field" aria-hidden="true"><label for="website">Website</label><input id="website" name="website" tabindex="-1" autocomplete="off"></div>
+      <button type="submit" class="btn btn-primary btn-lg" id="submitOrder">Request my quote</button>
+      <p class="form-note">No payment is taken now. Your request is sent to hello@knotnomad.com and a confirmation is emailed to you.</p>
     </form>
   </div>
 </section>
@@ -949,14 +980,38 @@
     document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
   }else{document.querySelectorAll('.reveal').forEach(function(el){el.classList.add('in');});}
 
-  // Form (demo handler — connect to a form service or backend to receive submissions)
+  // Laundry quote and pickup request
   var form=document.getElementById('bookForm');
-  form.addEventListener('submit',function(e){
+  var quantityInputs=Array.prototype.slice.call(document.querySelectorAll('[data-item]'));
+  var totalEl=document.getElementById('pieceTotal');
+  var minDate=new Date();minDate.setDate(minDate.getDate()+1);
+  document.getElementById('date').min=minDate.toISOString().slice(0,10);
+  function updateTotal(){
+    var total=quantityInputs.reduce(function(sum,input){return sum+(parseInt(input.value,10)||0);},0);
+    totalEl.textContent=String(total);return total;
+  }
+  quantityInputs.forEach(function(input){input.addEventListener('input',updateTotal);});
+  form.addEventListener('submit',async function(e){
     e.preventDefault();
     if(!form.checkValidity()){form.reportValidity();return;}
-    document.getElementById('formSuccess').classList.add('show');
-    form.reset();
-    document.getElementById('formSuccess').scrollIntoView({behavior:'smooth',block:'center'});
+    var items=quantityInputs.map(function(input){return{name:input.getAttribute('data-item'),quantity:parseInt(input.value,10)||0};}).filter(function(item){return item.quantity>0;});
+    var errorEl=document.getElementById('formError'),successEl=document.getElementById('formSuccess'),button=document.getElementById('submitOrder');
+    errorEl.classList.remove('show');successEl.classList.remove('show');
+    if(!items.length){errorEl.textContent='Please add at least one garment before requesting a quote.';errorEl.classList.add('show');errorEl.scrollIntoView({behavior:'smooth',block:'center'});return;}
+    button.disabled=true;button.textContent='Sending request…';
+    try{
+      var response=await fetch('/api/laundry-order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+        name:form.name.value,email:form.email.value,phone:form.phone.value,service:form.service.value,
+        pickupDate:form.date.value,pickupWindow:form.pickupWindow.value,turnaround:form.turnaround.value,
+        address:form.address.value,notes:form.notes.value,website:form.website.value,items:items
+      })});
+      var result=await response.json();
+      if(!response.ok)throw new Error(result.error||'We could not send your request. Please try again.');
+      successEl.textContent='Request received! Your reference is '+result.reference+'. Check your email while our team prepares your quote.';
+      successEl.classList.add('show');form.reset();quantityInputs.forEach(function(input){input.value='0';});updateTotal();
+      successEl.scrollIntoView({behavior:'smooth',block:'center'});
+    }catch(error){errorEl.textContent=error.message||'Something went wrong. Please try again.';errorEl.classList.add('show');errorEl.scrollIntoView({behavior:'smooth',block:'center'});}
+    finally{button.disabled=false;button.textContent='Request my quote';}
   });
 
   // Price list tabs
