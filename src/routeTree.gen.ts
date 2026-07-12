@@ -24,6 +24,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as WebhooksPaystackRouteImport } from './routes/webhooks/paystack'
 import { Route as ShopSlugRouteImport } from './routes/shop.$slug'
 import { Route as OrderConfirmationReferenceRouteImport } from './routes/order-confirmation.$reference'
+import { Route as ApiLaundryOrderRouteImport } from './routes/api/laundry-order'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminProductsRouteImport } from './routes/admin.products'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
@@ -107,6 +108,11 @@ const OrderConfirmationReferenceRoute =
     path: '/order-confirmation/$reference',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiLaundryOrderRoute = ApiLaundryOrderRouteImport.update({
+  id: '/api/laundry-order',
+  path: '/api/laundry-order',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -154,6 +160,7 @@ export interface FileRoutesByFullPath {
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/products': typeof AdminProductsRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/api/laundry-order': typeof ApiLaundryOrderRoute
   '/order-confirmation/$reference': typeof OrderConfirmationReferenceRoute
   '/shop/$slug': typeof ShopSlugRoute
   '/webhooks/paystack': typeof WebhooksPaystackRoute
@@ -176,6 +183,7 @@ export interface FileRoutesByTo {
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/products': typeof AdminProductsRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/api/laundry-order': typeof ApiLaundryOrderRoute
   '/order-confirmation/$reference': typeof OrderConfirmationReferenceRoute
   '/shop/$slug': typeof ShopSlugRoute
   '/webhooks/paystack': typeof WebhooksPaystackRoute
@@ -200,6 +208,7 @@ export interface FileRoutesById {
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/products': typeof AdminProductsRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/api/laundry-order': typeof ApiLaundryOrderRoute
   '/order-confirmation/$reference': typeof OrderConfirmationReferenceRoute
   '/shop/$slug': typeof ShopSlugRoute
   '/webhooks/paystack': typeof WebhooksPaystackRoute
@@ -225,6 +234,7 @@ export interface FileRouteTypes {
     | '/admin/orders'
     | '/admin/products'
     | '/admin/settings'
+    | '/api/laundry-order'
     | '/order-confirmation/$reference'
     | '/shop/$slug'
     | '/webhooks/paystack'
@@ -247,6 +257,7 @@ export interface FileRouteTypes {
     | '/admin/orders'
     | '/admin/products'
     | '/admin/settings'
+    | '/api/laundry-order'
     | '/order-confirmation/$reference'
     | '/shop/$slug'
     | '/webhooks/paystack'
@@ -270,6 +281,7 @@ export interface FileRouteTypes {
     | '/admin/orders'
     | '/admin/products'
     | '/admin/settings'
+    | '/api/laundry-order'
     | '/order-confirmation/$reference'
     | '/shop/$slug'
     | '/webhooks/paystack'
@@ -291,6 +303,7 @@ export interface RootRouteChildren {
   CustomOrderRoute: typeof CustomOrderRoute
   LookbookRoute: typeof LookbookRoute
   ShopRoute: typeof ShopRouteWithChildren
+  ApiLaundryOrderRoute: typeof ApiLaundryOrderRoute
   OrderConfirmationReferenceRoute: typeof OrderConfirmationReferenceRoute
   WebhooksPaystackRoute: typeof WebhooksPaystackRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
@@ -405,6 +418,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrderConfirmationReferenceRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/laundry-order': {
+      id: '/api/laundry-order'
+      path: '/api/laundry-order'
+      fullPath: '/api/laundry-order'
+      preLoaderRoute: typeof ApiLaundryOrderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/settings': {
       id: '/admin/settings'
       path: '/settings'
@@ -488,6 +508,7 @@ const rootRouteChildren: RootRouteChildren = {
   CustomOrderRoute: CustomOrderRoute,
   LookbookRoute: LookbookRoute,
   ShopRoute: ShopRouteWithChildren,
+  ApiLaundryOrderRoute: ApiLaundryOrderRoute,
   OrderConfirmationReferenceRoute: OrderConfirmationReferenceRoute,
   WebhooksPaystackRoute: WebhooksPaystackRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,

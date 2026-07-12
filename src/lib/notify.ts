@@ -42,3 +42,41 @@ export async function sendNotificationEmail(
     console.error("[notify] Resend request threw", err);
   }
 }
+
+export async function sendCustomerEmail(
+  to: string,
+  subject: string,
+  html: string,
+): Promise<boolean> {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.warn("[notify] RESEND_API_KEY not set, skipping customer email");
+    return false;
+  }
+
+  const from = process.env.RESEND_FROM_EMAIL || "Nomad Laundry <notifications@knotnomad.com>";
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from,
+        to: [to],
+        reply_to: "hello@knotnomad.com",
+        subject,
+        html,
+      }),
+    });
+    if (!res.ok) {
+      console.error("[notify] Customer email send failed", res.status, await res.text());
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error("[notify] Customer email request threw", err);
+    return false;
+  }
+}
