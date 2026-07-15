@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, MessageCircle, PenLine, Upload, MessagesSquare, CheckCircle2, Scissors, Truck } from "lucide-react";
-import { whatsappLink } from "@/lib/site";
+import { ArrowRight, PenLine, Upload, MessagesSquare, CheckCircle2, Scissors, Truck } from "lucide-react";
 import { useReveal } from "@/hooks/useReveal";
 import heroEditorial from "@/assets/hero-editorial.jpg";
 import hero1 from "@/assets/hero-1.jpg";
@@ -82,17 +81,38 @@ function Home() {
               A premium custom apparel studio for individuals, creatives and brands —
               translating identity into considered, wearable pieces.
             </p>
-            <div className="mt-10 flex flex-wrap gap-3">
-              <Link to="/custom-order" className="btn-pill group inline-flex items-center gap-2 bg-foreground text-primary-foreground px-7 py-4 text-xs font-bold uppercase tracking-[0.2em] hover:bg-accent hover:text-accent-foreground transition-colors duration-300">
-                Start Custom Order <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            <div className="mt-10 grid max-w-2xl gap-3 sm:grid-cols-2">
+              <Link to="/shop" className="btn-pill group inline-flex items-center justify-center gap-2 bg-foreground text-primary-foreground px-7 py-4 text-xs font-bold uppercase tracking-[0.2em] hover:bg-accent hover:text-accent-foreground transition-colors duration-300">
+                Shop Ready-to-Wear <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
               </Link>
-              <Link to="/collection" className="btn-pill inline-flex items-center gap-2 border-2 border-foreground px-7 py-4 text-xs font-bold uppercase tracking-[0.2em] hover:bg-foreground hover:text-primary-foreground transition-colors duration-300">
-                Explore Collection
+              <Link to="/custom-order" className="btn-pill group inline-flex items-center justify-center gap-2 border-2 border-foreground px-7 py-4 text-xs font-bold uppercase tracking-[0.2em] hover:bg-foreground hover:text-primary-foreground transition-colors duration-300">
+                Start a Custom Order <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
               </Link>
-              <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-5 py-4 text-xs font-bold uppercase tracking-[0.2em] text-foreground/80 hover:text-accent transition">
-                <MessageCircle size={16}/> Chat on WhatsApp
-              </a>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* COMMERCIAL OFFER */}
+      <section className="border-y border-border bg-foreground text-primary-foreground">
+        <div className="mx-auto grid max-w-7xl gap-10 px-6 py-14 lg:grid-cols-[0.8fr_1.2fr] lg:px-10 lg:py-18">
+          <div data-reveal>
+            <p className="eyebrow !text-primary-foreground/55">What we make</p>
+            <h2 className="mt-4 font-display text-4xl leading-none sm:text-5xl">
+              From one piece to a <span className="text-accent">full drop.</span>
+            </h2>
+            <div className="mt-8 flex flex-wrap gap-x-8 gap-y-2 border-t border-primary-foreground/15 pt-6">
+              <p className="font-display text-2xl">Starting from ₦12,000</p>
+              <p className="self-center text-sm text-primary-foreground/65">Custom orders available nationwide</p>
+            </div>
+          </div>
+          <div className="grid gap-px bg-primary-foreground/15 sm:grid-cols-2" data-reveal data-reveal-delay="2">
+            {["Plain & custom tees", "Collar shirts", "Wide-leg trousers", "Jackets", "Native custom wear", "Brand uniforms & capsule drops"].map((item, index) => (
+              <div key={item} className="flex items-center gap-4 bg-foreground px-5 py-4">
+                <span className="text-xs font-bold text-accent">0{index + 1}</span>
+                <span className="text-sm font-semibold">{item}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -146,8 +166,8 @@ function Home() {
               <div className="eyebrow">The Studio</div>
               <h2 className="mt-3 font-display text-4xl lg:text-6xl">Categories.</h2>
             </div>
-            <Link to="/collection" className="hidden md:inline-flex items-center gap-2 text-sm font-bold tracking-[0.15em] uppercase hover:text-accent transition">
-              View all <ArrowRight size={14}/>
+            <Link to="/custom-studio" className="hidden md:inline-flex items-center gap-2 text-sm font-bold tracking-[0.15em] uppercase hover:text-accent transition">
+              Explore Custom Studio <ArrowRight size={14}/>
             </Link>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">

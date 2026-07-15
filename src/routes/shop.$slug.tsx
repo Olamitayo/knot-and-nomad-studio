@@ -38,7 +38,11 @@ interface Product {
   colors: string[];
   is_sold_out: boolean;
   is_customizable: boolean;
+  gallery?: GalleryItem[];
 }
+
+interface GalleryItem { url: string; color: string; shot: string }
+const SHOT_TYPES = ["Editorial", "Front", "Back", "Flat lay", "Fabric close-up", "Detail", "Size chart", "Styling reference"];
 
 function ProductDetail() {
   const { slug } = Route.useParams();
@@ -94,7 +98,13 @@ function ProductDetail() {
     );
   }
 
-  const selectedImage = product.images[imgIdx] ?? product.images[0];
+  const fullGallery: GalleryItem[] = product.gallery?.length
+    ? product.gallery
+    : product.images.map((url, index) => ({ url, color: "", shot: SHOT_TYPES[index] ?? `Image ${index + 1}` }));
+  const colorGallery = fullGallery.filter((item) => !item.color || !color || item.color.toLowerCase() === color.toLowerCase());
+  const visibleGallery = colorGallery.length ? colorGallery : fullGallery;
+  const selectedItem = visibleGallery[imgIdx] ?? visibleGallery[0];
+  const selectedImage = selectedItem?.url;
 
   const onAdd = async () => {
     if (product.is_sold_out) return;
@@ -171,22 +181,23 @@ function ProductDetail() {
             )}
           </div>
 
-          {product.images.length > 1 && (
+          {visibleGallery.length > 1 && (
             <div className="mt-3 grid grid-cols-4 gap-3 sm:grid-cols-5">
-              {product.images.map((src, i) => (
+              {visibleGallery.map((item, i) => (
                 <button
-                  key={src}
+                  key={`${item.url}-${i}`}
                   onClick={() => setImgIdx(i)}
                   className={`aspect-square overflow-hidden border transition ${
                     imgIdx === i ? "border-foreground" : "border-border hover:border-foreground"
                   }`}
-                  aria-label={`View product image ${i + 1}`}
+                  aria-label={`View ${item.color ? `${item.color} ` : ""}${item.shot}`}
                 >
-                  <img src={src} alt="" className="h-full w-full object-cover" />
+                  <img src={item.url} alt="" className="h-full w-full object-cover" />
                 </button>
               ))}
             </div>
           )}
+          {selectedItem && <div className="mt-3 flex items-center justify-between gap-4 text-xs text-muted-foreground"><span>{selectedItem.shot}</span>{selectedItem.color && <span>{selectedItem.color}</span>}</div>}
         </div>
 
         <div>
@@ -250,7 +261,7 @@ function ProductDetail() {
                 {product.colors.map((item) => (
                   <button
                     key={item}
-                    onClick={() => setColor(item)}
+                    onClick={() => { setColor(item); setImgIdx(0); }}
                     className={`inline-flex min-h-11 items-center gap-2 border px-4 text-sm transition ${
                       color === item
                         ? "border-foreground bg-foreground text-primary-foreground"
