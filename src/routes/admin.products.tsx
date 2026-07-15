@@ -26,12 +26,16 @@ interface Product {
   is_bestseller: boolean;
   is_customizable: boolean;
   sort_order: number;
+  gallery: GalleryItem[];
 }
+
+interface GalleryItem { url: string; color: string; shot: string }
+const SHOT_TYPES = ["Editorial", "Front", "Back", "Flat lay", "Fabric close-up", "Detail", "Size chart", "Styling reference"];
 
 const blank: Omit<Product, "id"> = {
   slug: "", name: "", short_description: "", description: "", category: "T-shirts",
   price_ngn: 0, images: [], sizes: ["S", "M", "L"], colors: ["Black"], is_active: true,
-  is_sold_out: false, is_new_arrival: false, is_bestseller: false, is_customizable: false, sort_order: 0,
+  is_sold_out: false, is_new_arrival: false, is_bestseller: false, is_customizable: false, sort_order: 0, gallery: [],
 };
 
 function AdminProducts() {
@@ -68,7 +72,7 @@ function AdminProducts() {
     const { error } = await supabase.storage.from("product-images").upload(path, file);
     if (error) { toast.error(error.message); setUploading(false); return; }
     const { data } = supabase.storage.from("product-images").getPublicUrl(path);
-    setEditing({ ...editing, images: [...editing.images, data.publicUrl] });
+    setEditing({ ...editing, images: [...editing.images, data.publicUrl], gallery: [...(editing.gallery ?? []), { url: data.publicUrl, color: editing.colors[0] ?? "", shot: "Editorial" }] });
     setUploading(false);
   };
 
@@ -125,7 +129,13 @@ function AdminProducts() {
             <div className="grid sm:grid-cols-2 gap-4">
               <Input label="Name" value={editing.name} onChange={(v) => setEditing({ ...editing, name: v })} />
               <Input label="Slug (URL)" value={editing.slug} onChange={(v) => setEditing({ ...editing, slug: v })} />
-              <Input label="Category" value={editing.category} onChange={(v) => setEditing({ ...editing, category: v })} />
+              <label className="block">
+                <span className="eyebrow mb-2 block">Category / product type</span>
+                <input list="product-categories" value={editing.category} onChange={(e) => setEditing({ ...editing, category: e.target.value })} className="w-full bg-background border border-border px-3 py-2 text-sm" />
+                <datalist id="product-categories">
+                  {["Plain Tees", "Custom Tees", "Collar Shirts", "Oversized Tees", "Wide-Leg Trousers", "Tailored Trousers", "Cargo / Streetwear Pants", "Zip Jackets", "Cropped Jackets", "Wool / Premium Sets", "Embroidered Native Tops", "Panel Native Tops", "Custom Native Sets", "Jacket + Trouser Sets", "Tee + Trouser Sets", "Caps", "Tote Bags", "Patches"].map((item) => <option key={item} value={item} />)}
+                </datalist>
+              </label>
               <Input label="Price (NGN)" type="number" value={String(editing.price_ngn)} onChange={(v) => setEditing({ ...editing, price_ngn: Number(v) || 0 })} />
               <div className="sm:col-span-2">
                 <Input label="Short description" value={editing.short_description ?? ""} onChange={(v) => setEditing({ ...editing, short_description: v })} />
@@ -142,12 +152,17 @@ function AdminProducts() {
               <div className="sm:col-span-2">
                 <span className="eyebrow mb-2 block">Images</span>
                 <div className="grid grid-cols-4 gap-2 mb-2">
-                  {editing.images.map((src, i) => (
-                    <div key={i} className="relative aspect-square bg-muted">
-                      <img src={src} alt="" className="h-full w-full object-cover" />
-                      <button onClick={() => setEditing({ ...editing, images: editing.images.filter((_, j) => j !== i) })} className="absolute top-1 right-1 bg-background/90 p-1 hover:bg-destructive hover:text-destructive-foreground">
+                  {(editing.gallery?.length ? editing.gallery : editing.images.map((url, index) => ({ url, color: editing.colors[0] ?? "", shot: SHOT_TYPES[index] ?? "Detail" }))).map((item, i) => (
+                    <div key={`${item.url}-${i}`} className="border border-border bg-muted p-2">
+                      <div className="relative aspect-square"><img src={item.url} alt="" className="h-full w-full object-cover" />
+                      <button onClick={() => setEditing({ ...editing, images: editing.images.filter((url) => url !== item.url), gallery: (editing.gallery ?? []).filter((_, j) => j !== i) })} className="absolute top-1 right-1 bg-background/90 p-1 hover:bg-destructive hover:text-destructive-foreground">
                         <Trash2 size={12} />
                       </button>
+                      </div>
+                      <select aria-label="Shot type" value={item.shot} onChange={(e) => { const gallery = [...(editing.gallery?.length ? editing.gallery : editing.images.map((url, index) => ({ url, color: editing.colors[0] ?? "", shot: SHOT_TYPES[index] ?? "Detail" })))]; gallery[i] = { ...gallery[i], shot: e.target.value }; setEditing({ ...editing, gallery }); }} className="mt-2 w-full border border-border bg-background p-1 text-[0.65rem]">
+                        {SHOT_TYPES.map((shot) => <option key={shot}>{shot}</option>)}
+                      </select>
+                      <input aria-label="Image colour" placeholder="Colour" value={item.color} onChange={(e) => { const gallery = [...(editing.gallery?.length ? editing.gallery : editing.images.map((url, index) => ({ url, color: editing.colors[0] ?? "", shot: SHOT_TYPES[index] ?? "Detail" })))]; gallery[i] = { ...gallery[i], color: e.target.value }; setEditing({ ...editing, gallery }); }} className="mt-1 w-full border border-border bg-background p-1 text-[0.65rem]" />
                     </div>
                   ))}
                 </div>
@@ -160,7 +175,7 @@ function AdminProducts() {
                   <input id="urlinput" placeholder="https://…" className="flex-1 bg-background border border-border px-3 py-2 text-sm" />
                   <button type="button" onClick={() => {
                     const el = document.getElementById("urlinput") as HTMLInputElement;
-                    if (el?.value) { setEditing({ ...editing, images: [...editing.images, el.value] }); el.value = ""; }
+                    if (el?.value) { setEditing({ ...editing, images: [...editing.images, el.value], gallery: [...(editing.gallery ?? []), { url: el.value, color: editing.colors[0] ?? "", shot: "Editorial" }] }); el.value = ""; }
                   }} className="border border-border px-3 text-xs font-bold uppercase tracking-[0.25em]">Add</button>
                 </div>
               </div>

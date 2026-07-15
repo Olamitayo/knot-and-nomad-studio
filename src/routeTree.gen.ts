@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as LookbookRouteImport } from './routes/lookbook'
+import { Route as CustomStudioRouteImport } from './routes/custom-studio'
 import { Route as CustomOrderRouteImport } from './routes/custom-order'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CollectionRouteImport } from './routes/collection'
@@ -40,6 +41,11 @@ const ShopRoute = ShopRouteImport.update({
 const LookbookRoute = LookbookRouteImport.update({
   id: '/lookbook',
   path: '/lookbook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CustomStudioRoute = CustomStudioRouteImport.update({
+  id: '/custom-studio',
+  path: '/custom-studio',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CustomOrderRoute = CustomOrderRouteImport.update({
@@ -155,6 +161,7 @@ export interface FileRoutesByFullPath {
   '/collection': typeof CollectionRoute
   '/contact': typeof ContactRoute
   '/custom-order': typeof CustomOrderRoute
+  '/custom-studio': typeof CustomStudioRoute
   '/lookbook': typeof LookbookRoute
   '/shop': typeof ShopRouteWithChildren
   '/admin/orders': typeof AdminOrdersRoute
@@ -178,6 +185,7 @@ export interface FileRoutesByTo {
   '/collection': typeof CollectionRoute
   '/contact': typeof ContactRoute
   '/custom-order': typeof CustomOrderRoute
+  '/custom-studio': typeof CustomStudioRoute
   '/lookbook': typeof LookbookRoute
   '/shop': typeof ShopRouteWithChildren
   '/admin/orders': typeof AdminOrdersRoute
@@ -203,6 +211,7 @@ export interface FileRoutesById {
   '/collection': typeof CollectionRoute
   '/contact': typeof ContactRoute
   '/custom-order': typeof CustomOrderRoute
+  '/custom-studio': typeof CustomStudioRoute
   '/lookbook': typeof LookbookRoute
   '/shop': typeof ShopRouteWithChildren
   '/admin/orders': typeof AdminOrdersRoute
@@ -229,6 +238,7 @@ export interface FileRouteTypes {
     | '/collection'
     | '/contact'
     | '/custom-order'
+    | '/custom-studio'
     | '/lookbook'
     | '/shop'
     | '/admin/orders'
@@ -252,6 +262,7 @@ export interface FileRouteTypes {
     | '/collection'
     | '/contact'
     | '/custom-order'
+    | '/custom-studio'
     | '/lookbook'
     | '/shop'
     | '/admin/orders'
@@ -276,6 +287,7 @@ export interface FileRouteTypes {
     | '/collection'
     | '/contact'
     | '/custom-order'
+    | '/custom-studio'
     | '/lookbook'
     | '/shop'
     | '/admin/orders'
@@ -301,6 +313,7 @@ export interface RootRouteChildren {
   CollectionRoute: typeof CollectionRoute
   ContactRoute: typeof ContactRoute
   CustomOrderRoute: typeof CustomOrderRoute
+  CustomStudioRoute: typeof CustomStudioRoute
   LookbookRoute: typeof LookbookRoute
   ShopRoute: typeof ShopRouteWithChildren
   ApiLaundryOrderRoute: typeof ApiLaundryOrderRoute
@@ -325,6 +338,13 @@ declare module '@tanstack/react-router' {
       path: '/lookbook'
       fullPath: '/lookbook'
       preLoaderRoute: typeof LookbookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/custom-studio': {
+      id: '/custom-studio'
+      path: '/custom-studio'
+      fullPath: '/custom-studio'
+      preLoaderRoute: typeof CustomStudioRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/custom-order': {
@@ -506,6 +526,7 @@ const rootRouteChildren: RootRouteChildren = {
   CollectionRoute: CollectionRoute,
   ContactRoute: ContactRoute,
   CustomOrderRoute: CustomOrderRoute,
+  CustomStudioRoute: CustomStudioRoute,
   LookbookRoute: LookbookRoute,
   ShopRoute: ShopRouteWithChildren,
   ApiLaundryOrderRoute: ApiLaundryOrderRoute,

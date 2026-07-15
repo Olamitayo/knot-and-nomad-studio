@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { Sparkles, Upload, ArrowRight, MessageCircle } from "lucide-react";
+import { Sparkles, Upload, ArrowRight, MessageCircle, Clock3, CalendarDays, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { submitCustomOrder } from "@/lib/orders.functions";
 import { supabase } from "@/integrations/supabase/client";
@@ -131,6 +131,30 @@ function CustomOrder() {
         </p>
       </section>
 
+      <section className="mx-auto max-w-7xl px-6 pb-14 lg:px-10">
+        <div className="grid gap-px bg-border lg:grid-cols-[1.35fr_0.65fr]">
+          <div className="bg-card p-7 lg:p-9">
+            <p className="eyebrow">How custom orders work</p>
+            <ol className="mt-7 grid gap-5 sm:grid-cols-2">
+              {["Submit your idea", "We review your design", "We confirm price and timeline", "You approve and pay a deposit", "We produce and deliver"].map((step, index) => (
+                <li key={step} className="flex items-start gap-4">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-foreground text-xs font-bold text-primary-foreground">{index + 1}</span>
+                  <span className="pt-1 text-sm font-semibold">{step}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+          <div className="bg-foreground p-7 text-primary-foreground lg:p-9">
+            <p className="eyebrow !text-primary-foreground/55">Before you submit</p>
+            <div className="mt-7 space-y-5 text-sm">
+              <TrustSignal icon={Clock3} text="Response within 24 hours" />
+              <TrustSignal icon={CalendarDays} text="Production takes 5–14 working days, depending on complexity" />
+              <TrustSignal icon={ShieldCheck} text="A deposit is required before production" />
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="mx-auto max-w-5xl px-6 lg:px-10 pb-12">
         <div className="border border-accent/40 bg-accent/5 p-6 lg:p-8 flex gap-4">
           <Sparkles className="shrink-0 text-accent mt-1" size={22}/>
@@ -203,6 +227,10 @@ function CustomOrder() {
       </section>
     </>
   );
+}
+
+function TrustSignal({ icon: Icon, text }: { icon: typeof Clock3; text: string }) {
+  return <div className="flex items-start gap-3"><Icon size={18} className="mt-0.5 shrink-0 text-accent" /><span className="leading-6 text-primary-foreground/75">{text}</span></div>;
 }
 
 function Group({ title, children }: { title: string; children: React.ReactNode }) {

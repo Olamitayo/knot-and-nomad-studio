@@ -50,16 +50,15 @@ interface Product {
   is_customizable: boolean;
 }
 
-const CATEGORIES = [
-  "All",
-  "T-shirts",
-  "Caps",
-  "Hoodies",
-  "Sweatshirts",
-  "Polos",
-  "Streetwear",
-  "Accessories",
-];
+const SHOP_STRUCTURE = [
+  { name: "Tops", items: ["Plain Tees", "Custom Tees", "Collar Shirts", "Oversized Tees"] },
+  { name: "Bottoms", items: ["Wide-Leg Trousers", "Tailored Trousers", "Cargo / Streetwear Pants"] },
+  { name: "Jackets", items: ["Zip Jackets", "Cropped Jackets", "Wool / Premium Sets"] },
+  { name: "Native Wear", items: ["Embroidered Native Tops", "Panel Native Tops", "Custom Native Sets"] },
+  { name: "Sets", items: ["Jacket + Trouser Sets", "Tee + Trouser Sets"] },
+  { name: "Accessories", items: ["Caps", "Tote Bags", "Patches"] },
+] as const;
+const CATEGORIES = ["All", ...SHOP_STRUCTURE.map((group) => group.name)];
 const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "One Size"];
 const COLORS = ["Black", "White", "Cream", "Charcoal", "Sand", "Olive", "Navy", "Gold"];
 const TAGS = ["All", "New", "Bestseller", "Customizable"];
@@ -81,6 +80,7 @@ function ShopPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState("All");
+  const [subcategory, setSubcategory] = useState("All");
   const [size, setSize] = useState<string>("All");
   const [color, setColor] = useState<string>("All");
   const [tag, setTag] = useState("All");
@@ -120,6 +120,7 @@ function ShopPage() {
 
   const activeFilterCount = [
     category !== "All",
+    subcategory !== "All",
     size !== "All",
     color !== "All",
     tag !== "All",
@@ -129,6 +130,7 @@ function ShopPage() {
 
   const resetFilters = () => {
     setCategory("All");
+    setSubcategory("All");
     setSize("All");
     setColor("All");
     setTag("All");
@@ -140,7 +142,8 @@ function ShopPage() {
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
     const result = products.filter((p) => {
-      if (category !== "All" && p.category !== category) return false;
+      if (category !== "All" && productGroup(p) !== category) return false;
+      if (subcategory !== "All" && !matchesSubcategory(p, subcategory)) return false;
       if (size !== "All" && !p.sizes.includes(size)) return false;
       if (color !== "All" && !p.colors.includes(color)) return false;
       if (tag === "New" && !p.is_new_arrival) return false;
@@ -167,7 +170,7 @@ function ShopPage() {
         Number(b.is_new_arrival) - Number(a.is_new_arrival)
       );
     });
-  }, [products, category, size, color, tag, maxPrice, search, sort]);
+  }, [products, category, subcategory, size, color, tag, maxPrice, search, sort]);
 
   const heroImage = featuredProduct?.images[0] ?? fallbackHero;
 
@@ -222,7 +225,7 @@ function ShopPage() {
             {CATEGORIES.map((item) => (
               <button
                 key={item}
-                onClick={() => setCategory(item)}
+                onClick={() => { setCategory(item); setSubcategory("All"); }}
                 className={`shrink-0 border px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] transition ${
                   category === item
                     ? "border-foreground bg-foreground text-primary-foreground"
@@ -231,6 +234,35 @@ function ShopPage() {
               >
                 {item}
               </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="border-b border-border bg-background">
+        <div className="mx-auto max-w-7xl px-6 py-8 lg:px-10">
+          <div className="mb-5 flex items-end justify-between gap-4">
+            <div>
+              <p className="eyebrow">Shop by category</p>
+              <h2 className="mt-2 font-display text-3xl">Find your piece.</h2>
+            </div>
+            <p className="hidden text-sm text-muted-foreground md:block">Ready-to-wear and customisable options</p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {SHOP_STRUCTURE.map((group) => (
+              <div key={group.name} className="border border-border bg-card p-5">
+                <button onClick={() => { setCategory(group.name); setSubcategory("All"); document.querySelector("#shop-grid")?.scrollIntoView(); }} className="flex w-full items-center justify-between text-left">
+                  <span className="font-display text-xl">{group.name}</span>
+                  <ArrowRight size={15} />
+                </button>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {group.items.map((item) => (
+                    <button key={item} onClick={() => { setCategory(group.name); setSubcategory(item); document.querySelector("#shop-grid")?.scrollIntoView(); }} className="text-left text-xs leading-5 text-muted-foreground underline-offset-4 transition hover:text-foreground hover:underline">
+                      {item}{item === "Plain Tees" ? " · ₦12k–₦18k" : item === "Custom Tees" ? " · ₦18k–₦25k" : item === "Collar Shirts" ? " · ₦15k–₦35k" : ""}
+                    </button>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         </div>
@@ -250,7 +282,7 @@ function ShopPage() {
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search tees, hoodies, caps..."
+                placeholder="Search tees, trousers, jackets, native wear..."
                 className="h-12 w-full border border-border bg-card pl-11 pr-4 text-sm outline-none transition placeholder:text-muted-foreground focus:border-foreground"
               />
             </label>
@@ -323,6 +355,7 @@ function ShopPage() {
               <div className="mb-6 flex flex-wrap items-center gap-2">
                 {[
                   category !== "All" ? category : null,
+                  subcategory !== "All" ? subcategory : null,
                   size !== "All" ? size : null,
                   color !== "All" ? color : null,
                   tag !== "All" ? tag : null,
@@ -524,7 +557,7 @@ function ProductCard({ p }: { p: Product }) {
 
         <div className="mt-4 flex items-start justify-between gap-4">
           <div className="min-w-0">
-            <p className="eyebrow mb-1 !text-[0.6rem]">{p.category}</p>
+            <p className="eyebrow mb-1 !text-[0.6rem]">{productGroup(p)} · {p.category}</p>
             <h3 className="font-display text-2xl leading-tight transition-colors group-hover:text-accent">
               {p.name}
             </h3>
@@ -534,11 +567,14 @@ function ProductCard({ p }: { p: Product }) {
               </p>
             )}
           </div>
-          <p className="shrink-0 text-sm font-semibold">{formatNaira(p.price_ngn)}</p>
+          <div className="shrink-0 text-right">
+            <p className="text-[0.62rem] font-bold uppercase tracking-[0.16em] text-muted-foreground">Starting at</p>
+            <p className="mt-1 text-sm font-semibold">{formatNaira(p.price_ngn)}</p>
+          </div>
         </div>
 
         <div className="mt-4 flex min-h-5 items-center justify-between gap-3">
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5" aria-label={`Available colours: ${p.colors.join(", ") || "Ask the studio"}`}>
             {p.colors.slice(0, 5).map((item) => (
               <ColorDot key={item} color={item} />
             ))}
@@ -549,6 +585,14 @@ function ProductCard({ p }: { p: Product }) {
               {p.sizes.length > 4 ? " +" : ""}
             </p>
           )}
+        </div>
+        <div className="mt-5 flex items-center justify-between gap-3 border-t border-border pt-4">
+          <span className="text-[0.62rem] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+            {p.is_customizable ? "Customisable" : "Ready-to-wear"}
+          </span>
+          <span className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] transition group-hover:text-accent">
+            View product <ArrowRight size={14} />
+          </span>
         </div>
       </article>
     </Link>
@@ -619,4 +663,29 @@ function colorValue(color: string) {
   };
 
   return map[color] ?? color.toLowerCase();
+}
+
+function productGroup(product: Product) {
+  const value = `${product.category} ${product.name}`.toLowerCase();
+  if (/cap|tote|patch|accessor/.test(value)) return "Accessories";
+  if (/native|embroider|panel/.test(value)) return "Native Wear";
+  if (/jacket|cropped|wool/.test(value)) return /set/.test(value) ? "Sets" : "Jackets";
+  if (/trouser|cargo|pants|bottom/.test(value)) return /set/.test(value) ? "Sets" : "Bottoms";
+  if (/set|co-ord|coord/.test(value)) return "Sets";
+  return "Tops";
+}
+
+function matchesSubcategory(product: Product, subcategory: string) {
+  const value = `${product.category} ${product.name} ${product.short_description ?? ""}`.toLowerCase();
+  const terms: Record<string, string[]> = {
+    "Plain Tees": ["plain tee", "basic tee"], "Custom Tees": ["custom tee", "printed tee"],
+    "Collar Shirts": ["collar", "polo"], "Oversized Tees": ["oversized tee"],
+    "Wide-Leg Trousers": ["wide-leg", "wide leg"], "Tailored Trousers": ["tailored trouser"],
+    "Cargo / Streetwear Pants": ["cargo", "streetwear pant"], "Zip Jackets": ["zip jacket", "zip-up"],
+    "Cropped Jackets": ["cropped jacket"], "Wool / Premium Sets": ["wool", "premium set"],
+    "Embroidered Native Tops": ["embroidered native"], "Panel Native Tops": ["panel native"],
+    "Custom Native Sets": ["custom native", "native set"], "Jacket + Trouser Sets": ["jacket + trouser", "jacket set"],
+    "Tee + Trouser Sets": ["tee + trouser", "tee set"], Caps: ["cap"], "Tote Bags": ["tote"], Patches: ["patch"],
+  };
+  return (terms[subcategory] ?? [subcategory.toLowerCase()]).some((term) => value.includes(term));
 }

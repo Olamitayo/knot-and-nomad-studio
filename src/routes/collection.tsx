@@ -1,73 +1,39 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
-import catTshirt from "@/assets/cat-tshirt.jpg";
-import catCap from "@/assets/cat-cap.jpg";
-import catHoodie from "@/assets/cat-hoodie.jpg";
-import catStreet from "@/assets/cat-streetwear.jpg";
-import catPolo from "@/assets/cat-polo.jpg";
-import catAcc from "@/assets/cat-accessories.jpg";
+import look1 from "@/assets/look-1.jpg";
+import look2 from "@/assets/look-2.jpg";
+import look3 from "@/assets/look-3.jpg";
+import look4 from "@/assets/look-4.jpg";
 
 export const Route = createFileRoute("/collection")({
-  head: () => ({
-    meta: [
-      { title: "Collection — Knot & Nomad" },
-      { name: "description", content: "Explore Knot & Nomad's premium custom apparel collection — t-shirts, caps, hoodies, polos, streetwear and accessories." },
-      { property: "og:title", content: "Collection — Knot & Nomad" },
-      { property: "og:description", content: "Premium custom apparel collection." },
-    ],
-  }),
+  head: () => ({ meta: [{ title: "Collection — Knot & Nomad" }, { name: "description", content: "Discover Knot & Nomad product drops, seasonal stories and limited fashion collections." }] }),
   component: Collection,
 });
 
-const items = [
-  { img: catTshirt, name: "Custom T-Shirts", desc: "Heavyweight 220–260gsm cottons, oversized & regular fits, screen and DTG printing.", label: "Made to Order" },
-  { img: catHoodie, name: "Hoodies & Sweats", desc: "Brushed fleece, dropped shoulders, embroidery and signature prints.", label: "Signature Piece" },
-  { img: catCap, name: "Branded Caps", desc: "Six-panel, dad-cap, trucker. Embroidery, patches, gold thread.", label: "Custom Made" },
-  { img: catStreet, name: "Streetwear Pieces", desc: "Bombers, cargo pants, layered statement looks for capsule drops.", label: "Limited Edition" },
-  { img: catPolo, name: "Premium Polos", desc: "Pique cotton, refined collars, custom embroidery.", label: "Premium Finish" },
-  { img: catAcc, name: "Accessories", desc: "Tote bags, beanies, patches and finishing touches.", label: "Studio Edit" },
+const looks = [
+  { image: look1, number: "Look 01", title: "Soft structure" },
+  { image: look2, number: "Look 02", title: "Nomad layers" },
+  { image: look3, number: "Look 03", title: "Quiet utility" },
+  { image: look4, number: "Look 04", title: "After dark" },
 ];
 
 function Collection() {
-  return (
-    <>
-      <section className="mx-auto max-w-7xl px-6 lg:px-10 pt-24 lg:pt-32 pb-16">
-        <div className="eyebrow">Collection — Vol. 01</div>
-        <h1 className="mt-4 font-display text-5xl lg:text-7xl xl:text-8xl leading-[1.02] max-w-4xl tracking-tight">
-          Every category, <span className="text-accent">custom-built</span>.
-        </h1>
-        <p className="mt-7 max-w-xl text-muted-foreground leading-relaxed">
-          A working catalogue of our studio's silhouettes. Every piece below can be
-          fully customised — colour, fabric, print, fit and finish. Tap any category
-          to brief us on your vision.
-        </p>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-6 lg:px-10 pb-32">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {items.map((c, i) => (
-            <article key={c.name} className="group bg-background border border-border hover:border-accent/60 transition-colors duration-500">
-              <div className="relative aspect-[4/5] overflow-hidden">
-                <img src={c.img} alt={c.name} loading="lazy" width={1024} height={1280}
-                     className="w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.06]"/>
-                <span className="absolute top-4 left-4 bg-background/85 backdrop-blur-sm text-[0.6rem] tracking-[0.3em] uppercase px-3 py-1.5 font-medium">
-                  {c.label}
-                </span>
-                <span className="absolute bottom-4 right-4 font-display text-xs tracking-[0.3em] uppercase text-foreground/70">
-                  0{i+1} / 0{items.length}
-                </span>
-              </div>
-              <div className="p-7 lg:p-8">
-                <h3 className="font-display text-2xl lg:text-3xl tracking-tight">{c.name}</h3>
-                <p className="mt-3 text-sm text-muted-foreground leading-relaxed">{c.desc}</p>
-                <Link to="/custom-order" className="mt-6 inline-flex items-center gap-2 text-xs tracking-[0.28em] uppercase border-b border-foreground pb-1 hover:text-accent hover:border-accent transition">
-                  Request this style <ArrowRight size={14}/>
-                </Link>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-    </>
-  );
+  return <>
+    <section className="border-b border-border bg-foreground text-primary-foreground">
+      <div className="mx-auto max-w-7xl px-6 py-24 lg:px-10 lg:py-32">
+        <p className="eyebrow !text-primary-foreground/55">Collection 001 — Rooted in Motion</p>
+        <h1 className="mt-5 max-w-5xl font-display text-6xl leading-[0.92] sm:text-7xl lg:text-9xl">Clothes for the space <span className="text-accent">between places.</span></h1>
+        <div className="mt-10 flex flex-wrap items-center gap-5"><Link to="/shop" className="btn-pill inline-flex items-center gap-2 bg-primary-foreground px-7 py-4 text-xs font-bold uppercase tracking-[0.2em] text-foreground">Shop the drop <ArrowRight size={15} /></Link><p className="max-w-md text-sm leading-6 text-primary-foreground/60">A study in ease, proportion and movement. Limited pieces designed as a single wardrobe.</p></div>
+      </div>
+    </section>
+    <section className="mx-auto max-w-7xl px-6 py-20 lg:px-10 lg:py-28">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        {looks.map((look, index) => <figure key={look.number} className={index % 3 === 0 ? "col-span-2 lg:col-span-1" : ""}>
+          <div className="aspect-[3/4] overflow-hidden"><img src={look.image} alt={`${look.number}: ${look.title}`} className="h-full w-full object-cover transition duration-700 hover:scale-105" /></div>
+          <figcaption className="mt-4 flex justify-between gap-3"><span className="eyebrow">{look.number}</span><span className="text-sm">{look.title}</span></figcaption>
+        </figure>)}
+      </div>
+      <div className="mt-24 grid gap-8 border-t border-border pt-10 lg:grid-cols-2"><h2 className="font-display text-4xl lg:text-5xl">Want something made specifically for you?</h2><div><p className="max-w-lg text-muted-foreground">The collection is our product story. The Custom Studio is where your story begins.</p><Link to="/custom-studio" className="mt-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em]">Explore Custom Studio <ArrowRight size={14} /></Link></div></div>
+    </section>
+  </>;
 }

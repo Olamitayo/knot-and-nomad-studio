@@ -424,6 +424,7 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
+          gallery: Json
           images: string[]
           is_active: boolean
           is_bestseller: boolean
@@ -444,6 +445,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          gallery?: Json
           images?: string[]
           is_active?: boolean
           is_bestseller?: boolean
@@ -464,6 +466,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          gallery?: Json
           images?: string[]
           is_active?: boolean
           is_bestseller?: boolean
