@@ -86,23 +86,50 @@ function ShopPage() {
   const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
-    supabase
-      .from("products")
-      .select("*")
-      .eq("is_active", true)
-      .order("sort_order", { ascending: true })
-      .then(({ data, error }) => {
-        if (error || !data?.length) {
+    let active = true;
+
+    const loadCatalogue = async () => {
+      try {
+        const result = await Promise.race([
+          supabase
+            .from("products")
+            .select("*")
+            .eq("is_active", true)
+            .order("sort_order", { ascending: true }),
+          new Promise<never>((_, reject) =>
+            window.setTimeout(() => reject(new Error("Catalogue request timed out")), 8000),
+          ),
+        ]);
+
+        if (!active) return;
+
+        if (result.error || !result.data?.length) {
           setProducts(fallbackProducts);
-          setCatalogueNotice(
-            "Live stock is temporarily unavailable. Showing studio reference pieces—use WhatsApp to confirm availability.",
-          );
-        } else {
-          setProducts(data as StoreProduct[]);
-          setCatalogueNotice("");
+          if (import.meta.env.DEV) {
+            setCatalogueNotice("Live catalogue unavailable; showing fallback studio products.");
+          }
+          return;
         }
-        setLoading(false);
-      });
+
+        setProducts(result.data.map(normalizeProduct));
+        setCatalogueNotice("");
+      } catch (error) {
+        if (!active) return;
+        setProducts(fallbackProducts);
+        if (import.meta.env.DEV) {
+          console.warn("[Shop] Falling back to the local catalogue.", error);
+          setCatalogueNotice("Live catalogue unavailable; showing fallback studio products.");
+        }
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+
+    void loadCatalogue();
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   const priceCeiling = useMemo(
@@ -438,7 +465,7 @@ function ShopPage() {
               </div>
             )}
 
-            {loading ? (
+            {loading && products.length === 0 ? (
               <ProductSkeleton />
             ) : filtered.length === 0 ? (
               <div className="flex min-h-[22rem] flex-col items-center justify-center border border-border bg-card px-6 text-center">
@@ -465,6 +492,26 @@ function ShopPage() {
       </section>
     </div>
   );
+}
+
+function normalizeProduct(
+  product: Partial<StoreProduct> & Pick<StoreProduct, "id" | "slug" | "name">,
+): StoreProduct {
+  return {
+    ...product,
+    short_description: product.short_description ?? null,
+    category: product.category || "Tops",
+    price_ngn: Number(product.price_ngn) || 0,
+    images: Array.isArray(product.images) ? product.images.filter(Boolean) : [],
+    sizes: Array.isArray(product.sizes) ? product.sizes.filter(Boolean) : [],
+    colors: Array.isArray(product.colors) ? product.colors.filter(Boolean) : [],
+    sku: product.sku ?? null,
+    stock_level: Number(product.stock_level) || 0,
+    is_sold_out: Boolean(product.is_sold_out),
+    is_new_arrival: Boolean(product.is_new_arrival),
+    is_bestseller: Boolean(product.is_bestseller),
+    is_customizable: Boolean(product.is_customizable),
+  };
 }
 
 function ShopFilters({
