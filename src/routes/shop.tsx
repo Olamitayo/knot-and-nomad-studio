@@ -9,11 +9,16 @@ import {
   Sparkles,
   Star,
   Wand2,
+  MessageCircle,
+  ShoppingBag,
   X,
 } from "lucide-react";
 import fallbackHero from "@/assets/hero-editorial.jpg";
 import { supabase } from "@/integrations/supabase/client";
 import { formatNaira } from "@/lib/format";
+import { fallbackProducts, productGroup, type StoreProduct } from "@/lib/products";
+import { useCart } from "@/lib/cart";
+import { whatsappLink } from "@/lib/site";
 
 export const Route = createFileRoute("/shop")({
   head: () => ({
@@ -34,33 +39,21 @@ export const Route = createFileRoute("/shop")({
   component: ShopRoute,
 });
 
-interface Product {
-  id: string;
-  slug: string;
-  name: string;
-  short_description: string | null;
-  category: string;
-  price_ngn: number;
-  images: string[];
-  sizes: string[];
-  colors: string[];
-  is_sold_out: boolean;
-  is_new_arrival: boolean;
-  is_bestseller: boolean;
-  is_customizable: boolean;
-  sku: string | null;
-  stock_level: number;
-}
-
 const SHOP_STRUCTURE = [
   { name: "Tops", items: ["Plain Tees", "Custom Tees", "Collar Shirts", "Oversized Tees"] },
-  { name: "Bottoms", items: ["Wide-Leg Trousers", "Tailored Trousers", "Cargo / Streetwear Pants"] },
-  { name: "Jackets", items: ["Zip Jackets", "Cropped Jackets", "Wool / Premium Sets"] },
-  { name: "Native Wear", items: ["Embroidered Native Tops", "Panel Native Tops", "Custom Native Sets"] },
-  { name: "Sets", items: ["Jacket + Trouser Sets", "Tee + Trouser Sets"] },
-  { name: "Accessories", items: ["Caps", "Tote Bags", "Patches"] },
+  {
+    name: "Bottoms",
+    items: ["Wide-Leg Trousers", "Tailored Trousers", "Cargo / Streetwear Pants"],
+  },
+  { name: "Jackets", items: ["Zip Jackets", "Cropped Jackets", "Wool / Premium Jackets"] },
+  {
+    name: "Native Wear",
+    items: ["Embroidered Native Tops", "Panel Native Tops", "Custom Native Sets"],
+  },
+  { name: "Sets", items: ["Jacket + Trouser Sets", "Tee + Trouser Sets", "Wool Blend Sets"] },
+  { name: "Accessories", items: ["Caps", "Tote Bags", "Patches", "Branding accessories"] },
 ] as const;
-const CATEGORIES = ["All", ...SHOP_STRUCTURE.map((group) => group.name)];
+const CATEGORIES = ["All Products", ...SHOP_STRUCTURE.map((group) => group.name)];
 const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "One Size"];
 const COLORS = ["Black", "White", "Cream", "Charcoal", "Sand", "Olive", "Navy", "Gold"];
 const TAGS = ["All", "New", "Bestseller", "Customizable"];
@@ -79,9 +72,10 @@ function ShopRoute() {
 }
 
 function ShopPage() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<StoreProduct[]>(fallbackProducts);
   const [loading, setLoading] = useState(true);
-  const [category, setCategory] = useState("All");
+  const [catalogueNotice, setCatalogueNotice] = useState("");
+  const [category, setCategory] = useState("All Products");
   const [subcategory, setSubcategory] = useState("All");
   const [size, setSize] = useState<string>("All");
   const [color, setColor] = useState<string>("All");
@@ -97,8 +91,16 @@ function ShopPage() {
       .select("*")
       .eq("is_active", true)
       .order("sort_order", { ascending: true })
-      .then(({ data }) => {
-        setProducts((data as Product[]) ?? []);
+      .then(({ data, error }) => {
+        if (error || !data?.length) {
+          setProducts(fallbackProducts);
+          setCatalogueNotice(
+            "Live stock is temporarily unavailable. Showing studio reference pieces—use WhatsApp to confirm availability.",
+          );
+        } else {
+          setProducts(data as StoreProduct[]);
+          setCatalogueNotice("");
+        }
         setLoading(false);
       });
   }, []);
@@ -121,7 +123,7 @@ function ShopPage() {
   );
 
   const activeFilterCount = [
-    category !== "All",
+    category !== "All Products",
     subcategory !== "All",
     size !== "All",
     color !== "All",
@@ -131,7 +133,7 @@ function ShopPage() {
   ].filter(Boolean).length;
 
   const resetFilters = () => {
-    setCategory("All");
+    setCategory("All Products");
     setSubcategory("All");
     setSize("All");
     setColor("All");
@@ -144,8 +146,13 @@ function ShopPage() {
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
     const result = products.filter((p) => {
-      if (category !== "All" && productGroup(p) !== category) return false;
-      if (subcategory !== "All" && !matchesSubcategory(p, subcategory)) return false;
+      if (category !== "All Products" && productGroup(p) !== category) return false;
+      if (
+        subcategory !== "All" &&
+        p.subcategory !== subcategory &&
+        !matchesSubcategory(p, subcategory)
+      )
+        return false;
       if (size !== "All" && !p.sizes.includes(size)) return false;
       if (color !== "All" && !p.colors.includes(color)) return false;
       if (tag === "New" && !p.is_new_arrival) return false;
@@ -192,8 +199,8 @@ function ShopPage() {
               Cut for <span className="text-accent">motion</span>.
             </h1>
             <p className="mt-6 max-w-xl text-sm leading-7 text-primary-foreground/70 sm:text-base">
-              Ready-to-wear essentials and customisable studio pieces, priced in Nigerian
-              Naira and built for sharp everyday presence.
+              Ready-to-wear essentials and customisable studio pieces, priced in Nigerian Naira and
+              built for sharp everyday presence.
             </p>
             <div className="mt-9 flex flex-wrap gap-3">
               <a
@@ -211,7 +218,10 @@ function ShopPage() {
             </div>
             <div className="mt-12 grid max-w-2xl grid-cols-3 border-y border-primary-foreground/15 text-xs">
               {["Ready-to-wear", "Customisable", "Naira pricing"].map((item) => (
-                <div key={item} className="flex items-center gap-2 py-4 pr-3 text-primary-foreground/70">
+                <div
+                  key={item}
+                  className="flex items-center gap-2 py-4 pr-3 text-primary-foreground/70"
+                >
                   <CheckCircle2 size={14} className="text-accent" />
                   <span>{item}</span>
                 </div>
@@ -227,7 +237,10 @@ function ShopPage() {
             {CATEGORIES.map((item) => (
               <button
                 key={item}
-                onClick={() => { setCategory(item); setSubcategory("All"); }}
+                onClick={() => {
+                  setCategory(item);
+                  setSubcategory("All");
+                }}
                 className={`shrink-0 border px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] transition ${
                   category === item
                     ? "border-foreground bg-foreground text-primary-foreground"
@@ -248,19 +261,43 @@ function ShopPage() {
               <p className="eyebrow">Shop by category</p>
               <h2 className="mt-2 font-display text-3xl">Find your piece.</h2>
             </div>
-            <p className="hidden text-sm text-muted-foreground md:block">Ready-to-wear and customisable options</p>
+            <p className="hidden text-sm text-muted-foreground md:block">
+              Ready-to-wear and customisable options
+            </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {SHOP_STRUCTURE.map((group) => (
               <div key={group.name} className="border border-border bg-card p-5">
-                <button onClick={() => { setCategory(group.name); setSubcategory("All"); document.querySelector("#shop-grid")?.scrollIntoView(); }} className="flex w-full items-center justify-between text-left">
+                <button
+                  onClick={() => {
+                    setCategory(group.name);
+                    setSubcategory("All");
+                    document.querySelector("#shop-grid")?.scrollIntoView();
+                  }}
+                  className="flex w-full items-center justify-between text-left"
+                >
                   <span className="font-display text-xl">{group.name}</span>
                   <ArrowRight size={15} />
                 </button>
                 <div className="mt-4 flex flex-wrap gap-2">
                   {group.items.map((item) => (
-                    <button key={item} onClick={() => { setCategory(group.name); setSubcategory(item); document.querySelector("#shop-grid")?.scrollIntoView(); }} className="text-left text-xs leading-5 text-muted-foreground underline-offset-4 transition hover:text-foreground hover:underline">
-                      {item}{item === "Plain Tees" ? " · ₦12k–₦18k" : item === "Custom Tees" ? " · ₦18k–₦25k" : item === "Collar Shirts" ? " · ₦15k–₦35k" : ""}
+                    <button
+                      key={item}
+                      onClick={() => {
+                        setCategory(group.name);
+                        setSubcategory(item);
+                        document.querySelector("#shop-grid")?.scrollIntoView();
+                      }}
+                      className="text-left text-xs leading-5 text-muted-foreground underline-offset-4 transition hover:text-foreground hover:underline"
+                    >
+                      {item}
+                      {item === "Plain Tees"
+                        ? " · ₦12k–₦18k"
+                        : item === "Custom Tees"
+                          ? " · ₦18k–₦25k"
+                          : item === "Collar Shirts"
+                            ? " · ₦15k–₦35k"
+                            : ""}
                     </button>
                   ))}
                 </div>
@@ -271,16 +308,34 @@ function ShopPage() {
       </section>
 
       <section id="shop-grid" className="mx-auto max-w-7xl px-6 py-10 lg:px-10 lg:py-14">
+        {catalogueNotice && (
+          <div className="mb-8 flex flex-wrap items-center justify-between gap-4 border border-accent/30 bg-accent/5 px-5 py-4 text-sm">
+            <p>{catalogueNotice}</p>
+            <a
+              href={whatsappLink("Hi, I would like to confirm current ready-to-wear availability.")}
+              target="_blank"
+              rel="noreferrer"
+              className="font-bold uppercase tracking-[0.16em] text-accent"
+            >
+              Check availability
+            </a>
+          </div>
+        )}
         <div className="mb-8 grid gap-4 lg:grid-cols-[18rem_1fr] lg:items-end">
           <div>
             <p className="eyebrow mb-2">Current edit</p>
             <p className="text-sm text-muted-foreground">
-              {loading ? "Loading pieces..." : `${filtered.length} of ${products.length} pieces`}
+              {loading
+                ? "Refreshing live stock…"
+                : `${filtered.length} of ${products.length} pieces`}
             </p>
           </div>
           <div className="grid gap-3 md:grid-cols-[1fr_13rem_auto]">
             <label className="relative block">
-              <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <Search
+                size={16}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
+              />
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -356,7 +411,7 @@ function ShopPage() {
             {activeFilterCount > 0 && (
               <div className="mb-6 flex flex-wrap items-center gap-2">
                 {[
-                  category !== "All" ? category : null,
+                  category !== "All Products" ? category : null,
                   subcategory !== "All" ? subcategory : null,
                   size !== "All" ? size : null,
                   color !== "All" ? color : null,
@@ -389,8 +444,7 @@ function ShopPage() {
               <div className="flex min-h-[22rem] flex-col items-center justify-center border border-border bg-card px-6 text-center">
                 <p className="font-display text-3xl">No pieces found.</p>
                 <p className="mt-3 max-w-md text-sm text-muted-foreground">
-                  Try another category, remove a filter, or start a custom request with the
-                  studio.
+                  Try another category, remove a filter, or start a custom request with the studio.
                 </p>
                 <button
                   onClick={resetFilters}
@@ -439,7 +493,13 @@ function ShopFilters({
   return (
     <div className="space-y-7">
       <FilterGroup label="Size" options={["All", ...SIZES]} value={size} onChange={onSize} />
-      <FilterGroup label="Color" options={["All", ...COLORS]} value={color} onChange={onColor} swatches />
+      <FilterGroup
+        label="Color"
+        options={["All", ...COLORS]}
+        value={color}
+        onChange={onColor}
+        swatches
+      />
       <FilterGroup label="Collection" options={TAGS} value={tag} onChange={onTag} />
       <div>
         <div className="mb-3 flex items-end justify-between gap-3">
@@ -506,12 +566,32 @@ function FilterGroup({
   );
 }
 
-function ProductCard({ p }: { p: Product }) {
+function ProductCard({ p }: { p: StoreProduct }) {
   const secondImage = p.images[1];
+  const add = useCart((state) => state.add);
+  const canAdd =
+    !p.isFallback &&
+    !p.is_sold_out &&
+    p.stock_level > 0 &&
+    p.sizes.length > 0 &&
+    p.colors.length > 0;
+
+  const quickAdd = () => {
+    if (!canAdd) return;
+    add({
+      productId: p.id,
+      name: p.name,
+      image: p.images[0] ?? "",
+      unitPrice: p.starting_price_ngn || p.price_ngn,
+      size: p.sizes[0],
+      color: p.colors[0],
+      quantity: 1,
+    });
+  };
 
   return (
-    <Link to="/shop/$slug" params={{ slug: p.slug }} className="group block">
-      <article className="h-full">
+    <article className="group flex h-full flex-col">
+      <Link to="/shop/$slug" params={{ slug: p.slug }} className="block">
         <div className="relative aspect-[4/5] overflow-hidden border border-border bg-muted">
           {p.images[0] ? (
             <>
@@ -537,12 +617,6 @@ function ProductCard({ p }: { p: Product }) {
               </span>
             </div>
           )}
-          <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 bg-gradient-to-t from-foreground/80 to-transparent p-4 opacity-0 transition duration-300 group-hover:opacity-100">
-            <span className="text-xs font-bold uppercase tracking-[0.2em] text-primary-foreground">
-              View piece
-            </span>
-            <ArrowRight size={16} className="text-primary-foreground" />
-          </div>
           <div className="absolute left-3 top-3 flex max-w-[calc(100%-1.5rem)] flex-wrap gap-1.5">
             {p.is_new_arrival && <Badge icon={<Sparkles size={10} />} label="New" tone="light" />}
             {p.is_bestseller && <Badge icon={<Star size={10} />} label="Bestseller" tone="dark" />}
@@ -556,51 +630,101 @@ function ProductCard({ p }: { p: Product }) {
             </div>
           )}
           {!p.is_sold_out && p.stock_level > 0 && p.stock_level <= 5 && (
-            <span className="absolute bottom-3 right-3 bg-background/95 px-2.5 py-1 text-[0.62rem] font-bold uppercase tracking-[0.16em]">Only {p.stock_level} left</span>
+            <span className="absolute bottom-3 right-3 bg-background/95 px-2.5 py-1 text-[0.62rem] font-bold uppercase tracking-[0.16em]">
+              Only {p.stock_level} left
+            </span>
           )}
         </div>
+      </Link>
 
-        <div className="mt-4 flex items-start justify-between gap-4">
-          <div className="min-w-0">
-            <p className="eyebrow mb-1 !text-[0.6rem]">{productGroup(p)} · {p.category}{p.sku ? ` · ${p.sku}` : ""}</p>
+      <div className="mt-4 flex items-start justify-between gap-4">
+        <div className="min-w-0">
+          <p className="eyebrow mb-1 !text-[0.6rem]">
+            {productGroup(p)} · {p.category}
+            {p.sku ? ` · ${p.sku}` : ""}
+          </p>
+          <Link to="/shop/$slug" params={{ slug: p.slug }}>
             <h3 className="font-display text-2xl leading-tight transition-colors group-hover:text-accent">
               {p.name}
             </h3>
-            {p.short_description && (
-              <p className="mt-2 line-clamp-2 text-sm leading-6 text-muted-foreground">
-                {p.short_description}
-              </p>
-            )}
-          </div>
-          <div className="shrink-0 text-right">
-            <p className="text-[0.62rem] font-bold uppercase tracking-[0.16em] text-muted-foreground">Starting at</p>
-            <p className="mt-1 text-sm font-semibold">{formatNaira(p.price_ngn)}</p>
-          </div>
-        </div>
-
-        <div className="mt-4 flex min-h-5 items-center justify-between gap-3">
-          <div className="flex items-center gap-1.5" aria-label={`Available colours: ${p.colors.join(", ") || "Ask the studio"}`}>
-            {p.colors.slice(0, 5).map((item) => (
-              <ColorDot key={item} color={item} />
-            ))}
-          </div>
-          {p.sizes.length > 0 && (
-            <p className="truncate text-xs text-muted-foreground">
-              {p.sizes.slice(0, 4).join(" / ")}
-              {p.sizes.length > 4 ? " +" : ""}
+          </Link>
+          {p.short_description && (
+            <p className="mt-2 line-clamp-2 text-sm leading-6 text-muted-foreground">
+              {p.short_description}
             </p>
           )}
         </div>
-        <div className="mt-5 flex items-center justify-between gap-3 border-t border-border pt-4">
-          <span className="text-[0.62rem] font-bold uppercase tracking-[0.16em] text-muted-foreground">
-            {p.is_customizable ? "Customisable" : "Ready-to-wear"}
-          </span>
-          <span className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] transition group-hover:text-accent">
-            View product <ArrowRight size={14} />
-          </span>
+        <div className="shrink-0 text-right">
+          <p className="text-[0.62rem] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+            Starting at
+          </p>
+          <p className="mt-1 text-sm font-semibold">
+            {formatNaira(p.starting_price_ngn || p.price_ngn)}
+          </p>
         </div>
-      </article>
-    </Link>
+      </div>
+
+      <div className="mt-4 flex min-h-5 items-center justify-between gap-3">
+        <div
+          className="flex items-center gap-1.5"
+          aria-label={`Available colours: ${p.colors.join(", ") || "Ask the studio"}`}
+        >
+          {p.colors.slice(0, 5).map((item) => (
+            <ColorDot key={item} color={item} />
+          ))}
+        </div>
+        {p.sizes.length > 0 && (
+          <p className="truncate text-xs text-muted-foreground">
+            {p.sizes.slice(0, 4).join(" / ")}
+            {p.sizes.length > 4 ? " +" : ""}
+          </p>
+        )}
+      </div>
+      <div className="mt-4 flex flex-wrap gap-1.5">
+        {(p.product_tags?.length
+          ? p.product_tags
+          : [
+              p.is_ready_to_wear === false ? "Made-to-order" : "Ready-to-wear",
+              ...(p.is_customizable ? ["Customisable"] : []),
+            ]
+        )
+          .slice(0, 3)
+          .map((tag) => (
+            <span
+              key={tag}
+              className="border border-border px-2 py-1 text-[0.58rem] font-bold uppercase tracking-[0.14em] text-muted-foreground"
+            >
+              {tag}
+            </span>
+          ))}
+      </div>
+      <div className="mt-auto grid grid-cols-2 gap-2 border-t border-border pt-4">
+        <Link
+          to="/shop/$slug"
+          params={{ slug: p.slug }}
+          className="inline-flex min-h-11 items-center justify-center gap-2 border border-foreground px-3 text-[0.65rem] font-bold uppercase tracking-[0.16em] transition hover:bg-foreground hover:text-primary-foreground"
+        >
+          View product <ArrowRight size={13} />
+        </Link>
+        {canAdd ? (
+          <button
+            onClick={quickAdd}
+            className="inline-flex min-h-11 items-center justify-center gap-2 bg-foreground px-3 text-[0.65rem] font-bold uppercase tracking-[0.16em] text-primary-foreground transition hover:bg-accent"
+          >
+            <ShoppingBag size={13} /> Add to cart
+          </button>
+        ) : (
+          <a
+            href={whatsappLink(`Hi, I am interested in ${p.name}. Please confirm availability.`)}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex min-h-11 items-center justify-center gap-2 bg-foreground px-3 text-[0.65rem] font-bold uppercase tracking-[0.16em] text-primary-foreground transition hover:bg-accent"
+          >
+            <MessageCircle size={13} /> Inquire
+          </a>
+        )}
+      </div>
+    </article>
   );
 }
 
@@ -670,27 +794,30 @@ function colorValue(color: string) {
   return map[color] ?? color.toLowerCase();
 }
 
-function productGroup(product: Product) {
-  const value = `${product.category} ${product.name}`.toLowerCase();
-  if (/cap|tote|patch|accessor/.test(value)) return "Accessories";
-  if (/native|embroider|panel/.test(value)) return "Native Wear";
-  if (/jacket|cropped|wool/.test(value)) return /set/.test(value) ? "Sets" : "Jackets";
-  if (/trouser|cargo|pants|bottom/.test(value)) return /set/.test(value) ? "Sets" : "Bottoms";
-  if (/set|co-ord|coord/.test(value)) return "Sets";
-  return "Tops";
-}
-
-function matchesSubcategory(product: Product, subcategory: string) {
-  const value = `${product.category} ${product.name} ${product.short_description ?? ""}`.toLowerCase();
+function matchesSubcategory(product: StoreProduct, subcategory: string) {
+  const value =
+    `${product.category} ${product.name} ${product.short_description ?? ""}`.toLowerCase();
   const terms: Record<string, string[]> = {
-    "Plain Tees": ["plain tee", "basic tee"], "Custom Tees": ["custom tee", "printed tee"],
-    "Collar Shirts": ["collar", "polo"], "Oversized Tees": ["oversized tee"],
-    "Wide-Leg Trousers": ["wide-leg", "wide leg"], "Tailored Trousers": ["tailored trouser"],
-    "Cargo / Streetwear Pants": ["cargo", "streetwear pant"], "Zip Jackets": ["zip jacket", "zip-up"],
-    "Cropped Jackets": ["cropped jacket"], "Wool / Premium Sets": ["wool", "premium set"],
-    "Embroidered Native Tops": ["embroidered native"], "Panel Native Tops": ["panel native"],
-    "Custom Native Sets": ["custom native", "native set"], "Jacket + Trouser Sets": ["jacket + trouser", "jacket set"],
-    "Tee + Trouser Sets": ["tee + trouser", "tee set"], Caps: ["cap"], "Tote Bags": ["tote"], Patches: ["patch"],
+    "Plain Tees": ["plain tee", "basic tee"],
+    "Custom Tees": ["custom tee", "printed tee"],
+    "Collar Shirts": ["collar", "polo"],
+    "Oversized Tees": ["oversized tee"],
+    "Wide-Leg Trousers": ["wide-leg", "wide leg"],
+    "Tailored Trousers": ["tailored trouser"],
+    "Cargo / Streetwear Pants": ["cargo", "streetwear pant"],
+    "Zip Jackets": ["zip jacket", "zip-up"],
+    "Cropped Jackets": ["cropped jacket"],
+    "Wool / Premium Jackets": ["wool jacket", "premium jacket"],
+    "Embroidered Native Tops": ["embroidered native"],
+    "Panel Native Tops": ["panel native"],
+    "Custom Native Sets": ["custom native", "native set"],
+    "Jacket + Trouser Sets": ["jacket + trouser", "jacket set"],
+    "Tee + Trouser Sets": ["tee + trouser", "tee set"],
+    "Wool Blend Sets": ["wool blend set"],
+    Caps: ["cap"],
+    "Tote Bags": ["tote"],
+    Patches: ["patch"],
+    "Branding accessories": ["branding accessory", "label", "badge"],
   };
   return (terms[subcategory] ?? [subcategory.toLowerCase()]).some((term) => value.includes(term));
 }

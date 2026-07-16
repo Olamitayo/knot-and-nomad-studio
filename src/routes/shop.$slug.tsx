@@ -20,40 +20,34 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatNaira } from "@/lib/format";
 import { useCart } from "@/lib/cart";
 import { whatsappLink } from "@/lib/site";
+import {
+  displayPrice,
+  fallbackProducts,
+  productGroup,
+  type GalleryItem,
+  type StoreProduct,
+} from "@/lib/products";
 
 export const Route = createFileRoute("/shop/$slug")({
   component: ProductDetail,
 });
 
-interface Product {
-  id: string;
-  slug: string;
-  name: string;
-  short_description: string | null;
-  description: string | null;
-  category: string;
-  price_ngn: number;
-  images: string[];
-  sizes: string[];
-  colors: string[];
-  is_sold_out: boolean;
-  is_customizable: boolean;
-  gallery?: GalleryItem[];
-  sku: string | null;
-  stock_level: number;
-  material: string | null;
-  fit: string | null;
-  care_instructions: string | null;
-  delivery_estimate: string | null;
-}
-
-interface GalleryItem { url: string; color: string; shot: string }
-const SHOT_TYPES = ["Editorial", "Front", "Back", "Flat lay", "Fabric close-up", "Detail", "Size chart", "Styling reference"];
+const SHOT_TYPES = [
+  "Editorial",
+  "Front",
+  "Back",
+  "Flat lay",
+  "Fabric close-up",
+  "Detail",
+  "Size chart",
+  "Styling reference",
+];
 
 function ProductDetail() {
   const { slug } = Route.useParams();
   const navigate = useNavigate();
-  const [product, setProduct] = useState<Product | null>(null);
+  const [product, setProduct] = useState<StoreProduct | null>(null);
+  const [related, setRelated] = useState<StoreProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [imgIdx, setImgIdx] = useState(0);
   const [size, setSize] = useState<string>("");
@@ -71,13 +65,26 @@ function ProductDetail() {
       .select("*")
       .eq("slug", slug)
       .maybeSingle()
-      .then(({ data }) => {
-        setProduct(data as Product | null);
-        if (data) {
-          setSize((data as Product).sizes[0] ?? "");
-          setColor((data as Product).colors[0] ?? "");
+      .then(({ data, error }) => {
+        const resolved =
+          !error && data
+            ? (data as StoreProduct)
+            : (fallbackProducts.find((item) => item.slug === slug) ?? null);
+        setProduct(resolved);
+        if (resolved) {
+          setSize(resolved.sizes[0] ?? "");
+          setColor(resolved.colors[0] ?? "");
         }
         setLoading(false);
+      });
+    supabase
+      .from("products")
+      .select("*")
+      .eq("is_active", true)
+      .limit(12)
+      .then(({ data }) => {
+        if (data)
+          setRelated((data as StoreProduct[]).filter((item) => item.slug !== slug).slice(0, 4));
       });
   }, [slug]);
 
@@ -104,17 +111,34 @@ function ProductDetail() {
     );
   }
 
-  const fullGallery: GalleryItem[] = product.gallery?.length
-    ? product.gallery
-    : product.images.map((url, index) => ({ url, color: "", shot: SHOT_TYPES[index] ?? `Image ${index + 1}` }));
-  const colorGallery = fullGallery.filter((item) => !item.color || !color || item.color.toLowerCase() === color.toLowerCase());
+  const selectedVariant = product.variants?.find(
+    (variant) => variant.colour.toLowerCase() === color.toLowerCase(),
+  );
+  const variantGallery: GalleryItem[] =
+    selectedVariant?.images?.map((item) => ({ ...item, color })) ?? [];
+  const fullGallery: GalleryItem[] = variantGallery.length
+    ? variantGallery
+    : product.gallery?.length
+      ? product.gallery
+      : product.images.map((url, index) => ({
+          url,
+          color: "",
+          shot: SHOT_TYPES[index] ?? `Image ${index + 1}`,
+        }));
+  const colorGallery = fullGallery.filter(
+    (item) => !item.color || !color || item.color.toLowerCase() === color.toLowerCase(),
+  );
   const visibleGallery = colorGallery.length ? colorGallery : fullGallery;
   const selectedItem = visibleGallery[imgIdx] ?? visibleGallery[0];
   const selectedImage = selectedItem?.url;
+  const currentPrice = displayPrice(product, color);
+  const availableStock = selectedVariant ? selectedVariant.stockLevel : product.stock_level;
 
   const onAdd = async () => {
-    if (product.is_sold_out || product.stock_level === 0) return;
-    if (qty > product.stock_level) return toast.error(`Only ${product.stock_level} left in stock`);
+    if (product.isFallback)
+      return toast.info("Please use WhatsApp to confirm this studio reference piece.");
+    if (product.is_sold_out || availableStock === 0) return;
+    if (qty > availableStock) return toast.error(`Only ${availableStock} left in stock`);
     if (product.sizes.length && !size) return toast.error("Choose a size");
     if (product.colors.length && !color) return toast.error("Choose a color");
 
@@ -124,9 +148,7 @@ function ProductDetail() {
         setUploading(true);
         const ext = customFile.name.split(".").pop() ?? "png";
         const path = `custom/${crypto.randomUUID()}.${ext}`;
-        const { error } = await supabase.storage
-          .from("payment-receipts")
-          .upload(path, customFile);
+        const { error } = await supabase.storage.from("payment-receipts").upload(path, customFile);
         if (error) throw error;
         const { data } = supabase.storage.from("payment-receipts").getPublicUrl(path);
         designUrl = data.publicUrl;
@@ -142,7 +164,7 @@ function ProductDetail() {
       productId: product.id,
       name: product.name,
       image: selectedImage ?? product.images[0] ?? "",
-      unitPrice: product.price_ngn,
+      unitPrice: currentPrice,
       size: size || undefined,
       color: color || undefined,
       quantity: qty,
@@ -153,7 +175,7 @@ function ProductDetail() {
   };
 
   const onWhatsApp = () => {
-    const msg = `Hi, I have a question about: ${product.name} (${product.slug})`;
+    const msg = `Hi, I have a question about: ${product.name} (${product.sku || product.slug})${color ? ` in ${color}` : ""}`;
     window.open(whatsappLink(msg), "_blank");
   };
 
@@ -178,7 +200,11 @@ function ProductDetail() {
         <div className="lg:sticky lg:top-28 lg:self-start">
           <div className="overflow-hidden border border-border bg-muted">
             {selectedImage ? (
-              <img src={selectedImage} alt={product.name} className="aspect-[4/5] h-full w-full object-cover" />
+              <img
+                src={selectedImage}
+                alt={product.name}
+                className="aspect-[4/5] h-full w-full object-cover"
+              />
             ) : (
               <div className="flex aspect-[4/5] items-center justify-center bg-[linear-gradient(135deg,var(--muted),var(--card))] px-6 text-center">
                 <span className="text-xs font-bold uppercase tracking-[0.24em] text-muted-foreground">
@@ -204,18 +230,27 @@ function ProductDetail() {
               ))}
             </div>
           )}
-          {selectedItem && <div className="mt-3 flex items-center justify-between gap-4 text-xs text-muted-foreground"><span>{selectedItem.shot}</span>{selectedItem.color && <span>{selectedItem.color}</span>}</div>}
+          {selectedItem && (
+            <div className="mt-3 flex items-center justify-between gap-4 text-xs text-muted-foreground">
+              <span>{selectedItem.shot}</span>
+              {selectedItem.color && <span>{selectedItem.color}</span>}
+            </div>
+          )}
         </div>
 
         <div>
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <p className="eyebrow">{product.category}</p>
-            {product.sku && <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">SKU {product.sku}</p>}
+            {product.sku && (
+              <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
+                SKU {product.sku}
+              </p>
+            )}
           </div>
           <div className="flex flex-wrap items-start justify-between gap-5">
             <h1 className="font-display text-5xl leading-[1.02] lg:text-6xl">{product.name}</h1>
             <p className="border border-border bg-card px-4 py-3 text-lg font-semibold">
-              {formatNaira(product.price_ngn)}
+              {formatNaira(currentPrice)}
             </p>
           </div>
 
@@ -231,18 +266,32 @@ function ProductDetail() {
           )}
 
           <div className="mt-6 flex flex-wrap items-center gap-3 text-xs font-bold uppercase tracking-[0.16em]">
-            <span className={`inline-flex items-center gap-2 ${product.stock_level > 0 && !product.is_sold_out ? "text-accent" : "text-destructive"}`}>
+            <span
+              className={`inline-flex items-center gap-2 ${product.stock_level > 0 && !product.is_sold_out ? "text-accent" : "text-destructive"}`}
+            >
               <span className="h-2 w-2 rounded-full bg-current" />
-              {product.is_sold_out || product.stock_level === 0 ? "Out of stock" : product.stock_level <= 5 ? `Only ${product.stock_level} left` : "In stock"}
+              {product.isFallback
+                ? "Confirm availability"
+                : product.is_sold_out || availableStock === 0
+                  ? "Out of stock"
+                  : availableStock <= 5
+                    ? `Only ${availableStock} left`
+                    : "In stock"}
             </span>
-            {product.delivery_estimate && <span className="text-muted-foreground">Delivery: {product.delivery_estimate}</span>}
+            {product.delivery_estimate && (
+              <span className="text-muted-foreground">Delivery: {product.delivery_estimate}</span>
+            )}
           </div>
 
           <div className="my-8 grid grid-cols-2 gap-px bg-border text-sm sm:grid-cols-4">
             <TrustItem icon={<ShieldCheck size={16} />} label="Quality finish" />
             <TrustItem icon={<Truck size={16} />} label="Nigeria delivery" />
             <TrustItem icon={<Ruler size={16} />} label="Size options" />
-            <TrustItem icon={<Wand2 size={16} />} label="Custom-ready" muted={!product.is_customizable} />
+            <TrustItem
+              icon={<Wand2 size={16} />}
+              label="Custom-ready"
+              muted={!product.is_customizable}
+            />
           </div>
 
           {product.sizes.length > 0 && (
@@ -279,7 +328,10 @@ function ProductDetail() {
                 {product.colors.map((item) => (
                   <button
                     key={item}
-                    onClick={() => { setColor(item); setImgIdx(0); }}
+                    onClick={() => {
+                      setColor(item);
+                      setImgIdx(0);
+                    }}
                     className={`inline-flex min-h-11 items-center gap-2 border px-4 text-sm transition ${
                       color === item
                         ? "border-foreground bg-foreground text-primary-foreground"
@@ -306,7 +358,7 @@ function ProductDetail() {
               </button>
               <span className="min-w-12 text-center text-sm">{qty}</span>
               <button
-                onClick={() => setQty((q) => Math.min(product.stock_level || 1, q + 1))}
+                onClick={() => setQty((q) => Math.min(availableStock || 1, q + 1))}
                 className="flex h-full w-11 items-center justify-center transition hover:bg-muted"
                 aria-label="Increase quantity"
               >
@@ -353,11 +405,19 @@ function ProductDetail() {
           <div className="grid gap-3 sm:grid-cols-2">
             <button
               onClick={onAdd}
-              disabled={product.is_sold_out || product.stock_level === 0 || uploading}
+              disabled={
+                product.isFallback || product.is_sold_out || availableStock === 0 || uploading
+              }
               className="inline-flex min-h-14 items-center justify-center gap-2 bg-foreground px-6 text-xs font-bold uppercase tracking-[0.22em] text-primary-foreground transition hover:bg-accent hover:text-accent-foreground disabled:opacity-50"
             >
               <ShoppingBag size={15} />
-              {product.is_sold_out || product.stock_level === 0 ? "Sold out" : uploading ? "Uploading..." : "Add to cart"}
+              {product.isFallback
+                ? "Confirm availability"
+                : product.is_sold_out || availableStock === 0
+                  ? "Sold out"
+                  : uploading
+                    ? "Uploading..."
+                    : "Add to cart"}
             </button>
             <button
               onClick={onWhatsApp}
@@ -376,11 +436,29 @@ function ProductDetail() {
           </Link>
 
           <div className="mt-10 border-t border-border">
-            <ProductInfo label="Fabric / material" value={product.material} fallback="Contact the studio for fabric details." />
-            <ProductInfo label="Fit" value={product.fit} fallback="See the size guide or ask us for fit advice." />
-            <ProductInfo label="Care" value={product.care_instructions} fallback="Gentle care recommended. Ask the studio for garment-specific guidance." />
-            <ProductInfo label="Delivery" value={product.delivery_estimate} fallback="Delivery timing is confirmed at checkout." />
+            <ProductInfo
+              label="Fabric / material"
+              value={product.material}
+              fallback="Contact the studio for fabric details."
+            />
+            <ProductInfo
+              label="Fit"
+              value={product.fit}
+              fallback="See the size guide or ask us for fit advice."
+            />
+            <ProductInfo
+              label="Care"
+              value={product.care_instructions}
+              fallback="Gentle care recommended. Ask the studio for garment-specific guidance."
+            />
+            <ProductInfo
+              label="Delivery"
+              value={product.delivery_estimate}
+              fallback="Delivery timing is confirmed at checkout."
+            />
           </div>
+
+          <SizeGuide product={product} />
 
           <button
             onClick={() => navigate({ to: "/cart" })}
@@ -391,12 +469,141 @@ function ProductDetail() {
           </button>
         </div>
       </section>
+      {related.length > 0 && (
+        <section className="mx-auto max-w-7xl border-t border-border px-6 py-20 lg:px-10">
+          <div className="mb-10 flex items-end justify-between gap-4">
+            <div>
+              <p className="eyebrow">Complete the edit</p>
+              <h2 className="mt-2 font-display text-4xl">Related pieces.</h2>
+            </div>
+            <Link to="/shop" className="text-xs font-bold uppercase tracking-[0.18em]">
+              Shop all
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+            {related.map((item) => (
+              <Link key={item.id} to="/shop/$slug" params={{ slug: item.slug }} className="group">
+                <div className="aspect-[4/5] overflow-hidden bg-muted">
+                  {item.images[0] && (
+                    <img
+                      src={item.images[0]}
+                      alt={item.name}
+                      loading="lazy"
+                      className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                    />
+                  )}
+                </div>
+                <p className="mt-3 text-xs uppercase tracking-[0.16em] text-muted-foreground">
+                  {productGroup(item)}
+                </p>
+                <h3 className="mt-1 font-display text-lg">{item.name}</h3>
+                <p className="mt-1 text-sm">{formatNaira(displayPrice(item))}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }
 
-function ProductInfo({ label, value, fallback }: { label: string; value: string | null; fallback: string }) {
-  return <div className="grid gap-2 border-b border-border py-5 sm:grid-cols-[10rem_1fr]"><p className="eyebrow">{label}</p><p className="text-sm leading-6 text-muted-foreground">{value || fallback}</p></div>;
+function SizeGuide({ product }: { product: StoreProduct }) {
+  const group = productGroup(product);
+  const columns =
+    group === "Bottoms" || group === "Sets"
+      ? [
+          ["size", "Size"],
+          ["waist", "Waist"],
+          ["hip", "Hip"],
+          ["thigh", "Thigh"],
+          ["inseam", "Inseam"],
+          ["length", "Length"],
+          ["fitGuide", "Fit guide"],
+        ]
+      : group === "Native Wear"
+        ? [
+            ["chest", "Chest"],
+            ["shoulder", "Shoulder"],
+            ["sleeve", "Sleeve"],
+            ["topLength", "Top length"],
+            ["trouserWaist", "Trouser waist"],
+            ["trouserLength", "Trouser length"],
+            ["neck", "Neck / cap"],
+          ]
+        : [
+            ["size", "Size"],
+            ["chest", "Chest"],
+            ["shoulder", "Shoulder"],
+            ["sleeve", "Sleeve"],
+            ["length", "Length"],
+            ["fitGuide", "Fit guide"],
+          ];
+  const rows = product.size_guide ?? [];
+
+  return (
+    <section className="mt-10" id="size-guide">
+      <div className="flex items-end justify-between gap-4">
+        <div>
+          <p className="eyebrow">Fit support</p>
+          <h2 className="mt-2 font-display text-2xl">{group} size guide</h2>
+        </div>
+        <Link to="/size-guide" className="text-xs font-bold uppercase tracking-[0.16em]">
+          Measurement help
+        </Link>
+      </div>
+      {rows.length ? (
+        <div className="mt-5 overflow-x-auto border border-border">
+          <table className="min-w-full text-left text-xs">
+            <thead className="bg-muted">
+              <tr>
+                {columns.map(([key, label]) => (
+                  <th
+                    key={key}
+                    className="whitespace-nowrap px-4 py-3 font-bold uppercase tracking-[0.12em]"
+                  >
+                    {label}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row, index) => (
+                <tr key={index} className="border-t border-border">
+                  {columns.map(([key]) => (
+                    <td key={key} className="whitespace-nowrap px-4 py-3 text-muted-foreground">
+                      {row[key] || "—"}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className="mt-5 border border-border bg-card p-5 text-sm leading-6 text-muted-foreground">
+          Product-specific measurements are being prepared. Send your measurements on WhatsApp for
+          fit advice before ordering.
+        </div>
+      )}
+    </section>
+  );
+}
+
+function ProductInfo({
+  label,
+  value,
+  fallback,
+}: {
+  label: string;
+  value?: string | null;
+  fallback: string;
+}) {
+  return (
+    <div className="grid gap-2 border-b border-border py-5 sm:grid-cols-[10rem_1fr]">
+      <p className="eyebrow">{label}</p>
+      <p className="text-sm leading-6 text-muted-foreground">{value || fallback}</p>
+    </div>
+  );
 }
 
 function TrustItem({
