@@ -14,7 +14,9 @@ import { Route as SizeGuideRouteImport } from './routes/size-guide'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as ReturnsRouteImport } from './routes/returns'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PaymentRouteImport } from './routes/payment'
 import { Route as LookbookRouteImport } from './routes/lookbook'
+import { Route as FaqsRouteImport } from './routes/faqs'
 import { Route as DeliveryRouteImport } from './routes/delivery'
 import { Route as CustomStudioRouteImport } from './routes/custom-studio'
 import { Route as CustomOrderRouteImport } from './routes/custom-order'
@@ -63,9 +65,19 @@ const PrivacyRoute = PrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PaymentRoute = PaymentRouteImport.update({
+  id: '/payment',
+  path: '/payment',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LookbookRoute = LookbookRouteImport.update({
   id: '/lookbook',
   path: '/lookbook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqsRoute = FaqsRouteImport.update({
+  id: '/faqs',
+  path: '/faqs',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DeliveryRoute = DeliveryRouteImport.update({
@@ -193,7 +205,9 @@ export interface FileRoutesByFullPath {
   '/custom-order': typeof CustomOrderRoute
   '/custom-studio': typeof CustomStudioRoute
   '/delivery': typeof DeliveryRoute
+  '/faqs': typeof FaqsRoute
   '/lookbook': typeof LookbookRoute
+  '/payment': typeof PaymentRoute
   '/privacy': typeof PrivacyRoute
   '/returns': typeof ReturnsRoute
   '/shop': typeof ShopRouteWithChildren
@@ -222,7 +236,9 @@ export interface FileRoutesByTo {
   '/custom-order': typeof CustomOrderRoute
   '/custom-studio': typeof CustomStudioRoute
   '/delivery': typeof DeliveryRoute
+  '/faqs': typeof FaqsRoute
   '/lookbook': typeof LookbookRoute
+  '/payment': typeof PaymentRoute
   '/privacy': typeof PrivacyRoute
   '/returns': typeof ReturnsRoute
   '/shop': typeof ShopRouteWithChildren
@@ -253,7 +269,9 @@ export interface FileRoutesById {
   '/custom-order': typeof CustomOrderRoute
   '/custom-studio': typeof CustomStudioRoute
   '/delivery': typeof DeliveryRoute
+  '/faqs': typeof FaqsRoute
   '/lookbook': typeof LookbookRoute
+  '/payment': typeof PaymentRoute
   '/privacy': typeof PrivacyRoute
   '/returns': typeof ReturnsRoute
   '/shop': typeof ShopRouteWithChildren
@@ -285,7 +303,9 @@ export interface FileRouteTypes {
     | '/custom-order'
     | '/custom-studio'
     | '/delivery'
+    | '/faqs'
     | '/lookbook'
+    | '/payment'
     | '/privacy'
     | '/returns'
     | '/shop'
@@ -314,7 +334,9 @@ export interface FileRouteTypes {
     | '/custom-order'
     | '/custom-studio'
     | '/delivery'
+    | '/faqs'
     | '/lookbook'
+    | '/payment'
     | '/privacy'
     | '/returns'
     | '/shop'
@@ -344,7 +366,9 @@ export interface FileRouteTypes {
     | '/custom-order'
     | '/custom-studio'
     | '/delivery'
+    | '/faqs'
     | '/lookbook'
+    | '/payment'
     | '/privacy'
     | '/returns'
     | '/shop'
@@ -375,7 +399,9 @@ export interface RootRouteChildren {
   CustomOrderRoute: typeof CustomOrderRoute
   CustomStudioRoute: typeof CustomStudioRoute
   DeliveryRoute: typeof DeliveryRoute
+  FaqsRoute: typeof FaqsRoute
   LookbookRoute: typeof LookbookRoute
+  PaymentRoute: typeof PaymentRoute
   PrivacyRoute: typeof PrivacyRoute
   ReturnsRoute: typeof ReturnsRoute
   ShopRoute: typeof ShopRouteWithChildren
@@ -426,11 +452,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/payment': {
+      id: '/payment'
+      path: '/payment'
+      fullPath: '/payment'
+      preLoaderRoute: typeof PaymentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lookbook': {
       id: '/lookbook'
       path: '/lookbook'
       fullPath: '/lookbook'
       preLoaderRoute: typeof LookbookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faqs': {
+      id: '/faqs'
+      path: '/faqs'
+      fullPath: '/faqs'
+      preLoaderRoute: typeof FaqsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/delivery': {
@@ -628,7 +668,9 @@ const rootRouteChildren: RootRouteChildren = {
   CustomOrderRoute: CustomOrderRoute,
   CustomStudioRoute: CustomStudioRoute,
   DeliveryRoute: DeliveryRoute,
+  FaqsRoute: FaqsRoute,
   LookbookRoute: LookbookRoute,
+  PaymentRoute: PaymentRoute,
   PrivacyRoute: PrivacyRoute,
   ReturnsRoute: ReturnsRoute,
   ShopRoute: ShopRouteWithChildren,

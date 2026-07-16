@@ -1,10 +1,4 @@
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[]
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
 
 export type Database = {
   // Allows to automatically instantiate createClient with right options
@@ -437,6 +431,12 @@ export type Database = {
           fit: string | null
           care_instructions: string | null
           delivery_estimate: string | null
+          subcategory: string | null
+          starting_price_ngn: number | null
+          is_ready_to_wear: boolean
+          product_tags: string[]
+          variants: Json
+          size_guide: Json
           name: string
           price_ngn: number
           short_description: string | null
@@ -464,6 +464,12 @@ export type Database = {
           fit?: string | null
           care_instructions?: string | null
           delivery_estimate?: string | null
+          subcategory?: string | null
+          starting_price_ngn?: number | null
+          is_ready_to_wear?: boolean
+          product_tags?: string[]
+          variants?: Json
+          size_guide?: Json
           name: string
           price_ngn?: number
           short_description?: string | null
@@ -491,6 +497,12 @@ export type Database = {
           fit?: string | null
           care_instructions?: string | null
           delivery_estimate?: string | null
+          subcategory?: string | null
+          starting_price_ngn?: number | null
+          is_ready_to_wear?: boolean
+          product_tags?: string[]
+          variants?: Json
+          size_guide?: Json
           name?: string
           price_ngn?: number
           short_description?: string | null
@@ -616,10 +628,8 @@ export type Tables<
     }
     ? R
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])
-    ? (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] & DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
         Row: infer R
       }
       ? R
