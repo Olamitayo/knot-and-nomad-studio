@@ -27,6 +27,12 @@ interface Product {
   is_customizable: boolean;
   sort_order: number;
   gallery: GalleryItem[];
+  sku: string | null;
+  stock_level: number;
+  material: string | null;
+  fit: string | null;
+  care_instructions: string | null;
+  delivery_estimate: string | null;
 }
 
 interface GalleryItem { url: string; color: string; shot: string }
@@ -36,6 +42,7 @@ const blank: Omit<Product, "id"> = {
   slug: "", name: "", short_description: "", description: "", category: "T-shirts",
   price_ngn: 0, images: [], sizes: ["S", "M", "L"], colors: ["Black"], is_active: true,
   is_sold_out: false, is_new_arrival: false, is_bestseller: false, is_customizable: false, sort_order: 0, gallery: [],
+  sku: "", stock_level: 0, material: "", fit: "", care_instructions: "", delivery_estimate: "5–7 working days",
 };
 
 function AdminProducts() {
@@ -48,7 +55,19 @@ function AdminProducts() {
 
   const save = async () => {
     if (!editing) return;
-    const payload = { ...editing, slug: editing.slug || editing.name.toLowerCase().replace(/[^a-z0-9]+/g, "-") };
+    if (editing.is_active && !editing.sku?.trim()) {
+      toast.error("Add a SKU before publishing this product");
+      return;
+    }
+    const gallery = editing.gallery?.length
+      ? editing.gallery
+      : editing.images.map((url, index) => ({ url, color: editing.colors[0] ?? "", shot: SHOT_TYPES[index] ?? "Detail" }));
+    const incompleteColor = editing.colors.find((color) => gallery.filter((item) => !item.color || item.color.toLowerCase() === color.toLowerCase()).length < 5);
+    if (editing.is_active && incompleteColor) {
+      toast.error(`Add at least 5 gallery images for ${incompleteColor}`);
+      return;
+    }
+    const payload = { ...editing, gallery, slug: editing.slug || editing.name.toLowerCase().replace(/[^a-z0-9]+/g, "-") };
     const { id, ...rest } = payload as any;
     const op = id
       ? supabase.from("products").update(rest).eq("id", id)
@@ -137,6 +156,8 @@ function AdminProducts() {
                 </datalist>
               </label>
               <Input label="Price (NGN)" type="number" value={String(editing.price_ngn)} onChange={(v) => setEditing({ ...editing, price_ngn: Number(v) || 0 })} />
+              <Input label="SKU (one per style)" value={editing.sku ?? ""} onChange={(v) => setEditing({ ...editing, sku: v })} />
+              <Input label="Stock level" type="number" value={String(editing.stock_level ?? 0)} onChange={(v) => setEditing({ ...editing, stock_level: Math.max(0, Number(v) || 0) })} />
               <div className="sm:col-span-2">
                 <Input label="Short description" value={editing.short_description ?? ""} onChange={(v) => setEditing({ ...editing, short_description: v })} />
               </div>
@@ -148,9 +169,16 @@ function AdminProducts() {
               </div>
               <Input label="Sizes (comma-separated)" value={editing.sizes.join(", ")} onChange={(v) => setEditing({ ...editing, sizes: v.split(",").map((s) => s.trim()).filter(Boolean) })} />
               <Input label="Colors (comma-separated)" value={editing.colors.join(", ")} onChange={(v) => setEditing({ ...editing, colors: v.split(",").map((s) => s.trim()).filter(Boolean) })} />
+              <Input label="Fabric / material" value={editing.material ?? ""} onChange={(v) => setEditing({ ...editing, material: v })} />
+              <Input label="Fit" value={editing.fit ?? ""} onChange={(v) => setEditing({ ...editing, fit: v })} />
+              <Input label="Delivery estimate" value={editing.delivery_estimate ?? ""} onChange={(v) => setEditing({ ...editing, delivery_estimate: v })} />
+              <div className="sm:col-span-2">
+                <Input label="Care instructions" value={editing.care_instructions ?? ""} onChange={(v) => setEditing({ ...editing, care_instructions: v })} />
+              </div>
               <Input label="Sort order" type="number" value={String(editing.sort_order)} onChange={(v) => setEditing({ ...editing, sort_order: Number(v) || 0 })} />
               <div className="sm:col-span-2">
-                <span className="eyebrow mb-2 block">Images</span>
+                <span className="eyebrow mb-2 block">Colour gallery</span>
+                <p className="mb-3 text-xs leading-5 text-muted-foreground">Keep every colour under this one SKU. Add 5–8 shots per colour: editorial, front, back, flat lay, fabric, detail, size/fit and styling.</p>
                 <div className="grid grid-cols-4 gap-2 mb-2">
                   {(editing.gallery?.length ? editing.gallery : editing.images.map((url, index) => ({ url, color: editing.colors[0] ?? "", shot: SHOT_TYPES[index] ?? "Detail" }))).map((item, i) => (
                     <div key={`${item.url}-${i}`} className="border border-border bg-muted p-2">

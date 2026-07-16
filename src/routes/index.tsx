@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { ArrowRight, PenLine, Upload, MessagesSquare, CheckCircle2, Scissors, Truck } from "lucide-react";
 import { useReveal } from "@/hooks/useReveal";
 import heroEditorial from "@/assets/hero-editorial.jpg";
@@ -18,6 +19,8 @@ import look1 from "@/assets/look-1.jpg";
 import look2 from "@/assets/look-2.jpg";
 import look3 from "@/assets/look-3.jpg";
 import look4 from "@/assets/look-4.jpg";
+import { supabase } from "@/integrations/supabase/client";
+import { formatNaira } from "@/lib/format";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -53,6 +56,10 @@ const steps = [
 
 function Home() {
   const ref = useReveal();
+  const [featured, setFeatured] = useState<{ id: string; slug: string; name: string; category: string; price_ngn: number; images: string[]; colors: string[]; is_customizable: boolean }[]>([]);
+  useEffect(() => {
+    supabase.from("products").select("id,slug,name,category,price_ngn,images,colors,is_customizable").eq("is_active", true).order("is_bestseller", { ascending: false }).order("sort_order").limit(4).then(({ data }) => setFeatured(data ?? []));
+  }, []);
   return (
     <div ref={ref}>
       {/* HERO */}
@@ -130,6 +137,21 @@ function Home() {
           ))}
         </div>
       </div>
+
+      {featured.length > 0 && <section className="mx-auto max-w-7xl px-6 py-24 lg:px-10 lg:py-32">
+        <div className="mb-12 flex items-end justify-between gap-6" data-reveal>
+          <div><p className="eyebrow">Ready-to-wear</p><h2 className="mt-3 font-display text-4xl lg:text-6xl">Featured pieces.</h2></div>
+          <Link to="/shop" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em]">Shop all <ArrowRight size={14} /></Link>
+        </div>
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          {featured.map((product) => <Link key={product.id} to="/shop/$slug" params={{ slug: product.slug }} className="group">
+            <div className="aspect-[4/5] overflow-hidden border border-border bg-muted">{product.images[0] ? <img src={product.images[0]} alt={product.name} className="h-full w-full object-cover transition duration-700 group-hover:scale-105" /> : <div className="flex h-full items-center justify-center text-xs uppercase tracking-[0.18em] text-muted-foreground">Image coming soon</div>}</div>
+            <p className="mt-4 text-[0.62rem] font-bold uppercase tracking-[0.18em] text-muted-foreground">{product.category}</p>
+            <h3 className="mt-1 font-display text-lg leading-tight sm:text-xl">{product.name}</h3>
+            <div className="mt-2 flex items-center justify-between gap-2"><p className="text-sm font-semibold">From {formatNaira(product.price_ngn)}</p><p className="text-xs text-muted-foreground">{product.colors.length} colour{product.colors.length === 1 ? "" : "s"}</p></div>
+          </Link>)}
+        </div>
+      </section>}
 
       {/* ABOUT TEASER */}
       <section className="mx-auto max-w-7xl px-6 lg:px-10 py-24 lg:py-36 grid lg:grid-cols-12 gap-12 items-center">

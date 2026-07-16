@@ -35,6 +35,11 @@ function CustomStudio() {
           <div className="p-7"><h2 className="font-display text-2xl">{item.name}</h2><p className="mt-3 text-sm leading-6 text-muted-foreground">{item.desc}</p><Link to="/custom-order" className="mt-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em]">Start this order <ArrowRight size={14} /></Link></div>
         </article>)}
       </div>
+      <div className="mt-16 border border-border bg-foreground p-8 text-primary-foreground lg:p-10">
+        <p className="eyebrow !text-primary-foreground/55">Branding & finishing</p>
+        <div className="mt-5 flex flex-wrap gap-x-8 gap-y-3 font-display text-2xl"><span>Embroidery</span><span className="text-accent">/</span><span>DTF</span><span className="text-accent">/</span><span>Screen print</span><span className="text-accent">/</span><span>Patches</span></div>
+        <Link to="/custom-order" className="btn-pill mt-8 inline-flex items-center gap-2 bg-primary-foreground px-6 py-3 text-xs font-bold uppercase tracking-[0.18em] text-foreground">Brief the studio <ArrowRight size={14} /></Link>
+      </div>
     </section>
   </>;
 }
