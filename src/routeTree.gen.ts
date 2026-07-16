@@ -9,8 +9,13 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as SizeGuideRouteImport } from './routes/size-guide'
 import { Route as ShopRouteImport } from './routes/shop'
+import { Route as ReturnsRouteImport } from './routes/returns'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as LookbookRouteImport } from './routes/lookbook'
+import { Route as DeliveryRouteImport } from './routes/delivery'
 import { Route as CustomStudioRouteImport } from './routes/custom-studio'
 import { Route as CustomOrderRouteImport } from './routes/custom-order'
 import { Route as ContactRouteImport } from './routes/contact'
@@ -33,14 +38,39 @@ import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/e
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SizeGuideRoute = SizeGuideRouteImport.update({
+  id: '/size-guide',
+  path: '/size-guide',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ShopRoute = ShopRouteImport.update({
   id: '/shop',
   path: '/shop',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReturnsRoute = ReturnsRouteImport.update({
+  id: '/returns',
+  path: '/returns',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LookbookRoute = LookbookRouteImport.update({
   id: '/lookbook',
   path: '/lookbook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DeliveryRoute = DeliveryRouteImport.update({
+  id: '/delivery',
+  path: '/delivery',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CustomStudioRoute = CustomStudioRouteImport.update({
@@ -162,8 +192,13 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/custom-order': typeof CustomOrderRoute
   '/custom-studio': typeof CustomStudioRoute
+  '/delivery': typeof DeliveryRoute
   '/lookbook': typeof LookbookRoute
+  '/privacy': typeof PrivacyRoute
+  '/returns': typeof ReturnsRoute
   '/shop': typeof ShopRouteWithChildren
+  '/size-guide': typeof SizeGuideRoute
+  '/terms': typeof TermsRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/products': typeof AdminProductsRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -186,8 +221,13 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/custom-order': typeof CustomOrderRoute
   '/custom-studio': typeof CustomStudioRoute
+  '/delivery': typeof DeliveryRoute
   '/lookbook': typeof LookbookRoute
+  '/privacy': typeof PrivacyRoute
+  '/returns': typeof ReturnsRoute
   '/shop': typeof ShopRouteWithChildren
+  '/size-guide': typeof SizeGuideRoute
+  '/terms': typeof TermsRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/products': typeof AdminProductsRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -212,8 +252,13 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/custom-order': typeof CustomOrderRoute
   '/custom-studio': typeof CustomStudioRoute
+  '/delivery': typeof DeliveryRoute
   '/lookbook': typeof LookbookRoute
+  '/privacy': typeof PrivacyRoute
+  '/returns': typeof ReturnsRoute
   '/shop': typeof ShopRouteWithChildren
+  '/size-guide': typeof SizeGuideRoute
+  '/terms': typeof TermsRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/products': typeof AdminProductsRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -239,8 +284,13 @@ export interface FileRouteTypes {
     | '/contact'
     | '/custom-order'
     | '/custom-studio'
+    | '/delivery'
     | '/lookbook'
+    | '/privacy'
+    | '/returns'
     | '/shop'
+    | '/size-guide'
+    | '/terms'
     | '/admin/orders'
     | '/admin/products'
     | '/admin/settings'
@@ -263,8 +313,13 @@ export interface FileRouteTypes {
     | '/contact'
     | '/custom-order'
     | '/custom-studio'
+    | '/delivery'
     | '/lookbook'
+    | '/privacy'
+    | '/returns'
     | '/shop'
+    | '/size-guide'
+    | '/terms'
     | '/admin/orders'
     | '/admin/products'
     | '/admin/settings'
@@ -288,8 +343,13 @@ export interface FileRouteTypes {
     | '/contact'
     | '/custom-order'
     | '/custom-studio'
+    | '/delivery'
     | '/lookbook'
+    | '/privacy'
+    | '/returns'
     | '/shop'
+    | '/size-guide'
+    | '/terms'
     | '/admin/orders'
     | '/admin/products'
     | '/admin/settings'
@@ -314,8 +374,13 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   CustomOrderRoute: typeof CustomOrderRoute
   CustomStudioRoute: typeof CustomStudioRoute
+  DeliveryRoute: typeof DeliveryRoute
   LookbookRoute: typeof LookbookRoute
+  PrivacyRoute: typeof PrivacyRoute
+  ReturnsRoute: typeof ReturnsRoute
   ShopRoute: typeof ShopRouteWithChildren
+  SizeGuideRoute: typeof SizeGuideRoute
+  TermsRoute: typeof TermsRoute
   ApiLaundryOrderRoute: typeof ApiLaundryOrderRoute
   OrderConfirmationReferenceRoute: typeof OrderConfirmationReferenceRoute
   WebhooksPaystackRoute: typeof WebhooksPaystackRoute
@@ -326,6 +391,20 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/size-guide': {
+      id: '/size-guide'
+      path: '/size-guide'
+      fullPath: '/size-guide'
+      preLoaderRoute: typeof SizeGuideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/shop': {
       id: '/shop'
       path: '/shop'
@@ -333,11 +412,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/returns': {
+      id: '/returns'
+      path: '/returns'
+      fullPath: '/returns'
+      preLoaderRoute: typeof ReturnsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lookbook': {
       id: '/lookbook'
       path: '/lookbook'
       fullPath: '/lookbook'
       preLoaderRoute: typeof LookbookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/delivery': {
+      id: '/delivery'
+      path: '/delivery'
+      fullPath: '/delivery'
+      preLoaderRoute: typeof DeliveryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/custom-studio': {
@@ -527,8 +627,13 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   CustomOrderRoute: CustomOrderRoute,
   CustomStudioRoute: CustomStudioRoute,
+  DeliveryRoute: DeliveryRoute,
   LookbookRoute: LookbookRoute,
+  PrivacyRoute: PrivacyRoute,
+  ReturnsRoute: ReturnsRoute,
   ShopRoute: ShopRouteWithChildren,
+  SizeGuideRoute: SizeGuideRoute,
+  TermsRoute: TermsRoute,
   ApiLaundryOrderRoute: ApiLaundryOrderRoute,
   OrderConfirmationReferenceRoute: OrderConfirmationReferenceRoute,
   WebhooksPaystackRoute: WebhooksPaystackRoute,

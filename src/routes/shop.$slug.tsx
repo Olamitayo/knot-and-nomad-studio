@@ -39,6 +39,12 @@ interface Product {
   is_sold_out: boolean;
   is_customizable: boolean;
   gallery?: GalleryItem[];
+  sku: string | null;
+  stock_level: number;
+  material: string | null;
+  fit: string | null;
+  care_instructions: string | null;
+  delivery_estimate: string | null;
 }
 
 interface GalleryItem { url: string; color: string; shot: string }
@@ -107,7 +113,8 @@ function ProductDetail() {
   const selectedImage = selectedItem?.url;
 
   const onAdd = async () => {
-    if (product.is_sold_out) return;
+    if (product.is_sold_out || product.stock_level === 0) return;
+    if (qty > product.stock_level) return toast.error(`Only ${product.stock_level} left in stock`);
     if (product.sizes.length && !size) return toast.error("Choose a size");
     if (product.colors.length && !color) return toast.error("Choose a color");
 
@@ -134,7 +141,7 @@ function ProductDetail() {
     add({
       productId: product.id,
       name: product.name,
-      image: product.images[0] ?? "",
+      image: selectedImage ?? product.images[0] ?? "",
       unitPrice: product.price_ngn,
       size: size || undefined,
       color: color || undefined,
@@ -201,7 +208,10 @@ function ProductDetail() {
         </div>
 
         <div>
-          <p className="eyebrow mb-4">{product.category}</p>
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <p className="eyebrow">{product.category}</p>
+            {product.sku && <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">SKU {product.sku}</p>}
+          </div>
           <div className="flex flex-wrap items-start justify-between gap-5">
             <h1 className="font-display text-5xl leading-[1.02] lg:text-6xl">{product.name}</h1>
             <p className="border border-border bg-card px-4 py-3 text-lg font-semibold">
@@ -219,6 +229,14 @@ function ProductDetail() {
               {product.description}
             </p>
           )}
+
+          <div className="mt-6 flex flex-wrap items-center gap-3 text-xs font-bold uppercase tracking-[0.16em]">
+            <span className={`inline-flex items-center gap-2 ${product.stock_level > 0 && !product.is_sold_out ? "text-accent" : "text-destructive"}`}>
+              <span className="h-2 w-2 rounded-full bg-current" />
+              {product.is_sold_out || product.stock_level === 0 ? "Out of stock" : product.stock_level <= 5 ? `Only ${product.stock_level} left` : "In stock"}
+            </span>
+            {product.delivery_estimate && <span className="text-muted-foreground">Delivery: {product.delivery_estimate}</span>}
+          </div>
 
           <div className="my-8 grid grid-cols-2 gap-px bg-border text-sm sm:grid-cols-4">
             <TrustItem icon={<ShieldCheck size={16} />} label="Quality finish" />
@@ -288,7 +306,7 @@ function ProductDetail() {
               </button>
               <span className="min-w-12 text-center text-sm">{qty}</span>
               <button
-                onClick={() => setQty((q) => q + 1)}
+                onClick={() => setQty((q) => Math.min(product.stock_level || 1, q + 1))}
                 className="flex h-full w-11 items-center justify-center transition hover:bg-muted"
                 aria-label="Increase quantity"
               >
@@ -335,11 +353,11 @@ function ProductDetail() {
           <div className="grid gap-3 sm:grid-cols-2">
             <button
               onClick={onAdd}
-              disabled={product.is_sold_out || uploading}
+              disabled={product.is_sold_out || product.stock_level === 0 || uploading}
               className="inline-flex min-h-14 items-center justify-center gap-2 bg-foreground px-6 text-xs font-bold uppercase tracking-[0.22em] text-primary-foreground transition hover:bg-accent hover:text-accent-foreground disabled:opacity-50"
             >
               <ShoppingBag size={15} />
-              {product.is_sold_out ? "Sold out" : uploading ? "Uploading..." : "Add to cart"}
+              {product.is_sold_out || product.stock_level === 0 ? "Sold out" : uploading ? "Uploading..." : "Add to cart"}
             </button>
             <button
               onClick={onWhatsApp}
@@ -348,6 +366,20 @@ function ProductDetail() {
               <MessageCircle size={15} />
               WhatsApp inquiry
             </button>
+          </div>
+
+          <Link
+            to="/custom-order"
+            className="mt-3 inline-flex min-h-14 w-full items-center justify-center gap-2 border border-border bg-card px-6 text-xs font-bold uppercase tracking-[0.22em] transition hover:border-accent hover:text-accent"
+          >
+            <Wand2 size={15} /> Request customisation
+          </Link>
+
+          <div className="mt-10 border-t border-border">
+            <ProductInfo label="Fabric / material" value={product.material} fallback="Contact the studio for fabric details." />
+            <ProductInfo label="Fit" value={product.fit} fallback="See the size guide or ask us for fit advice." />
+            <ProductInfo label="Care" value={product.care_instructions} fallback="Gentle care recommended. Ask the studio for garment-specific guidance." />
+            <ProductInfo label="Delivery" value={product.delivery_estimate} fallback="Delivery timing is confirmed at checkout." />
           </div>
 
           <button
@@ -361,6 +393,10 @@ function ProductDetail() {
       </section>
     </div>
   );
+}
+
+function ProductInfo({ label, value, fallback }: { label: string; value: string | null; fallback: string }) {
+  return <div className="grid gap-2 border-b border-border py-5 sm:grid-cols-[10rem_1fr]"><p className="eyebrow">{label}</p><p className="text-sm leading-6 text-muted-foreground">{value || fallback}</p></div>;
 }
 
 function TrustItem({

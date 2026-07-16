@@ -76,6 +76,11 @@ export function Footer() {
                 ["/lookbook", "Lookbook"],
                 ["/custom-order", "Custom Order"],
                 ["/contact", "Contact"],
+                ["/size-guide", "Size Guide"],
+                ["/delivery", "Delivery"],
+                ["/returns", "Returns"],
+                ["/privacy", "Privacy"],
+                ["/terms", "Terms"],
               ].map(([to, label]) => (
                 <li key={to}>
                   <Link to={to} className="hover:text-accent transition">{label}</Link>

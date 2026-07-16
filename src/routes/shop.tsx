@@ -48,6 +48,8 @@ interface Product {
   is_new_arrival: boolean;
   is_bestseller: boolean;
   is_customizable: boolean;
+  sku: string | null;
+  stock_level: number;
 }
 
 const SHOP_STRUCTURE = [
@@ -152,7 +154,7 @@ function ShopPage() {
       if (maxPrice && p.price_ngn > maxPrice) return false;
       if (
         term &&
-        ![p.name, p.category, p.short_description ?? ""].some((value) =>
+        ![p.name, p.category, p.sku ?? "", p.short_description ?? ""].some((value) =>
           value.toLowerCase().includes(term),
         )
       ) {
@@ -553,11 +555,14 @@ function ProductCard({ p }: { p: Product }) {
               </span>
             </div>
           )}
+          {!p.is_sold_out && p.stock_level > 0 && p.stock_level <= 5 && (
+            <span className="absolute bottom-3 right-3 bg-background/95 px-2.5 py-1 text-[0.62rem] font-bold uppercase tracking-[0.16em]">Only {p.stock_level} left</span>
+          )}
         </div>
 
         <div className="mt-4 flex items-start justify-between gap-4">
           <div className="min-w-0">
-            <p className="eyebrow mb-1 !text-[0.6rem]">{productGroup(p)} · {p.category}</p>
+            <p className="eyebrow mb-1 !text-[0.6rem]">{productGroup(p)} · {p.category}{p.sku ? ` · ${p.sku}` : ""}</p>
             <h3 className="font-display text-2xl leading-tight transition-colors group-hover:text-accent">
               {p.name}
             </h3>

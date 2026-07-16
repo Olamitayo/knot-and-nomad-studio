@@ -431,6 +431,12 @@ export type Database = {
           is_customizable: boolean
           is_new_arrival: boolean
           is_sold_out: boolean
+          stock_level: number
+          sku: string | null
+          material: string | null
+          fit: string | null
+          care_instructions: string | null
+          delivery_estimate: string | null
           name: string
           price_ngn: number
           short_description: string | null
@@ -452,6 +458,12 @@ export type Database = {
           is_customizable?: boolean
           is_new_arrival?: boolean
           is_sold_out?: boolean
+          stock_level?: number
+          sku?: string | null
+          material?: string | null
+          fit?: string | null
+          care_instructions?: string | null
+          delivery_estimate?: string | null
           name: string
           price_ngn?: number
           short_description?: string | null
@@ -473,6 +485,12 @@ export type Database = {
           is_customizable?: boolean
           is_new_arrival?: boolean
           is_sold_out?: boolean
+          stock_level?: number
+          sku?: string | null
+          material?: string | null
+          fit?: string | null
+          care_instructions?: string | null
+          delivery_estimate?: string | null
           name?: string
           price_ngn?: number
           short_description?: string | null

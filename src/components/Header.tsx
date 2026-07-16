@@ -7,12 +7,10 @@ import { KnotIcon } from "@/components/KnotIcon";
 
 const nav = [
   { to: "/", label: "Home" },
-  { to: "/about", label: "About" },
   { to: "/shop", label: "Shop" },
-  { to: "/collection", label: "Collection" },
   { to: "/custom-studio", label: "Custom Studio" },
   { to: "/lookbook", label: "Lookbook" },
-  { to: "/custom-order", label: "Custom Order" },
+  { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
 ];
 
