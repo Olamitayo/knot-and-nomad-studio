@@ -59,7 +59,7 @@ export const Route = createFileRoute("/api/laundry-order")({
 
         const total = order.items.reduce((sum, item) => sum + item.quantity, 0);
         const itemSummary = order.items.map((item) => `${item.name}: ${item.quantity}`).join("\n");
-        const reference = `NL-${Date.now().toString(36).toUpperCase()}`;
+        const reference = `GC-${Date.now().toString(36).toUpperCase()}`;
 
         await sendNotificationEmail(`Garment care request ${reference} — ${order.name}`, [
           ["Reference", reference],
