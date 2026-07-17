@@ -103,7 +103,7 @@ export function Footer() {
                 ["/about", "About"],
                 ["/lookbook", "Lookbook"],
                 ["/collection", "Collection"],
-                ["/laundry", "Garment Care"],
+                ["/garment-care", "Garment Care"],
                 ["/privacy", "Privacy Policy"],
                 ["/terms", "Terms"],
               ]}
@@ -157,6 +157,20 @@ export function Footer() {
             </div>
           </div>
         </div>
+        <a
+          href="/garment-care"
+          className="mt-14 flex items-center justify-between gap-6 border-y border-primary-foreground/15 py-6 transition hover:border-accent hover:text-accent"
+        >
+          <div>
+            <p className="font-display text-xl">Garment Care</p>
+            <p className="mt-1 text-sm text-primary-foreground/65">
+              Premium laundry, steaming, stain treatment and pickup service by Knot & Nomad.
+            </p>
+          </div>
+          <span className="text-xs font-bold uppercase tracking-[0.18em]">
+            Explore Garment Care →
+          </span>
+        </a>
         <div className="mt-16 pt-8 border-t border-primary-foreground/15 flex flex-col sm:flex-row justify-between gap-4 text-xs text-primary-foreground/60">
           <span>
             © {new Date().getFullYear()} {SITE.name}. All rights reserved.
