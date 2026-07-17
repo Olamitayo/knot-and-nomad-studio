@@ -4,13 +4,19 @@
 const NOTIFY_TO = ["hello@knotnomad.com", "support@knotnomad.com"];
 
 function escapeHtml(value: string): string {
-  const map: Record<string, string> = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+  const map: Record<string, string> = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  };
   return value.replace(/[&<>"']/g, (c) => map[c]);
 }
 
 export async function sendNotificationEmail(
   subject: string,
-  fields: Array<[label: string, value: string | number | null | undefined]>
+  fields: Array<[label: string, value: string | number | null | undefined]>,
 ): Promise<void> {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
@@ -22,7 +28,10 @@ export async function sendNotificationEmail(
   const html = `<div style="font-family:sans-serif;font-size:14px;line-height:1.6;color:#1a1a1a">
     ${fields
       .filter(([, value]) => value !== null && value !== undefined && value !== "")
-      .map(([label, value]) => `<p style="margin:0 0 8px"><strong>${escapeHtml(label)}:</strong> ${escapeHtml(String(value))}</p>`)
+      .map(
+        ([label, value]) =>
+          `<p style="margin:0 0 8px"><strong>${escapeHtml(label)}:</strong> ${escapeHtml(String(value))}</p>`,
+      )
       .join("")}
   </div>`;
 
@@ -54,7 +63,8 @@ export async function sendCustomerEmail(
     return false;
   }
 
-  const from = process.env.RESEND_FROM_EMAIL || "Nomad Laundry <notifications@knotnomad.com>";
+  const from =
+    process.env.RESEND_FROM_EMAIL || "Knot & Nomad Garment Care <notifications@knotnomad.com>";
   try {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
