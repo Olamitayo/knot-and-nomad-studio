@@ -28,14 +28,18 @@ function AdminLayout() {
       <div className="mx-auto max-w-2xl px-6 py-20">
         <h1 className="font-display text-3xl mb-4">Admin access required</h1>
         <p className="text-muted-foreground mb-6">
-          Your account is signed in but is not an admin yet. To grant admin access, run this once in your database (Cloud → SQL):
+          Your account is signed in but is not an admin yet. To grant admin access, run this once in
+          your database (Cloud → SQL):
         </p>
         <pre className="bg-muted border border-border p-4 text-xs overflow-x-auto">
-{`INSERT INTO public.user_roles (user_id, role)
+          {`INSERT INTO public.user_roles (user_id, role)
 VALUES ('${user.id}', 'admin');`}
         </pre>
         <p className="mt-4 text-xs text-muted-foreground">After running, refresh this page.</p>
-        <button onClick={() => supabase.auth.signOut().then(() => navigate({ to: "/auth" }))} className="mt-6 text-xs font-bold uppercase tracking-[0.25em] underline">
+        <button
+          onClick={() => supabase.auth.signOut().then(() => navigate({ to: "/auth" }))}
+          className="mt-6 text-xs font-bold uppercase tracking-[0.25em] underline"
+        >
           Sign out
         </button>
       </div>
@@ -56,7 +60,10 @@ VALUES ('${user.id}', 'admin');`}
           <p className="eyebrow mb-2">Admin</p>
           <h1 className="font-display text-3xl">Knot & Nomad Studio</h1>
         </div>
-        <button onClick={() => supabase.auth.signOut().then(() => navigate({ to: "/" }))} className="text-xs font-bold uppercase tracking-[0.25em] hover:text-accent">
+        <button
+          onClick={() => supabase.auth.signOut().then(() => navigate({ to: "/" }))}
+          className="text-xs font-bold uppercase tracking-[0.25em] hover:text-accent"
+        >
           Sign out
         </button>
       </div>

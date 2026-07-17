@@ -12,12 +12,16 @@ function AdminOverview() {
 
   useEffect(() => {
     (async () => {
-      const [{ count: pCount }, { count: oCount }, { data: pending }, { data: paid }] = await Promise.all([
-        supabase.from("products").select("*", { count: "exact", head: true }),
-        supabase.from("orders").select("*", { count: "exact", head: true }),
-        supabase.from("orders").select("id").eq("payment_status", "pending"),
-        supabase.from("orders").select("total_ngn").in("payment_status", ["paid", "receipt_submitted"]),
-      ]);
+      const [{ count: pCount }, { count: oCount }, { data: pending }, { data: paid }] =
+        await Promise.all([
+          supabase.from("products").select("*", { count: "exact", head: true }),
+          supabase.from("orders").select("*", { count: "exact", head: true }),
+          supabase.from("orders").select("id").eq("payment_status", "pending"),
+          supabase
+            .from("orders")
+            .select("total_ngn")
+            .in("payment_status", ["paid", "receipt_submitted"]),
+        ]);
       setCounts({
         products: pCount ?? 0,
         orders: oCount ?? 0,
@@ -31,13 +35,21 @@ function AdminOverview() {
     { label: "Products", value: counts.products, to: "/admin/products" as const },
     { label: "Orders", value: counts.orders, to: "/admin/orders" as const },
     { label: "Awaiting payment", value: counts.pending, to: "/admin/orders" as const },
-    { label: "Revenue (received)", value: formatNaira(counts.revenue), to: "/admin/orders" as const },
+    {
+      label: "Revenue (received)",
+      value: formatNaira(counts.revenue),
+      to: "/admin/orders" as const,
+    },
   ];
 
   return (
     <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {stats.map((s) => (
-        <Link key={s.label} to={s.to} className="border border-border p-6 hover:bg-muted/40 transition">
+        <Link
+          key={s.label}
+          to={s.to}
+          className="border border-border p-6 hover:bg-muted/40 transition"
+        >
           <p className="eyebrow mb-3">{s.label}</p>
           <p className="font-display text-3xl">{s.value}</p>
         </Link>

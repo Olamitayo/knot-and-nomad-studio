@@ -18,7 +18,12 @@ function NotFoundComponent() {
       <div className="max-w-md text-center">
         <h1 className="font-display text-8xl">404</h1>
         <p className="mt-4 text-muted-foreground">This page got lost on its journey.</p>
-        <a href="/" className="btn-pill mt-8 inline-block bg-foreground text-primary-foreground px-7 py-3.5 text-xs font-bold uppercase tracking-[0.2em] hover:bg-accent hover:text-accent-foreground transition-colors">Back home</a>
+        <a
+          href="/"
+          className="btn-pill mt-8 inline-block bg-foreground text-primary-foreground px-7 py-3.5 text-xs font-bold uppercase tracking-[0.2em] hover:bg-accent hover:text-accent-foreground transition-colors"
+        >
+          Back home
+        </a>
       </div>
     </div>
   );
@@ -33,9 +38,14 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
         <h1 className="font-display text-4xl">Something went wrong</h1>
         <p className="mt-3 text-sm text-muted-foreground">{error.message}</p>
         <button
-          onClick={() => { router.invalidate(); reset(); }}
+          onClick={() => {
+            router.invalidate();
+            reset();
+          }}
           className="btn-pill mt-6 bg-foreground text-primary-foreground px-7 py-3.5 text-xs font-bold uppercase tracking-[0.2em] hover:bg-accent hover:text-accent-foreground transition-colors"
-        >Try again</button>
+        >
+          Try again
+        </button>
       </div>
     </div>
   );
@@ -47,20 +57,43 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Knot & Nomad — Custom Premium Apparel | Rooted in Motion" },
-      { name: "description", content: "Premium custom apparel studio. Design your own t-shirts, caps, hoodies and streetwear — crafted around your identity." },
+      {
+        name: "description",
+        content:
+          "Premium custom apparel studio. Design your own t-shirts, caps, hoodies and streetwear — crafted around your identity.",
+      },
       { name: "author", content: "Knot & Nomad" },
       { name: "theme-color", content: "#1a1a1a" },
       { property: "og:site_name", content: "Knot & Nomad" },
       { property: "og:type", content: "website" },
       { property: "og:title", content: "Knot & Nomad — Custom Premium Apparel | Rooted in Motion" },
-      { property: "og:description", content: "Premium custom apparel studio. Design your own t-shirts, caps, hoodies and streetwear — crafted around your identity." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/704179cd-bdfa-425e-8832-92d4240adb49" },
+      {
+        property: "og:description",
+        content:
+          "Premium custom apparel studio. Design your own t-shirts, caps, hoodies and streetwear — crafted around your identity.",
+      },
+      {
+        property: "og:image",
+        content:
+          "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/704179cd-bdfa-425e-8832-92d4240adb49",
+      },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Knot & Nomad — Custom Premium Apparel | Rooted in Motion" },
-      { name: "twitter:description", content: "Premium custom apparel studio. Design your own t-shirts, caps, hoodies and streetwear — crafted around your identity." },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/704179cd-bdfa-425e-8832-92d4240adb49" },
+      {
+        name: "twitter:title",
+        content: "Knot & Nomad — Custom Premium Apparel | Rooted in Motion",
+      },
+      {
+        name: "twitter:description",
+        content:
+          "Premium custom apparel studio. Design your own t-shirts, caps, hoodies and streetwear — crafted around your identity.",
+      },
+      {
+        name: "twitter:image",
+        content:
+          "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/704179cd-bdfa-425e-8832-92d4240adb49",
+      },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -71,7 +104,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "manifest", href: "/site.webmanifest" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,600;0,700;0,800;0,900;1,700&family=Inter:wght@300;400;500;600;700&display=swap" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,600;0,700;0,800;0,900;1,700&family=Inter:wght@300;400;500;600;700&display=swap",
+      },
     ],
   }),
   shellComponent: RootShell,

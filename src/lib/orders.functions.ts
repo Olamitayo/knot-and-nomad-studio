@@ -80,9 +80,7 @@ const subscribeSchema = z.object({
 export const subscribeNewsletter = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => subscribeSchema.parse(d))
   .handler(async ({ data }) => {
-    const { error } = await supabaseAdmin
-      .from("newsletter_subscribers")
-      .insert(data);
+    const { error } = await supabaseAdmin.from("newsletter_subscribers").insert(data);
     if (error && !String(error.message).toLowerCase().includes("duplicate")) {
       console.error("newsletter insert failed", error);
       return { ok: false, error: "Subscription failed. Try again." };

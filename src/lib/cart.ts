@@ -58,5 +58,4 @@ export const useCart = create<CartState>()(
 export const cartSubtotal = (items: CartItem[]) =>
   items.reduce((sum, i) => sum + i.unitPrice * i.quantity, 0);
 
-export const cartCount = (items: CartItem[]) =>
-  items.reduce((sum, i) => sum + i.quantity, 0);
+export const cartCount = (items: CartItem[]) => items.reduce((sum, i) => sum + i.quantity, 0);

@@ -1,3 +1,25 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { InfoPage } from "@/components/InfoPage";
-export const Route = createFileRoute("/privacy")({ component: () => <InfoPage eyebrow="Your information" title="Privacy" intro="We use customer information only to operate the store, fulfil orders and provide support." sections={[{ title: "What we collect", body: "Contact, delivery, order and payment-reference information you provide when shopping or submitting a custom brief." }, { title: "How it is used", body: "To process orders, communicate updates, prevent fraud and improve our service. Card details are handled by our payment provider and are not stored by Knot & Nomad." }, { title: "Your choices", body: "You may ask us to correct your information or stop non-essential marketing communication by contacting the studio." }]} /> });
+export const Route = createFileRoute("/privacy")({
+  component: () => (
+    <InfoPage
+      eyebrow="Your information"
+      title="Privacy"
+      intro="We use customer information only to operate the store, fulfil orders and provide support."
+      sections={[
+        {
+          title: "What we collect",
+          body: "Contact, delivery, order and payment-reference information you provide when shopping or submitting a custom brief.",
+        },
+        {
+          title: "How it is used",
+          body: "To process orders, communicate updates, prevent fraud and improve our service. Card details are handled by our payment provider and are not stored by Knot & Nomad.",
+        },
+        {
+          title: "Your choices",
+          body: "You may ask us to correct your information or stop non-essential marketing communication by contacting the studio.",
+        },
+      ]}
+    />
+  ),
+});

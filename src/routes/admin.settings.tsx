@@ -31,23 +31,38 @@ function AdminSettings() {
   const [zoneBusy, setZoneBusy] = useState(false);
 
   useEffect(() => {
-    supabase.from("app_settings").select("*").limit(1).maybeSingle().then(({ data }) => setS(data as Settings | null));
+    supabase
+      .from("app_settings")
+      .select("*")
+      .limit(1)
+      .maybeSingle()
+      .then(({ data }) => setS(data as Settings | null));
     reloadZones();
   }, []);
 
   const reloadZones = () =>
-    supabase.from("delivery_zones").select("*").order("sort_order").order("area_name")
+    supabase
+      .from("delivery_zones")
+      .select("*")
+      .order("sort_order")
+      .order("area_name")
       .then(({ data }) => setZones((data as DeliveryZone[]) ?? []));
 
   const save = async () => {
     if (!s) return;
     setBusy(true);
-    const { error } = await supabase.from("app_settings").update({
-      bank_name: s.bank_name, account_name: s.account_name,
-      account_number: s.account_number, delivery_fee_ngn: s.delivery_fee_ngn,
-    }).eq("id", s.id);
+    const { error } = await supabase
+      .from("app_settings")
+      .update({
+        bank_name: s.bank_name,
+        account_name: s.account_name,
+        account_number: s.account_number,
+        delivery_fee_ngn: s.delivery_fee_ngn,
+      })
+      .eq("id", s.id);
     setBusy(false);
-    if (error) toast.error(error.message); else toast.success("Saved");
+    if (error) toast.error(error.message);
+    else toast.success("Saved");
   };
 
   const addZone = async () => {
@@ -84,10 +99,26 @@ function AdminSettings() {
       <div>
         <h2 className="font-display text-2xl mb-6">Settings</h2>
         <div className="space-y-4">
-          <Field label="Bank name" value={s.bank_name} onChange={(v) => setS({ ...s, bank_name: v })} />
-          <Field label="Account name" value={s.account_name} onChange={(v) => setS({ ...s, account_name: v })} />
-          <Field label="Account number" value={s.account_number} onChange={(v) => setS({ ...s, account_number: v })} />
-          <button onClick={save} disabled={busy} className="bg-foreground text-primary-foreground px-6 py-3 text-xs font-bold uppercase tracking-[0.25em] disabled:opacity-50">
+          <Field
+            label="Bank name"
+            value={s.bank_name}
+            onChange={(v) => setS({ ...s, bank_name: v })}
+          />
+          <Field
+            label="Account name"
+            value={s.account_name}
+            onChange={(v) => setS({ ...s, account_name: v })}
+          />
+          <Field
+            label="Account number"
+            value={s.account_number}
+            onChange={(v) => setS({ ...s, account_number: v })}
+          />
+          <button
+            onClick={save}
+            disabled={busy}
+            className="bg-foreground text-primary-foreground px-6 py-3 text-xs font-bold uppercase tracking-[0.25em] disabled:opacity-50"
+          >
             {busy ? "Saving…" : "Save settings"}
           </button>
         </div>
@@ -96,9 +127,9 @@ function AdminSettings() {
       <div>
         <h2 className="font-display text-2xl mb-2">Lagos delivery areas</h2>
         <p className="text-sm text-muted-foreground mb-6">
-          Each area has its own delivery fee, shown to customers at checkout when their state is Lagos.
-          Orders outside Lagos aren't priced here — their delivery fee is negotiated per order (see Orders).
-          Pickup orders are always free regardless of these fees.
+          Each area has its own delivery fee, shown to customers at checkout when their state is
+          Lagos. Orders outside Lagos aren't priced here — their delivery fee is negotiated per
+          order (see Orders). Pickup orders are always free regardless of these fees.
         </p>
         <div className="border border-border divide-y divide-border">
           {zones.map((z) => (
@@ -113,12 +144,19 @@ function AdminSettings() {
                 }}
                 className="w-32 bg-background border border-border px-3 py-2 text-sm"
               />
-              <button onClick={() => deleteZone(z.id)} className="p-2 text-muted-foreground hover:text-destructive">
+              <button
+                onClick={() => deleteZone(z.id)}
+                className="p-2 text-muted-foreground hover:text-destructive"
+              >
                 <Trash2 size={16} />
               </button>
             </div>
           ))}
-          {zones.length === 0 && <p className="p-4 text-sm text-muted-foreground">No delivery areas yet — add one below.</p>}
+          {zones.length === 0 && (
+            <p className="p-4 text-sm text-muted-foreground">
+              No delivery areas yet — add one below.
+            </p>
+          )}
         </div>
 
         <div className="flex items-end gap-3 mt-4">
@@ -140,7 +178,11 @@ function AdminSettings() {
               className="w-full bg-background border border-border px-3 py-2 text-sm"
             />
           </label>
-          <button onClick={addZone} disabled={zoneBusy} className="bg-foreground text-primary-foreground px-4 py-2 text-xs font-bold uppercase tracking-[0.25em] hover:bg-accent hover:text-accent-foreground transition disabled:opacity-50 flex items-center gap-2">
+          <button
+            onClick={addZone}
+            disabled={zoneBusy}
+            className="bg-foreground text-primary-foreground px-4 py-2 text-xs font-bold uppercase tracking-[0.25em] hover:bg-accent hover:text-accent-foreground transition disabled:opacity-50 flex items-center gap-2"
+          >
             <Plus size={14} /> Add
           </button>
         </div>
@@ -149,11 +191,26 @@ function AdminSettings() {
   );
 }
 
-function Field({ label, value, onChange, type = "text" }: { label: string; value: string; onChange: (v: string) => void; type?: string }) {
+function Field({
+  label,
+  value,
+  onChange,
+  type = "text",
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  type?: string;
+}) {
   return (
     <label className="block">
       <span className="eyebrow mb-2 block">{label}</span>
-      <input type={type} value={value} onChange={(e) => onChange(e.target.value)} className="w-full bg-background border border-border px-3 py-2 text-sm" />
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full bg-background border border-border px-3 py-2 text-sm"
+      />
     </label>
   );
 }

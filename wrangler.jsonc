@@ -6,6 +6,6 @@
   "main": "src/server.ts",
   "routes": [
     { "pattern": "knotnomad.com", "custom_domain": true },
-    { "pattern": "www.knotnomad.com", "custom_domain": true }
+    { "pattern": "www.knotnomad.com", "custom_domain": true },
   ],
 }

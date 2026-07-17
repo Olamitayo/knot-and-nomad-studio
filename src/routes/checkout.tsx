@@ -59,12 +59,22 @@ function CheckoutPage() {
   });
 
   useEffect(() => {
-    supabase.from("app_settings").select("*").limit(1).maybeSingle().then(({ data }) => {
-      if (data) setSettings(data as Settings);
-    });
-    supabase.from("delivery_zones").select("id, area_name, fee_ngn").order("sort_order").order("area_name").then(({ data }) => {
-      setZones((data as DeliveryZone[]) ?? []);
-    });
+    supabase
+      .from("app_settings")
+      .select("*")
+      .limit(1)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data) setSettings(data as Settings);
+      });
+    supabase
+      .from("delivery_zones")
+      .select("id, area_name, fee_ngn")
+      .order("sort_order")
+      .order("area_name")
+      .then(({ data }) => {
+        setZones((data as DeliveryZone[]) ?? []);
+      });
   }, []);
 
   // Cart items come from persisted localStorage, which zustand rehydrates
@@ -91,8 +101,10 @@ function CheckoutPage() {
   const deliveryFeeConfirmed = isPickup || isLagos;
   const total = subtotal + deliveryFee;
 
-  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
-    setForm((f) => ({ ...f, [k]: e.target.value }));
+  const set =
+    (k: keyof typeof form) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
+      setForm((f) => ({ ...f, [k]: e.target.value }));
 
   const payWithCard = (order: { id: string; reference: string; total: number }) => {
     openPaystackCheckout({
@@ -123,7 +135,15 @@ function CheckoutPage() {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.full_name || !form.email || !form.phone || !form.whatsapp || !form.address || !form.city || !form.state) {
+    if (
+      !form.full_name ||
+      !form.email ||
+      !form.phone ||
+      !form.whatsapp ||
+      !form.address ||
+      !form.city ||
+      !form.state
+    ) {
       return toast.error("Please fill all required fields.");
     }
     if (isLagos && !isPickup && !deliveryArea) {
@@ -214,7 +234,9 @@ function CheckoutPage() {
       <div className="mx-auto max-w-6xl px-6 lg:px-10 py-12 lg:py-16">
         <p className="eyebrow mb-3">Checkout</p>
         <h1 className="font-display text-4xl lg:text-5xl mb-2">Almost yours</h1>
-        <p className="text-muted-foreground mb-12">Review the details below before we get started on your pieces.</p>
+        <p className="text-muted-foreground mb-12">
+          Review the details below before we get started on your pieces.
+        </p>
 
         <form onSubmit={onSubmit} className="grid lg:grid-cols-3 gap-12">
           <div className="lg:col-span-2 space-y-10">
@@ -245,7 +267,9 @@ function CheckoutPage() {
                     >
                       <option value="">Select your state…</option>
                       {NIGERIA_STATES.map((st) => (
-                        <option key={st} value={st}>{st}</option>
+                        <option key={st} value={st}>
+                          {st}
+                        </option>
                       ))}
                     </select>
                   </div>
@@ -281,8 +305,9 @@ function CheckoutPage() {
                 )}
                 {!isLagos && !isPickup && form.state && (
                   <p className="text-sm text-muted-foreground border border-border bg-muted/40 p-4">
-                    We deliver outside Lagos too — the delivery fee for {form.state} will be confirmed with you via WhatsApp
-                    right after you place this order, before any payment is taken.
+                    We deliver outside Lagos too — the delivery fee for {form.state} will be
+                    confirmed with you via WhatsApp right after you place this order, before any
+                    payment is taken.
                   </p>
                 )}
                 <div>
@@ -319,17 +344,30 @@ function CheckoutPage() {
 
               {!deliveryFeeConfirmed && (
                 <p className="mt-6 text-sm text-muted-foreground border border-border bg-muted/40 p-4">
-                  Payment happens after your delivery fee is confirmed — placing this order now just saves your details and starts the conversation on WhatsApp.
+                  Payment happens after your delivery fee is confirmed — placing this order now just
+                  saves your details and starts the conversation on WhatsApp.
                 </p>
               )}
 
               {deliveryFeeConfirmed && paymentMethod === "transfer" && settings && (
                 <div className="mt-6 border border-border bg-muted/40 p-6 text-sm space-y-2">
                   <p className="eyebrow mb-2">Pay to</p>
-                  <p><span className="text-muted-foreground">Bank: </span>{settings.bank_name}</p>
-                  <p><span className="text-muted-foreground">Account name: </span>{settings.account_name}</p>
-                  <p><span className="text-muted-foreground">Account number: </span><span className="font-mono">{settings.account_number}</span></p>
-                  <p className="mt-3 text-muted-foreground">After placing this order, you'll be shown your unique reference. Send your payment receipt via WhatsApp with the reference for confirmation.</p>
+                  <p>
+                    <span className="text-muted-foreground">Bank: </span>
+                    {settings.bank_name}
+                  </p>
+                  <p>
+                    <span className="text-muted-foreground">Account name: </span>
+                    {settings.account_name}
+                  </p>
+                  <p>
+                    <span className="text-muted-foreground">Account number: </span>
+                    <span className="font-mono">{settings.account_number}</span>
+                  </p>
+                  <p className="mt-3 text-muted-foreground">
+                    After placing this order, you'll be shown your unique reference. Send your
+                    payment receipt via WhatsApp with the reference for confirmation.
+                  </p>
                 </div>
               )}
             </section>
@@ -353,21 +391,38 @@ function CheckoutPage() {
                 {items.map((it) => (
                   <div key={it.id} className="flex gap-3 text-sm">
                     <div className="w-14 h-16 bg-muted shrink-0 overflow-hidden">
-                      {it.image && <img src={it.image} alt="" className="h-full w-full object-cover" />}
+                      {it.image && (
+                        <img src={it.image} alt="" className="h-full w-full object-cover" />
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-medium truncate">{it.name}</p>
-                      <p className="text-xs text-muted-foreground">{[it.size, it.color, `× ${it.quantity}`].filter(Boolean).join(" · ")}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {[it.size, it.color, `× ${it.quantity}`].filter(Boolean).join(" · ")}
+                      </p>
                     </div>
-                    <p className="text-sm whitespace-nowrap">{formatNaira(it.unitPrice * it.quantity)}</p>
+                    <p className="text-sm whitespace-nowrap">
+                      {formatNaira(it.unitPrice * it.quantity)}
+                    </p>
                   </div>
                 ))}
               </div>
               <div className="space-y-2 text-sm border-t border-border pt-4">
                 <Row label="Subtotal" value={formatNaira(subtotal)} />
-                <Row label="Delivery" value={deliveryFeeConfirmed ? formatNaira(deliveryFee) : "To be confirmed"} />
+                <Row
+                  label="Delivery"
+                  value={deliveryFeeConfirmed ? formatNaira(deliveryFee) : "To be confirmed"}
+                />
                 <div className="h-px bg-border my-2" />
-                <Row label="Total" value={deliveryFeeConfirmed ? formatNaira(total) : `${formatNaira(subtotal)} + delivery`} bold />
+                <Row
+                  label="Total"
+                  value={
+                    deliveryFeeConfirmed
+                      ? formatNaira(total)
+                      : `${formatNaira(subtotal)} + delivery`
+                  }
+                  bold
+                />
               </div>
               <button
                 type="submit"
@@ -375,10 +430,17 @@ function CheckoutPage() {
                 className="btn-pill mt-6 w-full bg-foreground text-primary-foreground py-4 text-xs font-bold uppercase tracking-[0.25em] hover:bg-accent hover:text-accent-foreground transition disabled:opacity-50"
               >
                 {submitting
-                  ? deliveryFeeConfirmed && paymentMethod === "card" ? "Opening secure checkout…" : "Placing order…"
-                  : deliveryFeeConfirmed && paymentMethod === "card" ? "Pay now" : "Place order"}
+                  ? deliveryFeeConfirmed && paymentMethod === "card"
+                    ? "Opening secure checkout…"
+                    : "Placing order…"
+                  : deliveryFeeConfirmed && paymentMethod === "card"
+                    ? "Pay now"
+                    : "Place order"}
               </button>
-              <Link to="/cart" className="mt-3 block text-center text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground">
+              <Link
+                to="/cart"
+                className="mt-3 block text-center text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground"
+              >
                 Edit cart
               </Link>
             </div>
@@ -389,23 +451,46 @@ function CheckoutPage() {
   );
 }
 
-function Field({ label, ...props }: { label: string } & React.InputHTMLAttributes<HTMLInputElement>) {
+function Field({
+  label,
+  ...props
+}: { label: string } & React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <label className="block">
       <span className="eyebrow mb-2 block">{label}</span>
-      <input {...props} className="w-full bg-background border border-border px-3 py-3 text-sm focus:outline-none focus:border-foreground" />
+      <input
+        {...props}
+        className="w-full bg-background border border-border px-3 py-3 text-sm focus:outline-none focus:border-foreground"
+      />
     </label>
   );
 }
 
-function PayOption({ active, onClick, icon, title, desc, disabled }: { active: boolean; onClick: () => void; icon: React.ReactNode; title: string; desc: string; disabled?: boolean }) {
+function PayOption({
+  active,
+  onClick,
+  icon,
+  title,
+  desc,
+  disabled,
+}: {
+  active: boolean;
+  onClick: () => void;
+  icon: React.ReactNode;
+  title: string;
+  desc: string;
+  disabled?: boolean;
+}) {
   return (
     <button
       type="button"
       onClick={onClick}
       className={`text-left p-4 border transition ${active ? "border-foreground bg-foreground text-primary-foreground" : "border-border hover:border-foreground"} ${disabled ? "opacity-60" : ""}`}
     >
-      <div className="flex items-center gap-2 mb-1">{icon}<span className="font-medium">{title}</span></div>
+      <div className="flex items-center gap-2 mb-1">
+        {icon}
+        <span className="font-medium">{title}</span>
+      </div>
       <p className="text-xs opacity-80">{desc}</p>
     </button>
   );
@@ -414,7 +499,8 @@ function PayOption({ active, onClick, icon, title, desc, disabled }: { active: b
 function Trust({ icon, label }: { icon: React.ReactNode; label: string }) {
   return (
     <div className="flex items-center gap-2 text-muted-foreground border border-border px-3 py-2.5">
-      {icon}<span>{label}</span>
+      {icon}
+      <span>{label}</span>
     </div>
   );
 }

@@ -1,3 +1,25 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { InfoPage } from "@/components/InfoPage";
-export const Route = createFileRoute("/returns")({ component: () => <InfoPage eyebrow="Order support" title="Returns" intro="If something is wrong with your order, contact us promptly so we can review it fairly." sections={[{ title: "Ready-to-wear", body: "Unworn, unwashed ready-to-wear pieces may be eligible for exchange when returned in original condition. Contact us before sending anything back." }, { title: "Custom pieces", body: "Personalised and made-to-measure pieces cannot usually be returned unless they arrive faulty or differ materially from the approved brief." }, { title: "Report an issue", body: "Send your order reference and clear photos through WhatsApp or email as soon as possible after delivery." }]} /> });
+export const Route = createFileRoute("/returns")({
+  component: () => (
+    <InfoPage
+      eyebrow="Order support"
+      title="Returns"
+      intro="If something is wrong with your order, contact us promptly so we can review it fairly."
+      sections={[
+        {
+          title: "Ready-to-wear",
+          body: "Unworn, unwashed ready-to-wear pieces may be eligible for exchange when returned in original condition. Contact us before sending anything back.",
+        },
+        {
+          title: "Custom pieces",
+          body: "Personalised and made-to-measure pieces cannot usually be returned unless they arrive faulty or differ materially from the approved brief.",
+        },
+        {
+          title: "Report an issue",
+          body: "Send your order reference and clear photos through WhatsApp or email as soon as possible after delivery.",
+        },
+      ]}
+    />
+  ),
+});

@@ -27,7 +27,8 @@ interface OrderForNotify {
   payment_method: string;
 }
 
-const ORDER_SELECT = "reference, full_name, email, phone, whatsapp, address, city, state, total_ngn, payment_method";
+const ORDER_SELECT =
+  "reference, full_name, email, phone, whatsapp, address, city, state, total_ngn, payment_method";
 
 async function notifyOrder(order: OrderForNotify, subject: string) {
   await sendNotificationEmail(subject, [
@@ -67,9 +68,12 @@ async function verifyAndMarkPaid(reference: string): Promise<{ ok: boolean; erro
     return { ok: true };
   }
 
-  const res = await fetch(`https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`, {
-    headers: { Authorization: `Bearer ${secretKey}` },
-  });
+  const res = await fetch(
+    `https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`,
+    {
+      headers: { Authorization: `Bearer ${secretKey}` },
+    },
+  );
 
   if (!res.ok) {
     console.error("[payments] Paystack verify request failed", res.status, await res.text());
@@ -84,7 +88,11 @@ async function verifyAndMarkPaid(reference: string): Promise<{ ok: boolean; erro
   }
 
   if (tx.currency !== "NGN" || tx.amount !== order.total_ngn * 100) {
-    console.error("[payments] Amount/currency mismatch", { expected: order.total_ngn * 100, got: tx.amount, currency: tx.currency });
+    console.error("[payments] Amount/currency mismatch", {
+      expected: order.total_ngn * 100,
+      got: tx.amount,
+      currency: tx.currency,
+    });
     return { ok: false, error: "Payment amount did not match the order total." };
   }
 
@@ -95,7 +103,10 @@ async function verifyAndMarkPaid(reference: string): Promise<{ ok: boolean; erro
 
   if (updateErr) {
     console.error("[payments] Failed to mark order paid", updateErr);
-    return { ok: false, error: "Payment verified but we couldn't update the order. Contact support." };
+    return {
+      ok: false,
+      error: "Payment verified but we couldn't update the order. Contact support.",
+    };
   }
 
   await notifyOrder(order, `Payment confirmed — order ${order.reference}`);

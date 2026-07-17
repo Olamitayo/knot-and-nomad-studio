@@ -47,16 +47,23 @@ function ConfirmationPage() {
   const reload = () =>
     supabase
       .from("orders")
-      .select("id, reference, full_name, email, whatsapp, city, state, subtotal_ngn, total_ngn, payment_method, payment_status, delivery_fee_status, receipt_url")
+      .select(
+        "id, reference, full_name, email, whatsapp, city, state, subtotal_ngn, total_ngn, payment_method, payment_status, delivery_fee_status, receipt_url",
+      )
       .eq("reference", reference)
       .maybeSingle()
       .then(({ data }) => setOrder(data as Order | null));
 
   useEffect(() => {
     reload();
-    supabase.from("app_settings").select("*").limit(1).maybeSingle().then(({ data }) => {
-      if (data) setSettings(data as Settings);
-    });
+    supabase
+      .from("app_settings")
+      .select("*")
+      .limit(1)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data) setSettings(data as Settings);
+      });
   }, [reference]);
 
   const onUploadReceipt = async (file: File) => {
@@ -123,12 +130,17 @@ function ConfirmationPage() {
     : "";
 
   if (!order) {
-    return <div className="mx-auto max-w-3xl px-6 py-24 text-center text-muted-foreground">Loading order…</div>;
+    return (
+      <div className="mx-auto max-w-3xl px-6 py-24 text-center text-muted-foreground">
+        Loading order…
+      </div>
+    );
   }
 
   const awaitingDeliveryFee = order.delivery_fee_status === "pending_negotiation";
   const isTransfer = order.payment_method === "transfer" && !awaitingDeliveryFee;
-  const isCardPending = order.payment_method === "card" && order.payment_status !== "paid" && !awaitingDeliveryFee;
+  const isCardPending =
+    order.payment_method === "card" && order.payment_status !== "paid" && !awaitingDeliveryFee;
   const isCardPaid = order.payment_method === "card" && order.payment_status === "paid";
 
   return (
@@ -137,12 +149,16 @@ function ConfirmationPage() {
         <div className="text-center mb-12">
           <CheckCircle2 size={48} className="mx-auto text-accent" />
           <p className="eyebrow mt-6 mb-3">Order received</p>
-          <h1 className="font-display text-4xl lg:text-5xl">Thank you, {order.full_name.split(" ")[0]}.</h1>
+          <h1 className="font-display text-4xl lg:text-5xl">
+            Thank you, {order.full_name.split(" ")[0]}.
+          </h1>
           <p className="mt-4 text-muted-foreground">
             Your order has been received.{" "}
-            {awaitingDeliveryFee && "We'll confirm your delivery fee via WhatsApp before any payment is taken. "}
+            {awaitingDeliveryFee &&
+              "We'll confirm your delivery fee via WhatsApp before any payment is taken. "}
             {isTransfer && "Kindly send your payment receipt via WhatsApp for confirmation. "}
-            {isCardPending && "Your card payment hasn't completed yet — pay below to confirm your order. "}
+            {isCardPending &&
+              "Your card payment hasn't completed yet — pay below to confirm your order. "}
             Our team will contact you shortly.
           </p>
         </div>
@@ -164,11 +180,24 @@ function ConfirmationPage() {
           <div className="grid sm:grid-cols-2 gap-3 text-sm">
             <div>
               <span className="text-muted-foreground">Total: </span>
-              {awaitingDeliveryFee ? `${formatNaira(order.subtotal_ngn)} + delivery (tbc)` : formatNaira(order.total_ngn)}
+              {awaitingDeliveryFee
+                ? `${formatNaira(order.subtotal_ngn)} + delivery (tbc)`
+                : formatNaira(order.total_ngn)}
             </div>
-            <div><span className="text-muted-foreground">Payment: </span>{order.payment_method === "transfer" ? "Bank transfer" : "Card"}</div>
-            <div><span className="text-muted-foreground">Status: </span>{awaitingDeliveryFee ? "awaiting delivery fee" : order.payment_status.replace(/_/g, " ")}</div>
-            <div><span className="text-muted-foreground">Email: </span>{order.email}</div>
+            <div>
+              <span className="text-muted-foreground">Payment: </span>
+              {order.payment_method === "transfer" ? "Bank transfer" : "Card"}
+            </div>
+            <div>
+              <span className="text-muted-foreground">Status: </span>
+              {awaitingDeliveryFee
+                ? "awaiting delivery fee"
+                : order.payment_status.replace(/_/g, " ")}
+            </div>
+            <div>
+              <span className="text-muted-foreground">Email: </span>
+              {order.email}
+            </div>
           </div>
         </div>
 
@@ -176,7 +205,8 @@ function ConfirmationPage() {
           <div className="border border-border p-6 lg:p-8 mb-8 text-center">
             <p className="eyebrow mb-3">Delivery fee</p>
             <p className="text-sm text-muted-foreground mb-6">
-              Since your delivery address is outside Lagos, we'll confirm the delivery fee with you directly. Once agreed, refresh this page (or reopen this link) to complete payment.
+              Since your delivery address is outside Lagos, we'll confirm the delivery fee with you
+              directly. Once agreed, refresh this page (or reopen this link) to complete payment.
             </p>
             <a
               href={whatsappLink(deliveryWhatsappMsg)}
@@ -193,7 +223,8 @@ function ConfirmationPage() {
           <div className="border border-border p-6 lg:p-8 mb-8 text-center">
             <p className="eyebrow mb-3">Card payment</p>
             <p className="text-sm text-muted-foreground mb-6">
-              Your payment wasn't completed. Click below to open secure checkout and finish paying — your order is already saved.
+              Your payment wasn't completed. Click below to open secure checkout and finish paying —
+              your order is already saved.
             </p>
             <button
               onClick={retryCardPayment}
@@ -216,12 +247,21 @@ function ConfirmationPage() {
           <div className="border border-border p-6 lg:p-8 mb-8">
             <p className="eyebrow mb-4">Bank transfer details</p>
             <div className="space-y-2 text-sm mb-6">
-              <p><span className="text-muted-foreground">Bank: </span>{settings.bank_name}</p>
-              <p><span className="text-muted-foreground">Account name: </span>{settings.account_name}</p>
+              <p>
+                <span className="text-muted-foreground">Bank: </span>
+                {settings.bank_name}
+              </p>
+              <p>
+                <span className="text-muted-foreground">Account name: </span>
+                {settings.account_name}
+              </p>
               <p className="flex items-center gap-2">
                 <span className="text-muted-foreground">Account number: </span>
                 <span className="font-mono">{settings.account_number}</span>
-                <button onClick={() => copy(settings.account_number)} className="text-muted-foreground hover:text-foreground">
+                <button
+                  onClick={() => copy(settings.account_number)}
+                  className="text-muted-foreground hover:text-foreground"
+                >
                   <Copy size={12} />
                 </button>
               </p>
@@ -232,7 +272,11 @@ function ConfirmationPage() {
                 <span className="eyebrow mb-2 block">Upload payment receipt</span>
                 <label className="border border-border border-dashed p-6 flex flex-col items-center gap-2 cursor-pointer hover:bg-muted/40 transition">
                   <Upload size={18} className="text-muted-foreground" />
-                  <span className="text-sm">{order.receipt_url ? "Receipt uploaded — replace?" : "Click to upload screenshot or PDF"}</span>
+                  <span className="text-sm">
+                    {order.receipt_url
+                      ? "Receipt uploaded — replace?"
+                      : "Click to upload screenshot or PDF"}
+                  </span>
                   <input
                     type="file"
                     accept="image/*,.pdf"
@@ -243,7 +287,12 @@ function ConfirmationPage() {
                 </label>
               </label>
               {order.receipt_url && (
-                <a href={order.receipt_url} target="_blank" rel="noopener noreferrer" className="text-xs font-bold uppercase tracking-[0.25em] underline">
+                <a
+                  href={order.receipt_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs font-bold uppercase tracking-[0.25em] underline"
+                >
                   View uploaded receipt
                 </a>
               )}
@@ -253,14 +302,19 @@ function ConfirmationPage() {
                 rel="noopener noreferrer"
                 className="btn-pill w-full block text-center bg-foreground text-primary-foreground py-4 text-xs font-bold uppercase tracking-[0.25em] hover:bg-accent hover:text-accent-foreground transition"
               >
-                <span className="inline-flex items-center gap-2"><MessageCircle size={14} /> Confirm via WhatsApp</span>
+                <span className="inline-flex items-center gap-2">
+                  <MessageCircle size={14} /> Confirm via WhatsApp
+                </span>
               </a>
             </div>
           </div>
         )}
 
         <div className="text-center">
-          <Link to="/shop" className="text-xs font-bold uppercase tracking-[0.25em] underline-offset-4 hover:underline">
+          <Link
+            to="/shop"
+            className="text-xs font-bold uppercase tracking-[0.25em] underline-offset-4 hover:underline"
+          >
             Continue shopping
           </Link>
         </div>

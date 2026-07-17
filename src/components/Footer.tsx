@@ -103,6 +103,7 @@ export function Footer() {
                 ["/about", "About"],
                 ["/lookbook", "Lookbook"],
                 ["/collection", "Collection"],
+                ["/laundry", "Garment Care"],
                 ["/privacy", "Privacy Policy"],
                 ["/terms", "Terms"],
               ]}
@@ -156,18 +157,6 @@ export function Footer() {
             </div>
           </div>
         </div>
-        <a
-          href="/laundry"
-          className="mt-14 flex items-center justify-between gap-6 border-y border-primary-foreground/15 py-6 transition hover:border-accent hover:text-accent"
-        >
-          <div>
-            <p className="font-display text-xl">Nomad Laundry</p>
-            <p className="mt-1 text-xs uppercase tracking-[0.18em] text-primary-foreground/55">
-              Garment Care by Knot & Nomad
-            </p>
-          </div>
-          <span className="text-xs font-bold uppercase tracking-[0.18em]">Visit Laundry →</span>
-        </a>
         <div className="mt-16 pt-8 border-t border-primary-foreground/15 flex flex-col sm:flex-row justify-between gap-4 text-xs text-primary-foreground/60">
           <span>
             © {new Date().getFullYear()} {SITE.name}. All rights reserved.

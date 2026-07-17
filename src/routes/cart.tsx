@@ -20,7 +20,10 @@ function CartPage() {
         <ShoppingBag size={32} className="mx-auto text-muted-foreground" />
         <h1 className="font-display text-4xl mt-6">Your cart is empty</h1>
         <p className="text-muted-foreground mt-3">Begin building your edit.</p>
-        <Link to="/shop" className="btn-pill mt-8 inline-block bg-foreground text-primary-foreground px-8 py-4 text-xs font-bold uppercase tracking-[0.25em] hover:bg-accent hover:text-accent-foreground transition">
+        <Link
+          to="/shop"
+          className="btn-pill mt-8 inline-block bg-foreground text-primary-foreground px-8 py-4 text-xs font-bold uppercase tracking-[0.25em] hover:bg-accent hover:text-accent-foreground transition"
+        >
           Browse the shop
         </Link>
       </div>
@@ -37,12 +40,17 @@ function CartPage() {
           {items.map((it) => (
             <div key={it.id} className="flex gap-4 pb-6 border-b border-border">
               <div className="w-24 h-32 bg-muted shrink-0 overflow-hidden">
-                {it.image && <img src={it.image} alt={it.name} className="h-full w-full object-cover" />}
+                {it.image && (
+                  <img src={it.image} alt={it.name} className="h-full w-full object-cover" />
+                )}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex justify-between gap-4">
                   <h3 className="font-display text-xl">{it.name}</h3>
-                  <button onClick={() => remove(it.id)} className="text-muted-foreground hover:text-foreground">
+                  <button
+                    onClick={() => remove(it.id)}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
                     <X size={16} />
                   </button>
                 </div>
@@ -50,15 +58,24 @@ function CartPage() {
                   {[it.size, it.color].filter(Boolean).join(" · ")}
                 </p>
                 {it.customizationNotes && (
-                  <p className="text-xs text-muted-foreground mt-1 italic">Custom: {it.customizationNotes.slice(0, 80)}{it.customizationNotes.length > 80 ? "…" : ""}</p>
+                  <p className="text-xs text-muted-foreground mt-1 italic">
+                    Custom: {it.customizationNotes.slice(0, 80)}
+                    {it.customizationNotes.length > 80 ? "…" : ""}
+                  </p>
                 )}
                 <div className="mt-3 flex items-center justify-between">
                   <div className="inline-flex items-center border border-border">
-                    <button onClick={() => setQuantity(it.id, it.quantity - 1)} className="px-2.5 py-1.5 hover:bg-muted">
+                    <button
+                      onClick={() => setQuantity(it.id, it.quantity - 1)}
+                      className="px-2.5 py-1.5 hover:bg-muted"
+                    >
                       <Minus size={12} />
                     </button>
                     <span className="px-4 text-sm">{it.quantity}</span>
-                    <button onClick={() => setQuantity(it.id, it.quantity + 1)} className="px-2.5 py-1.5 hover:bg-muted">
+                    <button
+                      onClick={() => setQuantity(it.id, it.quantity + 1)}
+                      className="px-2.5 py-1.5 hover:bg-muted"
+                    >
                       <Plus size={12} />
                     </button>
                   </div>
@@ -93,7 +110,10 @@ function CartPage() {
             >
               Proceed to checkout
             </Link>
-            <Link to="/shop" className="mt-4 block text-center text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground">
+            <Link
+              to="/shop"
+              className="mt-4 block text-center text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground"
+            >
               Continue shopping
             </Link>
           </div>
