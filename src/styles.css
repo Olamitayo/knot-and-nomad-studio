@@ -127,7 +127,10 @@
     font-feature-settings: "ss01", "cv11";
   }
 
-  h1, h2, h3, h4 {
+  h1,
+  h2,
+  h3,
+  h4 {
     font-family: var(--font-display);
     font-weight: 800;
     letter-spacing: -0.02em;
@@ -135,9 +138,15 @@
     font-feature-settings: "ss01";
   }
 
-  h1 { letter-spacing: -0.03em; }
+  h1 {
+    letter-spacing: -0.03em;
+  }
 
-  .font-display { font-family: var(--font-display); font-weight: 800; letter-spacing: -0.02em; }
+  .font-display {
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
 
   .eyebrow {
     font-family: var(--font-sans);
@@ -167,15 +176,32 @@
     opacity: 1;
     transform: none;
   }
-  [data-reveal-delay="1"].revealed { transition-delay: 80ms; }
-  [data-reveal-delay="2"].revealed { transition-delay: 160ms; }
-  [data-reveal-delay="3"].revealed { transition-delay: 240ms; }
-  [data-reveal-delay="4"].revealed { transition-delay: 320ms; }
-  [data-reveal-delay="5"].revealed { transition-delay: 400ms; }
+  [data-reveal-delay="1"].revealed {
+    transition-delay: 80ms;
+  }
+  [data-reveal-delay="2"].revealed {
+    transition-delay: 160ms;
+  }
+  [data-reveal-delay="3"].revealed {
+    transition-delay: 240ms;
+  }
+  [data-reveal-delay="4"].revealed {
+    transition-delay: 320ms;
+  }
+  [data-reveal-delay="5"].revealed {
+    transition-delay: 400ms;
+  }
 
   @media (prefers-reduced-motion: reduce) {
-    [data-reveal] { opacity: 1; transform: none; transition: none; }
-    .marquee, .fade-up { animation: none !important; }
+    [data-reveal] {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+    .marquee,
+    .fade-up {
+      animation: none !important;
+    }
   }
 
   /* Subtle image hover-lift utility */
@@ -183,7 +209,9 @@
     overflow: hidden;
   }
   .img-lift > img {
-    transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1), filter 0.6s ease;
+    transition:
+      transform 1.2s cubic-bezier(0.22, 1, 0.36, 1),
+      filter 0.6s ease;
   }
   .img-lift:hover > img {
     transform: scale(1.04);
@@ -197,14 +225,16 @@
     background-position: 0 100%;
     transition: background-size 0.4s ease;
   }
-  .link-underline:hover { background-size: 100% 1px; }
+  .link-underline:hover {
+    background-size: 100% 1px;
+  }
 
   .grain::before {
     content: "";
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background-image: radial-gradient(rgba(0,0,0,0.06) 1px, transparent 1px);
+    background-image: radial-gradient(rgba(0, 0, 0, 0.06) 1px, transparent 1px);
     background-size: 3px 3px;
     opacity: 0.35;
     mix-blend-mode: multiply;
@@ -215,8 +245,14 @@
   }
 
   @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .marquee {
@@ -224,7 +260,11 @@
   }
 
   @keyframes marquee {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
   }
 }

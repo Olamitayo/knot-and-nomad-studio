@@ -17,7 +17,8 @@ function loadPaystackScript(): Promise<void> {
     script.src = "https://js.paystack.co/v1/inline.js";
     script.async = true;
     script.onload = () => resolve();
-    script.onerror = () => reject(new Error("Could not load Paystack checkout. Check your connection and try again."));
+    script.onerror = () =>
+      reject(new Error("Could not load Paystack checkout. Check your connection and try again."));
     document.head.appendChild(script);
   });
   return loadPromise;

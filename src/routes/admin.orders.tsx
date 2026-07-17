@@ -48,12 +48,26 @@ function AdminOrders() {
   const [deliveryFeeInput, setDeliveryFeeInput] = useState("");
   const [confirmingFee, setConfirmingFee] = useState(false);
 
-  const reload = () => supabase.from("orders").select("*").order("created_at", { ascending: false }).then(({ data }) => setOrders((data as Order[]) ?? []));
-  useEffect(() => { reload(); }, []);
+  const reload = () =>
+    supabase
+      .from("orders")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .then(({ data }) => setOrders((data as Order[]) ?? []));
+  useEffect(() => {
+    reload();
+  }, []);
 
   useEffect(() => {
-    if (!open) { setItems([]); return; }
-    supabase.from("order_items").select("*").eq("order_id", open.id).then(({ data }) => setItems((data as Item[]) ?? []));
+    if (!open) {
+      setItems([]);
+      return;
+    }
+    supabase
+      .from("order_items")
+      .select("*")
+      .eq("order_id", open.id)
+      .then(({ data }) => setItems((data as Item[]) ?? []));
     setDeliveryFeeInput("");
   }, [open]);
 
@@ -63,7 +77,11 @@ function AdminOrders() {
     if (status) patch.status = status;
     const { error } = await supabase.from("orders").update(patch).eq("id", id);
     if (error) toast.error(error.message);
-    else { toast.success("Updated"); reload(); if (open?.id === id) setOpen({ ...open, ...patch }); }
+    else {
+      toast.success("Updated");
+      reload();
+      if (open?.id === id) setOpen({ ...open, ...patch });
+    }
   };
 
   const confirmDeliveryFee = async () => {
@@ -79,7 +97,9 @@ function AdminOrders() {
     const { error } = await supabase.from("orders").update(patch).eq("id", open.id);
     setConfirmingFee(false);
     if (error) return toast.error(error.message);
-    toast.success("Delivery fee confirmed — let the customer know on WhatsApp so they can complete payment.");
+    toast.success(
+      "Delivery fee confirmed — let the customer know on WhatsApp so they can complete payment.",
+    );
     reload();
     setOpen({ ...open, ...patch });
   };
@@ -101,9 +121,16 @@ function AdminOrders() {
           </thead>
           <tbody>
             {orders.map((o) => (
-              <tr key={o.id} className="border-t border-border hover:bg-muted/30 cursor-pointer" onClick={() => setOpen(o)}>
+              <tr
+                key={o.id}
+                className="border-t border-border hover:bg-muted/30 cursor-pointer"
+                onClick={() => setOpen(o)}
+              >
                 <td className="p-3 font-mono text-xs">{o.reference}</td>
-                <td className="p-3">{o.full_name}<div className="text-xs text-muted-foreground">{o.email}</div></td>
+                <td className="p-3">
+                  {o.full_name}
+                  <div className="text-xs text-muted-foreground">{o.email}</div>
+                </td>
                 <td className="p-3">{formatNaira(o.total_ngn)}</td>
                 <td className="p-3 text-xs capitalize">
                   {o.payment_method} · {o.payment_status.replace(/_/g, " ")}
@@ -114,20 +141,36 @@ function AdminOrders() {
                   )}
                 </td>
                 <td className="p-3 text-xs capitalize">{o.status}</td>
-                <td className="p-3 text-xs text-muted-foreground">{new Date(o.created_at).toLocaleDateString()}</td>
+                <td className="p-3 text-xs text-muted-foreground">
+                  {new Date(o.created_at).toLocaleDateString()}
+                </td>
               </tr>
             ))}
-            {orders.length === 0 && <tr><td colSpan={6} className="p-8 text-center text-muted-foreground">No orders yet.</td></tr>}
+            {orders.length === 0 && (
+              <tr>
+                <td colSpan={6} className="p-8 text-center text-muted-foreground">
+                  No orders yet.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
 
       {open && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 overflow-y-auto" onClick={() => setOpen(null)}>
-          <div className="bg-background border border-border max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 overflow-y-auto"
+          onClick={() => setOpen(null)}
+        >
+          <div
+            className="bg-background border border-border max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
             <p className="eyebrow mb-2">Order</p>
             <h3 className="font-display text-2xl font-mono">{open.reference}</h3>
-            <p className="text-sm text-muted-foreground mt-1">{new Date(open.created_at).toLocaleString()}</p>
+            <p className="text-sm text-muted-foreground mt-1">
+              {new Date(open.created_at).toLocaleString()}
+            </p>
 
             <div className="grid sm:grid-cols-2 gap-3 mt-6 text-sm">
               <Detail label="Name" value={open.full_name} />
@@ -158,7 +201,9 @@ function AdminOrders() {
                 <p className="eyebrow mb-3">Confirm negotiated delivery fee</p>
                 <div className="flex items-end gap-3">
                   <label className="flex-1 block">
-                    <span className="text-xs text-muted-foreground mb-2 block">Delivery fee (NGN)</span>
+                    <span className="text-xs text-muted-foreground mb-2 block">
+                      Delivery fee (NGN)
+                    </span>
                     <input
                       type="number"
                       value={deliveryFeeInput}
@@ -175,7 +220,9 @@ function AdminOrders() {
                   </button>
                 </div>
                 <p className="text-xs text-muted-foreground mt-2">
-                  New total will be {formatNaira(open.subtotal_ngn)} + this fee. Let the customer know via WhatsApp afterward — they'll see the updated total and payment options on their order confirmation page.
+                  New total will be {formatNaira(open.subtotal_ngn)} + this fee. Let the customer
+                  know via WhatsApp afterward — they'll see the updated total and payment options on
+                  their order confirmation page.
                 </p>
               </div>
             )}
@@ -184,12 +231,28 @@ function AdminOrders() {
               <p className="eyebrow mb-3">Items</p>
               <div className="space-y-2">
                 {items.map((it) => (
-                  <div key={it.id} className="flex justify-between text-sm border border-border p-3">
+                  <div
+                    key={it.id}
+                    className="flex justify-between text-sm border border-border p-3"
+                  >
                     <div>
                       <p className="font-medium">{it.product_name}</p>
-                      <p className="text-xs text-muted-foreground">{[it.size, it.color, `× ${it.quantity}`].filter(Boolean).join(" · ")}</p>
-                      {it.customization_notes && <p className="text-xs italic mt-1">Custom: {it.customization_notes}</p>}
-                      {it.custom_design_url && <a href={it.custom_design_url} target="_blank" rel="noopener noreferrer" className="text-xs underline">View design</a>}
+                      <p className="text-xs text-muted-foreground">
+                        {[it.size, it.color, `× ${it.quantity}`].filter(Boolean).join(" · ")}
+                      </p>
+                      {it.customization_notes && (
+                        <p className="text-xs italic mt-1">Custom: {it.customization_notes}</p>
+                      )}
+                      {it.custom_design_url && (
+                        <a
+                          href={it.custom_design_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs underline"
+                        >
+                          View design
+                        </a>
+                      )}
                     </div>
                     <p className="text-sm">{formatNaira(it.unit_price_ngn * it.quantity)}</p>
                   </div>
@@ -200,14 +263,25 @@ function AdminOrders() {
             {open.receipt_url && (
               <div className="mt-6">
                 <p className="eyebrow mb-2">Payment receipt</p>
-                <a href={open.receipt_url} target="_blank" rel="noopener noreferrer" className="text-sm underline">View uploaded receipt</a>
+                <a
+                  href={open.receipt_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm underline"
+                >
+                  View uploaded receipt
+                </a>
               </div>
             )}
 
             <div className="mt-8 grid sm:grid-cols-2 gap-3">
               <div>
                 <p className="eyebrow mb-2">Payment status</p>
-                <select value={open.payment_status} onChange={(e) => updateStatus(open.id, e.target.value)} className="w-full bg-background border border-border px-3 py-2 text-sm">
+                <select
+                  value={open.payment_status}
+                  onChange={(e) => updateStatus(open.id, e.target.value)}
+                  className="w-full bg-background border border-border px-3 py-2 text-sm"
+                >
                   <option value="pending">Pending</option>
                   <option value="receipt_submitted">Receipt submitted</option>
                   <option value="paid">Paid</option>
@@ -216,7 +290,11 @@ function AdminOrders() {
               </div>
               <div>
                 <p className="eyebrow mb-2">Order status</p>
-                <select value={open.status} onChange={(e) => updateStatus(open.id, undefined, e.target.value)} className="w-full bg-background border border-border px-3 py-2 text-sm">
+                <select
+                  value={open.status}
+                  onChange={(e) => updateStatus(open.id, undefined, e.target.value)}
+                  className="w-full bg-background border border-border px-3 py-2 text-sm"
+                >
                   <option value="new">New</option>
                   <option value="in_production">In production</option>
                   <option value="shipped">Shipped</option>
@@ -226,7 +304,12 @@ function AdminOrders() {
               </div>
             </div>
 
-            <button onClick={() => setOpen(null)} className="mt-6 w-full border border-border py-3 text-xs font-bold uppercase tracking-[0.25em]">Close</button>
+            <button
+              onClick={() => setOpen(null)}
+              className="mt-6 w-full border border-border py-3 text-xs font-bold uppercase tracking-[0.25em]"
+            >
+              Close
+            </button>
           </div>
         </div>
       )}
@@ -235,5 +318,10 @@ function AdminOrders() {
 }
 
 function Detail({ label, value }: { label: string; value: string }) {
-  return <div><span className="text-muted-foreground">{label}: </span>{value}</div>;
+  return (
+    <div>
+      <span className="text-muted-foreground">{label}: </span>
+      {value}
+    </div>
+  );
 }

@@ -80,7 +80,12 @@ export function Header() {
                 {n.label}
               </Link>
             ))}
-            <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="py-2 text-sm font-bold uppercase tracking-[0.1em] text-accent">
+            <a
+              href={whatsappLink()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="py-2 text-sm font-bold uppercase tracking-[0.1em] text-accent"
+            >
               WhatsApp us
             </a>
           </nav>
