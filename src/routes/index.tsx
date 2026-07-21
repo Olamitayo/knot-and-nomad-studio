@@ -14,10 +14,6 @@ import catHoodie from "@/assets/cat-hoodie.jpg";
 import catStreet from "@/assets/cat-streetwear.jpg";
 import catPolo from "@/assets/cat-polo.jpg";
 import catAcc from "@/assets/cat-accessories.jpg";
-import look1 from "@/assets/look-1.jpg";
-import look2 from "@/assets/look-2.jpg";
-import look3 from "@/assets/look-3.jpg";
-import look4 from "@/assets/look-4.jpg";
 import { supabase } from "@/integrations/supabase/client";
 import { formatNaira } from "@/lib/format";
 import { fallbackProducts } from "@/lib/products";
@@ -430,20 +426,44 @@ function Home() {
             View gallery <ArrowRight size={14} />
           </Link>
         </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {[look1, look2, look3, look4].map((src, i) => (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {[
+            {
+              src: "/images/lookbook/knot-nomad-lookbook-01.webp",
+              alt: "Look 01: Black male model wearing a lavender knit polo and relaxed grey tailored trousers.",
+              width: 2246,
+              height: 3040,
+              position: "center 35%",
+            },
+            {
+              src: "/images/lookbook/knot-nomad-lookbook-03.webp",
+              alt: "Look 03: Male model wearing a sage utility jacket and neutral trousers in a tropical garden.",
+              width: 2246,
+              height: 3040,
+              position: "center 35%",
+            },
+            {
+              src: "/images/lookbook/knot-nomad-lookbook-06.webp",
+              alt: "Look 06: Close editorial view of a Black male model wearing a caramel cable-knit polo.",
+              width: 2132,
+              height: 3203,
+              position: "center 30%",
+            },
+          ].map((look, i) => (
             <div
-              key={i}
-              className={`overflow-hidden img-lift ${i % 3 === 0 ? "row-span-2 lg:row-span-1" : ""}`}
+              key={look.src}
+              className="overflow-hidden img-lift aspect-[3/4]"
               data-reveal
-              data-reveal-delay={String((i % 4) + 1)}
+              data-reveal-delay={String(i + 1)}
             >
               <img
-                src={src}
-                alt="Lookbook"
+                src={look.src}
+                alt={look.alt}
                 loading="lazy"
-                width={1024}
-                height={1280}
+                decoding="async"
+                width={look.width}
+                height={look.height}
+                style={{ objectPosition: look.position }}
                 className="w-full h-full object-cover"
               />
             </div>
