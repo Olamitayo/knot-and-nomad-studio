@@ -1,5 +1,6 @@
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { BrandLogo } from "@/components/BrandLogo";
 import { useAuth, useIsAdmin } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -56,9 +57,12 @@ VALUES ('${user.id}', 'admin');`}
   return (
     <div className="mx-auto max-w-7xl px-6 lg:px-10 py-12">
       <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
-        <div>
-          <p className="eyebrow mb-2">Admin</p>
-          <h1 className="font-display text-3xl">Knot & Nomad Studio</h1>
+        <div className="flex items-center gap-5">
+          <BrandLogo variant="monogram" size="md" />
+          <div>
+            <p className="eyebrow mb-2">Admin</p>
+            <h1 className="font-display text-3xl">Knot & Nomad Studio</h1>
+          </div>
         </div>
         <button
           onClick={() => supabase.auth.signOut().then(() => navigate({ to: "/" }))}

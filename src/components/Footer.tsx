@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Instagram, Facebook } from "lucide-react";
 import { useState } from "react";
 import { SITE, whatsappLink } from "@/lib/site";
-import { KnotIcon } from "@/components/KnotIcon";
+import { BrandLogo } from "@/components/BrandLogo";
 import { useServerFn } from "@tanstack/react-start";
 import { subscribeNewsletter } from "@/lib/orders.functions";
 import { toast } from "sonner";
@@ -35,12 +35,12 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-6 lg:px-10 py-20">
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-4">
-            <div className="flex items-center gap-4">
-              <KnotIcon className="h-12 w-12" />
-              <div>
-                <div className="font-display text-2xl tracking-tight">{SITE.name}</div>
-                <div className="eyebrow text-primary-foreground/70">{SITE.tagline}</div>
-              </div>
+            <BrandLogo variant="signature" theme="light" size="lg" className="hidden sm:block" />
+            <div className="sm:hidden">
+              <BrandLogo variant="primary" theme="light" size="md" />
+              <p className="mt-3 whitespace-nowrap text-[0.58rem] font-semibold tracking-[0.12em] text-primary-foreground/70">
+                CRAFTED TO TRAVEL. MADE TO LAST.
+              </p>
             </div>
             <p className="mt-6 max-w-md text-sm text-primary-foreground/70 leading-relaxed">
               A custom apparel studio for individuals, creatives and brands — translating identity

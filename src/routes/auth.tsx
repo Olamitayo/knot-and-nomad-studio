@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { BrandLogo } from "@/components/BrandLogo";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [{ title: "Sign in — Knot & Nomad" }] }),
@@ -39,6 +40,7 @@ function AuthPage() {
 
   return (
     <div className="mx-auto max-w-md px-6 py-20">
+      <BrandLogo variant="primary" size="md" className="mb-10" />
       <p className="eyebrow mb-3">Account</p>
       <h1 className="font-display text-4xl mb-8">
         {mode === "signin" ? "Sign in" : "Create account"}

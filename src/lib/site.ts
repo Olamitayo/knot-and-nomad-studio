@@ -1,7 +1,7 @@
 // Edit these values to update brand contact details across the entire site.
 export const SITE = {
   name: "Knot & Nomad",
-  tagline: "Rooted in Motion",
+  tagline: "CRAFTED TO TRAVEL. MADE TO LAST.",
   email: "hello@knotnomad.com",
   // Replace with your full WhatsApp number (digits only, with country code).
   whatsappNumber: "2348129894036",

@@ -9,6 +9,7 @@ import { verifyPaystackPayment, notifyNewOrder } from "@/lib/payments.functions"
 import { NIGERIA_STATES } from "@/lib/nigeria-states";
 import { toast } from "sonner";
 import { CreditCard, Banknote, Lock, MessageCircle, Truck, Wand2, ShieldCheck } from "lucide-react";
+import { BrandLogo } from "@/components/BrandLogo";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({ meta: [{ title: "Checkout — Knot & Nomad" }] }),
@@ -232,6 +233,7 @@ function CheckoutPage() {
   return (
     <div className="bg-background">
       <div className="mx-auto max-w-6xl px-6 lg:px-10 py-12 lg:py-16">
+        <BrandLogo variant="primary" size="md" className="mb-10" />
         <p className="eyebrow mb-3">Checkout</p>
         <h1 className="font-display text-4xl lg:text-5xl mb-2">Almost yours</h1>
         <p className="text-muted-foreground mb-12">
