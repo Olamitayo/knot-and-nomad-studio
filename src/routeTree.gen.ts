@@ -16,6 +16,7 @@ import { Route as ReturnsRouteImport } from './routes/returns'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PaymentRouteImport } from './routes/payment'
 import { Route as LookbookRouteImport } from './routes/lookbook'
+import { Route as GarmentCareRouteImport } from './routes/garment-care'
 import { Route as FaqsRouteImport } from './routes/faqs'
 import { Route as DeliveryRouteImport } from './routes/delivery'
 import { Route as CustomStudioRouteImport } from './routes/custom-studio'
@@ -73,6 +74,11 @@ const PaymentRoute = PaymentRouteImport.update({
 const LookbookRoute = LookbookRouteImport.update({
   id: '/lookbook',
   path: '/lookbook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GarmentCareRoute = GarmentCareRouteImport.update({
+  id: '/garment-care',
+  path: '/garment-care',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FaqsRoute = FaqsRouteImport.update({
@@ -206,6 +212,7 @@ export interface FileRoutesByFullPath {
   '/custom-studio': typeof CustomStudioRoute
   '/delivery': typeof DeliveryRoute
   '/faqs': typeof FaqsRoute
+  '/garment-care': typeof GarmentCareRoute
   '/lookbook': typeof LookbookRoute
   '/payment': typeof PaymentRoute
   '/privacy': typeof PrivacyRoute
@@ -237,6 +244,7 @@ export interface FileRoutesByTo {
   '/custom-studio': typeof CustomStudioRoute
   '/delivery': typeof DeliveryRoute
   '/faqs': typeof FaqsRoute
+  '/garment-care': typeof GarmentCareRoute
   '/lookbook': typeof LookbookRoute
   '/payment': typeof PaymentRoute
   '/privacy': typeof PrivacyRoute
@@ -270,6 +278,7 @@ export interface FileRoutesById {
   '/custom-studio': typeof CustomStudioRoute
   '/delivery': typeof DeliveryRoute
   '/faqs': typeof FaqsRoute
+  '/garment-care': typeof GarmentCareRoute
   '/lookbook': typeof LookbookRoute
   '/payment': typeof PaymentRoute
   '/privacy': typeof PrivacyRoute
@@ -304,6 +313,7 @@ export interface FileRouteTypes {
     | '/custom-studio'
     | '/delivery'
     | '/faqs'
+    | '/garment-care'
     | '/lookbook'
     | '/payment'
     | '/privacy'
@@ -335,6 +345,7 @@ export interface FileRouteTypes {
     | '/custom-studio'
     | '/delivery'
     | '/faqs'
+    | '/garment-care'
     | '/lookbook'
     | '/payment'
     | '/privacy'
@@ -367,6 +378,7 @@ export interface FileRouteTypes {
     | '/custom-studio'
     | '/delivery'
     | '/faqs'
+    | '/garment-care'
     | '/lookbook'
     | '/payment'
     | '/privacy'
@@ -400,6 +412,7 @@ export interface RootRouteChildren {
   CustomStudioRoute: typeof CustomStudioRoute
   DeliveryRoute: typeof DeliveryRoute
   FaqsRoute: typeof FaqsRoute
+  GarmentCareRoute: typeof GarmentCareRoute
   LookbookRoute: typeof LookbookRoute
   PaymentRoute: typeof PaymentRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -464,6 +477,13 @@ declare module '@tanstack/react-router' {
       path: '/lookbook'
       fullPath: '/lookbook'
       preLoaderRoute: typeof LookbookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/garment-care': {
+      id: '/garment-care'
+      path: '/garment-care'
+      fullPath: '/garment-care'
+      preLoaderRoute: typeof GarmentCareRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/faqs': {
@@ -669,6 +689,7 @@ const rootRouteChildren: RootRouteChildren = {
   CustomStudioRoute: CustomStudioRoute,
   DeliveryRoute: DeliveryRoute,
   FaqsRoute: FaqsRoute,
+  GarmentCareRoute: GarmentCareRoute,
   LookbookRoute: LookbookRoute,
   PaymentRoute: PaymentRoute,
   PrivacyRoute: PrivacyRoute,

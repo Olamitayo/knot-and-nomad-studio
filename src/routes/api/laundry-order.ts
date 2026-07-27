@@ -86,6 +86,7 @@ export const Route = createFileRoute("/api/laundry-order")({
           order.email,
           `We received your Knot & Nomad Garment Care request — ${reference}`,
           `<div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;color:#25221d;line-height:1.6">
+            <a href="https://knotnomad.com" aria-label="KnotNomad home"><img src="https://knotnomad.com/brand/knotnomad-logo-primary.png" width="196" height="90" alt="KnotNomad" style="display:block;margin:0 0 24px"></a>
             <h1 style="font-size:26px">Your garment care request is in.</h1>
             <p>Hi ${escapeHtml(order.name)},</p>
             <p>We received your pickup and quote request. Our team will review the garments and email your official quote for approval.</p>

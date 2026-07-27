@@ -26,7 +26,7 @@ export const Route = createFileRoute("/lookbook")({
       },
       { property: "og:title", content: "Lookbook — Knot & Nomad" },
       { property: "og:description", content: "Editorial visuals from the Knot & Nomad studio." },
-      { property: "og:image", content: "/images/lookbook/knot-nomad-lookbook-01.webp" },
+      { property: "og:image", content: "https://knotnomad.com/og-knotnomad.png" },
     ],
   }),
   component: Lookbook,

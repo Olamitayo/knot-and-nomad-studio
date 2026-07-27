@@ -26,6 +26,7 @@ export async function sendNotificationEmail(
 
   const from = process.env.RESEND_FROM_EMAIL || "Knot & Nomad <notifications@knotnomad.com>";
   const html = `<div style="font-family:sans-serif;font-size:14px;line-height:1.6;color:#1a1a1a">
+    <a href="https://knotnomad.com" aria-label="KnotNomad home"><img src="https://knotnomad.com/brand/knotnomad-logo-primary.png" width="196" height="90" alt="KnotNomad" style="display:block;margin:0 0 24px"></a>
     ${fields
       .filter(([, value]) => value !== null && value !== undefined && value !== "")
       .map(

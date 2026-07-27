@@ -1,9 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Menu, X, ShoppingBag } from "lucide-react";
-import { SITE, whatsappLink } from "@/lib/site";
+import { whatsappLink } from "@/lib/site";
 import { useCart, cartCount } from "@/lib/cart";
-import { KnotIcon } from "@/components/KnotIcon";
+import { BrandLogo } from "@/components/BrandLogo";
 
 const nav = [
   { to: "/", label: "Home" },
@@ -22,9 +22,9 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 backdrop-blur-md bg-background/80 border-b border-border/60">
       <div className="mx-auto max-w-7xl px-6 lg:px-10 h-20 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-3 group" aria-label={SITE.name}>
-          <KnotIcon className="h-9 w-9 transition-transform duration-500 group-hover:rotate-[8deg]" />
-          <span className="font-display text-xl tracking-tight">{SITE.name}</span>
+        <Link to="/" className="flex items-center" aria-label="KnotNomad home">
+          <BrandLogo variant="primary" size="md" priority decorative className="hidden sm:block" />
+          <BrandLogo variant="monogram" size="md" priority decorative className="sm:hidden" />
         </Link>
         <nav className="hidden lg:flex items-center gap-6">
           {nav.map((n) => (

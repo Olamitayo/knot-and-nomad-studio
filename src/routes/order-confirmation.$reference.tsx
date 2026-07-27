@@ -8,6 +8,7 @@ import { openPaystackCheckout } from "@/lib/paystack";
 import { verifyPaystackPayment, notifyReceiptSubmitted } from "@/lib/payments.functions";
 import { toast } from "sonner";
 import { CheckCircle2, Copy, CreditCard, MessageCircle, Upload } from "lucide-react";
+import { BrandLogo } from "@/components/BrandLogo";
 
 export const Route = createFileRoute("/order-confirmation/$reference")({
   component: ConfirmationPage,
@@ -146,6 +147,7 @@ function ConfirmationPage() {
   return (
     <div className="bg-background">
       <div className="mx-auto max-w-3xl px-6 lg:px-10 py-16">
+        <BrandLogo variant="primary" size="md" className="mx-auto mb-10" />
         <div className="text-center mb-12">
           <CheckCircle2 size={48} className="mx-auto text-accent" />
           <p className="eyebrow mt-6 mb-3">Order received</p>
