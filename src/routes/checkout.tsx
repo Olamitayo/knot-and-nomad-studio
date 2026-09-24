@@ -232,20 +232,19 @@ function CheckoutPage() {
 
   return (
     <div className="bg-background">
-      <div className="mx-auto max-w-6xl px-6 lg:px-10 py-12 lg:py-16">
+      <div className="mx-auto max-w-6xl px-6 py-12 lg:px-10 lg:py-16">
         <BrandLogo variant="primary" size="md" className="mb-10" />
         <p className="eyebrow mb-3">Checkout</p>
-        <h1 className="font-display text-4xl lg:text-5xl mb-2">Almost yours</h1>
-        <p className="text-muted-foreground mb-12">
+        <h1 className="mb-2 font-display text-4xl lg:text-5xl">Almost yours</h1>
+        <p className="mb-12 text-muted-foreground">
           Review the details below before we get started on your pieces.
         </p>
 
-        <form onSubmit={onSubmit} className="grid lg:grid-cols-3 gap-12">
-          <div className="lg:col-span-2 space-y-10">
-            {/* Contact */}
-            <section>
-              <h2 className="font-display text-2xl mb-6">Contact</h2>
-              <div className="grid sm:grid-cols-2 gap-4">
+        <form onSubmit={onSubmit} className="grid gap-12 lg:grid-cols-3">
+          <div className="space-y-10 lg:col-span-2">
+            <section className="rounded-[2rem] border border-border bg-card p-5 sm:p-7">
+              <h2 className="mb-6 font-display text-2xl">Contact</h2>
+              <div className="grid gap-4 sm:grid-cols-2">
                 <Field label="Full name *" value={form.full_name} onChange={set("full_name")} />
                 <Field label="Email *" type="email" value={form.email} onChange={set("email")} />
                 <Field label="Phone *" value={form.phone} onChange={set("phone")} />
@@ -253,19 +252,18 @@ function CheckoutPage() {
               </div>
             </section>
 
-            {/* Delivery */}
-            <section>
-              <h2 className="font-display text-2xl mb-6">Delivery</h2>
+            <section className="rounded-[2rem] border border-border bg-card p-5 sm:p-7">
+              <h2 className="mb-6 font-display text-2xl">Delivery</h2>
               <div className="grid gap-4">
                 <Field label="Delivery address *" value={form.address} onChange={set("address")} />
-                <div className="grid sm:grid-cols-2 gap-4">
+                <div className="grid gap-4 sm:grid-cols-2">
                   <Field label="City *" value={form.city} onChange={set("city")} />
                   <div>
                     <label className="eyebrow mb-2 block">State *</label>
                     <select
                       value={form.state}
                       onChange={set("state")}
-                      className="w-full bg-background border border-border px-3 py-3 text-sm"
+                      className="w-full border border-border bg-background px-3 py-3 text-sm focus:border-foreground focus:outline-none"
                     >
                       <option value="">Select your state…</option>
                       {NIGERIA_STATES.map((st) => (
@@ -281,7 +279,7 @@ function CheckoutPage() {
                   <select
                     value={form.delivery_option}
                     onChange={set("delivery_option")}
-                    className="w-full bg-background border border-border px-3 py-3 text-sm"
+                    className="w-full border border-border bg-background px-3 py-3 text-sm focus:border-foreground focus:outline-none"
                   >
                     <option value="standard">Standard (3–5 business days)</option>
                     <option value="express">Express (1–2 business days)</option>
@@ -294,7 +292,7 @@ function CheckoutPage() {
                     <select
                       value={deliveryArea}
                       onChange={(e) => setDeliveryArea(e.target.value)}
-                      className="w-full bg-background border border-border px-3 py-3 text-sm"
+                      className="w-full border border-border bg-background px-3 py-3 text-sm focus:border-foreground focus:outline-none"
                     >
                       <option value="">Select your area…</option>
                       {zones.map((z) => (
@@ -306,7 +304,7 @@ function CheckoutPage() {
                   </div>
                 )}
                 {!isLagos && !isPickup && form.state && (
-                  <p className="text-sm text-muted-foreground border border-border bg-muted/40 p-4">
+                  <p className="border border-border bg-muted/40 p-4 text-sm text-muted-foreground">
                     We deliver outside Lagos too — the delivery fee for {form.state} will be
                     confirmed with you via WhatsApp right after you place this order, before any
                     payment is taken.
@@ -318,16 +316,15 @@ function CheckoutPage() {
                     value={form.notes}
                     onChange={set("notes")}
                     rows={3}
-                    className="w-full bg-background border border-border px-3 py-3 text-sm"
+                    className="w-full border border-border bg-background px-3 py-3 text-sm focus:border-foreground focus:outline-none"
                   />
                 </div>
               </div>
             </section>
 
-            {/* Payment */}
-            <section>
-              <h2 className="font-display text-2xl mb-6">Payment</h2>
-              <div className="grid sm:grid-cols-2 gap-3">
+            <section className="rounded-[2rem] border border-border bg-card p-5 sm:p-7">
+              <h2 className="mb-6 font-display text-2xl">Payment</h2>
+              <div className="grid gap-3 sm:grid-cols-2">
                 <PayOption
                   active={paymentMethod === "transfer"}
                   onClick={() => setPaymentMethod("transfer")}
@@ -345,14 +342,14 @@ function CheckoutPage() {
               </div>
 
               {!deliveryFeeConfirmed && (
-                <p className="mt-6 text-sm text-muted-foreground border border-border bg-muted/40 p-4">
+                <p className="mt-6 border border-border bg-muted/40 p-4 text-sm text-muted-foreground">
                   Payment happens after your delivery fee is confirmed — placing this order now just
                   saves your details and starts the conversation on WhatsApp.
                 </p>
               )}
 
               {deliveryFeeConfirmed && paymentMethod === "transfer" && settings && (
-                <div className="mt-6 border border-border bg-muted/40 p-6 text-sm space-y-2">
+                <div className="mt-6 space-y-2 border border-border bg-muted/40 p-6 text-sm">
                   <p className="eyebrow mb-2">Pay to</p>
                   <p>
                     <span className="text-muted-foreground">Bank: </span>
@@ -374,8 +371,7 @@ function CheckoutPage() {
               )}
             </section>
 
-            {/* Trust */}
-            <section className="grid sm:grid-cols-2 gap-3 text-xs">
+            <section className="grid gap-3 text-xs sm:grid-cols-2">
               <Trust icon={<Lock size={14} />} label="Secure checkout" />
               <Trust icon={<ShieldCheck size={14} />} label="Order review before payment" />
               <Trust icon={<MessageCircle size={14} />} label="WhatsApp support" />
@@ -385,37 +381,36 @@ function CheckoutPage() {
             </section>
           </div>
 
-          {/* Summary */}
           <aside>
-            <div className="bg-muted/40 border border-border p-6 lg:sticky lg:top-28">
-              <h2 className="font-display text-xl mb-6">Order summary</h2>
-              <div className="space-y-4 mb-6 max-h-72 overflow-y-auto pr-2">
+            <div className="rounded-[2rem] border border-border bg-muted/40 p-6 shadow-[0_26px_70px_rgba(17,16,14,0.04)] lg:sticky lg:top-28 lg:p-8">
+              <h2 className="mb-6 font-display text-xl">Order summary</h2>
+              <div className="mb-6 max-h-72 space-y-4 overflow-y-auto pr-2">
                 {items.map((it) => (
                   <div key={it.id} className="flex gap-3 text-sm">
-                    <div className="w-14 h-16 bg-muted shrink-0 overflow-hidden">
+                    <div className="h-16 w-14 shrink-0 overflow-hidden rounded-lg bg-muted">
                       {it.image && (
                         <img src={it.image} alt="" className="h-full w-full object-cover" />
                       )}
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium truncate">{it.name}</p>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate font-medium">{it.name}</p>
                       <p className="text-xs text-muted-foreground">
                         {[it.size, it.color, `× ${it.quantity}`].filter(Boolean).join(" · ")}
                       </p>
                     </div>
-                    <p className="text-sm whitespace-nowrap">
+                    <p className="whitespace-nowrap text-sm">
                       {formatNaira(it.unitPrice * it.quantity)}
                     </p>
                   </div>
                 ))}
               </div>
-              <div className="space-y-2 text-sm border-t border-border pt-4">
+              <div className="space-y-2 border-t border-border pt-4 text-sm">
                 <Row label="Subtotal" value={formatNaira(subtotal)} />
                 <Row
                   label="Delivery"
                   value={deliveryFeeConfirmed ? formatNaira(deliveryFee) : "To be confirmed"}
                 />
-                <div className="h-px bg-border my-2" />
+                <div className="my-2 h-px bg-border" />
                 <Row
                   label="Total"
                   value={
@@ -429,7 +424,7 @@ function CheckoutPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="btn-pill mt-6 w-full bg-foreground text-primary-foreground py-4 text-xs font-bold uppercase tracking-[0.25em] hover:bg-accent hover:text-accent-foreground transition disabled:opacity-50"
+                className="btn-pill mt-6 w-full bg-foreground px-5 py-4 text-xs font-bold uppercase tracking-[0.25em] text-primary-foreground transition hover:bg-accent hover:text-accent-foreground disabled:opacity-50"
               >
                 {submitting
                   ? deliveryFeeConfirmed && paymentMethod === "card"
@@ -441,7 +436,7 @@ function CheckoutPage() {
               </button>
               <Link
                 to="/cart"
-                className="mt-3 block text-center text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground"
+                className="mt-3 block text-center text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground transition hover:text-foreground"
               >
                 Edit cart
               </Link>
