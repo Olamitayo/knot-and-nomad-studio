@@ -221,7 +221,7 @@ function ShopPage() {
           <div className="lg:col-span-7">
             <p className="eyebrow mb-5 text-primary-foreground/60">Knot & Nomad Shop</p>
             <h1 className="font-display text-5xl leading-[0.98] sm:text-6xl lg:text-7xl">
-              Premium pieces.
+              Elevated essentials.
               <br />
               Cut for <span className="text-accent">motion</span>.
             </h1>

@@ -198,7 +198,7 @@ function ProductDetail() {
 
       <section className="mx-auto grid max-w-7xl gap-10 px-6 py-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(25rem,0.92fr)] lg:px-10 lg:py-16">
         <div className="lg:sticky lg:top-28 lg:self-start">
-          <div className="overflow-hidden border border-border bg-muted">
+          <div className="overflow-hidden rounded-[2rem] border border-border bg-muted shadow-[0_30px_80px_rgba(17,16,14,0.06)]">
             {selectedImage ? (
               <img
                 src={selectedImage}
@@ -220,7 +220,7 @@ function ProductDetail() {
                 <button
                   key={`${item.url}-${i}`}
                   onClick={() => setImgIdx(i)}
-                  className={`aspect-square overflow-hidden border transition ${
+                  className={`aspect-square overflow-hidden rounded-xl border transition ${
                     imgIdx === i ? "border-foreground" : "border-border hover:border-foreground"
                   }`}
                   aria-label={`View ${item.color ? `${item.color} ` : ""}${item.shot}`}
@@ -238,7 +238,7 @@ function ProductDetail() {
           )}
         </div>
 
-        <div>
+        <div className="rounded-[2rem] border border-border bg-card p-5 shadow-[0_26px_70px_rgba(17,16,14,0.04)] sm:p-7">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <p className="eyebrow">{product.category}</p>
             {product.sku && (
@@ -249,9 +249,12 @@ function ProductDetail() {
           </div>
           <div className="flex flex-wrap items-start justify-between gap-5">
             <h1 className="font-display text-5xl leading-[1.02] lg:text-6xl">{product.name}</h1>
-            <p className="border border-border bg-card px-4 py-3 text-lg font-semibold">
-              {formatNaira(currentPrice)}
-            </p>
+            <div className="rounded-full border border-border bg-background px-4 py-3 text-right">
+              <p className="text-[0.56rem] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                from
+              </p>
+              <p className="text-lg font-semibold">{formatNaira(currentPrice)}</p>
+            </div>
           </div>
 
           {product.short_description && (
@@ -283,7 +286,7 @@ function ProductDetail() {
             )}
           </div>
 
-          <div className="my-8 grid grid-cols-2 gap-px bg-border text-sm sm:grid-cols-4">
+          <div className="my-8 grid grid-cols-2 gap-px overflow-hidden rounded-[1.5rem] border border-border bg-border text-sm sm:grid-cols-4">
             <TrustItem icon={<ShieldCheck size={16} />} label="Quality finish" />
             <TrustItem icon={<Truck size={16} />} label="Nigeria delivery" />
             <TrustItem icon={<Ruler size={16} />} label="Size options" />
@@ -368,7 +371,7 @@ function ProductDetail() {
           </div>
 
           {product.is_customizable && (
-            <div className="mb-8 border border-border bg-card p-5">
+            <div className="mb-8 rounded-[1.5rem] border border-border bg-background p-5">
               <label className="flex cursor-pointer items-center gap-3">
                 <input
                   type="checkbox"
@@ -384,7 +387,7 @@ function ProductDetail() {
                     value={customNotes}
                     onChange={(e) => setCustomNotes(e.target.value)}
                     placeholder="Describe placement, text, colours, references..."
-                    className="min-h-[96px] w-full border border-border bg-background p-3 text-sm outline-none transition focus:border-foreground"
+                    className="min-h-[96px] w-full border border-border bg-card p-3 text-sm outline-none transition focus:border-foreground"
                     maxLength={1000}
                   />
                   <label className="flex cursor-pointer items-center gap-2 border border-dashed border-border p-3 text-sm text-muted-foreground transition hover:border-foreground hover:text-foreground">
@@ -430,12 +433,12 @@ function ProductDetail() {
 
           <Link
             to="/custom-order"
-            className="mt-3 inline-flex min-h-14 w-full items-center justify-center gap-2 border border-border bg-card px-6 text-xs font-bold uppercase tracking-[0.22em] transition hover:border-accent hover:text-accent"
+            className="mt-3 inline-flex min-h-14 w-full items-center justify-center gap-2 border border-border bg-background px-6 text-xs font-bold uppercase tracking-[0.22em] transition hover:border-accent hover:text-accent"
           >
             <Wand2 size={15} /> Request customisation
           </Link>
 
-          <div className="mt-10 border-t border-border">
+          <div className="mt-10 border-t border-border pt-2">
             <ProductInfo
               label="Fabric / material"
               value={product.material}

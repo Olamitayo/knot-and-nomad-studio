@@ -134,53 +134,129 @@ function Home() {
   return (
     <div ref={ref}>
       {/* HERO */}
-      <section className="relative min-h-[94vh] flex items-end overflow-hidden">
-        <HeroSlideshow
-          images={[
-            {
-              src: heroEditorial,
-              alt: "Knot & Nomad editorial — oversized cream hoodie and wide-leg trousers",
-            },
-            { src: hero1, alt: "Charcoal hoodie editorial" },
-            { src: hero2, alt: "Sweatshirt against concrete" },
-            { src: hero3, alt: "Black essentials hoodie" },
-            { src: hero4, alt: "Cream waffle hoodie" },
-          ]}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/0 via-background/10 to-background" />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/70 via-background/20 to-transparent" />
-        <div className="relative mx-auto max-w-7xl w-full px-6 lg:px-10 pb-20 lg:pb-28">
-          <div className="fade-up">
-            <div className="flex items-center gap-3 text-foreground/80">
-              <span className="block h-px w-10 bg-accent" />
-              <span className="eyebrow text-foreground/80">
-                Premium custom apparel — Est. Worldwide
-              </span>
+      <section className="editorial-list relative overflow-hidden border-b border-white/10 bg-[#1a1716]">
+        <div className="mx-auto max-w-7xl px-6 lg:px-10">
+          <div className="space-y-0 py-2 sm:py-3">
+            {[
+              "02 Collar shirts",
+              "03 Wide-leg trousers",
+              "04 Jackets",
+              "05 Native custom wear",
+              "06 Brand uniforms & capsule drops",
+            ].map((item, index) => (
+              <div key={item} className="editorial-item flex items-center gap-4 py-5 sm:py-6">
+                <span className="editorial-item__number">{item.split(" ")[0]}</span>
+                <span className="editorial-item__label text-white/95">{item.replace(/^\d+\s/, "")}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="border-y border-[#3a4238] bg-[#b7c8b3] py-4 text-[#171717] overflow-hidden">
+        <div className="marquee flex items-center gap-12 whitespace-nowrap text-[2.3rem] font-display uppercase tracking-[-0.06em] sm:text-[3.5rem] lg:text-[5rem]">
+          <span>Rooted in motion</span>
+          <span className="text-[#1b422d]">✦</span>
+          <span>Custom apparel</span>
+          <span className="text-[#1b422d]">✦</span>
+          <span>Designed around you</span>
+          <span className="text-[#1b422d]">✦</span>
+          <span>Rooted in motion</span>
+          <span className="text-[#1b422d]">✦</span>
+          <span>Custom apparel</span>
+          <span className="text-[#1b422d]">✦</span>
+          <span>Designed around you</span>
+          <span className="text-[#1b422d]">✦</span>
+        </div>
+      </div>
+
+      <section className="editorial-showcase border-b border-border/70">
+        <div className="mx-auto max-w-7xl px-6 py-16 lg:px-10 lg:py-20">
+          <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+            <div className="overflow-hidden border border-[#d3cabd] bg-[#f8f4ee] p-4 sm:p-6">
+              <div className="mb-4 flex items-center justify-between gap-3">
+                <div className="flex gap-2">
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#d7d0c7]" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#c9c0b8]" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#b8b1a5]" />
+                </div>
+                <span className="editorial-chip inline-flex items-center rounded-full px-3 py-1 text-[0.62rem] font-bold uppercase tracking-[0.18em] text-[#254f37]">
+                  14 colors
+                </span>
+              </div>
+              <div className="grid gap-4 md:grid-cols-[1.1fr_0.9fr]">
+                <div className="overflow-hidden border border-[#d9d2c9] bg-[#f0ece4] p-3">
+                  <img
+                    src={heroEditorial}
+                    alt="Editorial studio look"
+                    className="h-[420px] w-full object-cover"
+                  />
+                </div>
+                <div className="space-y-4">
+                  <div className="rounded-[1.5rem] border border-[#d8d1c8] bg-white p-4 shadow-[0_18px_45px_rgba(30,25,20,0.06)]">
+                    <p className="text-[0.62rem] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                      Premium tee
+                    </p>
+                    <h3 className="mt-2 font-display text-3xl leading-none">Signature fit</h3>
+                    <p className="mt-3 text-sm text-muted-foreground">
+                      Heavyweight cotton, relaxed drape and subtle structure.
+                    </p>
+                    <div className="mt-5 flex items-center justify-between gap-2">
+                      <span className="text-base font-semibold">From ₦24,000</span>
+                      <span className="text-xs font-bold uppercase tracking-[0.14em] text-accent">
+                        Custom
+                      </span>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-5 gap-2">
+                    {[
+                      "#d5d6c3",
+                      "#d2b8a8",
+                      "#8a9d7f",
+                      "#4f5a75",
+                      "#efefe9",
+                    ].map((swatch) => (
+                      <div
+                        key={swatch}
+                        className="h-10 rounded-full border border-[#d2cabd]"
+                        style={{ backgroundColor: swatch }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
-            <h1 className="mt-7 font-display uppercase text-[2.8rem] sm:text-6xl lg:text-7xl xl:text-[7.5rem] leading-[0.92] max-w-5xl">
-              Fashion <span className="text-accent">rooted</span>
-              <br />
-              in motion.
-            </h1>
-            <p className="mt-7 max-w-xl text-base lg:text-lg text-muted-foreground leading-relaxed">
-              A premium ready-to-wear fashion brand and custom apparel studio—creating considered
-              pieces for individuals, creatives and brands.
-            </p>
-            <div className="mt-10 grid max-w-2xl gap-3 sm:grid-cols-2">
-              <Link
-                to="/shop"
-                className="btn-pill group inline-flex items-center justify-center gap-2 bg-foreground text-primary-foreground px-7 py-4 text-xs font-bold uppercase tracking-[0.2em] hover:bg-accent hover:text-accent-foreground transition-colors duration-300"
-              >
-                Shop Ready-to-Wear{" "}
-                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <Link
-                to="/custom-order"
-                className="btn-pill group inline-flex items-center justify-center gap-2 border-2 border-foreground px-7 py-4 text-xs font-bold uppercase tracking-[0.2em] hover:bg-foreground hover:text-primary-foreground transition-colors duration-300"
-              >
-                Start a Custom Order{" "}
-                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-              </Link>
+
+            <div className="flex flex-col justify-between gap-6 rounded-[2rem] border border-[#d3cabd] bg-[#1f2a22] p-6 text-[#edf1ea] shadow-[0_20px_55px_rgba(23,25,22,0.12)]">
+              <div>
+                <p className="text-[0.62rem] font-bold uppercase tracking-[0.2em] text-[#d5e6d8]">
+                  Studio edit
+                </p>
+                <h3 className="mt-4 font-display text-4xl leading-none text-white sm:text-5xl">
+                  Built for movement.
+                </h3>
+              </div>
+              <div className="overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#2a3a2f] p-3">
+                <img
+                  src={hero2}
+                  alt="Studio capsule collection"
+                  className="h-[280px] w-full object-cover"
+                />
+              </div>
+              <div className="flex items-center justify-between gap-3 border-t border-white/10 pt-4">
+                <div>
+                  <p className="text-sm text-[#d4e1d5]">Custom orders in 5–14 days</p>
+                  <p className="mt-1 text-xs uppercase tracking-[0.18em] text-[#9bb69f]">
+                    nationwide delivery
+                  </p>
+                </div>
+                <Link
+                  to="/custom-order"
+                  className="inline-flex items-center justify-center rounded-full bg-[#dde7d7] px-4 py-2 text-[0.62rem] font-bold uppercase tracking-[0.18em] text-[#1b2a1f] transition hover:bg-white"
+                >
+                  Start now
+                </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -255,15 +331,16 @@ function Home() {
               Shop all <ArrowRight size={14} />
             </Link>
           </div>
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+
+          <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
             {featured.map((product) => (
               <Link
                 key={product.id}
                 to="/shop/$slug"
                 params={{ slug: product.slug }}
-                className="group"
+                className="group block overflow-hidden rounded-[1.75rem] border border-border/70 bg-card shadow-[0_18px_48px_rgba(15,14,12,0.04)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_30px_80px_rgba(15,14,12,0.08)]"
               >
-                <div className="aspect-[4/5] overflow-hidden border border-border bg-muted">
+                <div className="relative aspect-[4/5] overflow-hidden bg-muted">
                   {product.images[0] ? (
                     <img
                       src={product.images[0]}
@@ -275,18 +352,31 @@ function Home() {
                       Image coming soon
                     </div>
                   )}
+
+                  <div className="absolute inset-x-4 top-4 flex items-center justify-between gap-2">
+                    <span className="rounded-full bg-background/75 px-2.5 py-1 text-[0.58rem] font-bold uppercase tracking-[0.14em] text-foreground backdrop-blur-sm">
+                      {product.category}
+                    </span>
+                    {product.is_customizable && (
+                      <span className="rounded-full border border-black/10 bg-white/80 px-2.5 py-1 text-[0.58rem] font-bold uppercase tracking-[0.14em] text-accent backdrop-blur-sm">
+                        Custom
+                      </span>
+                    )}
+                  </div>
                 </div>
-                <p className="mt-4 text-[0.62rem] font-bold uppercase tracking-[0.18em] text-muted-foreground">
-                  {product.category}
-                </p>
-                <h3 className="mt-1 font-display text-lg leading-tight sm:text-xl">
-                  {product.name}
-                </h3>
-                <div className="mt-2 flex items-center justify-between gap-2">
-                  <p className="text-sm font-semibold">From {formatNaira(product.price_ngn)}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {product.colors.length} colour{product.colors.length === 1 ? "" : "s"}
-                  </p>
+
+                <div className="space-y-4 p-5">
+                  <div className="flex items-start justify-between gap-3">
+                    <h3 className="font-display text-2xl leading-none">{product.name}</h3>
+                    <span className="font-display text-3xl leading-none text-accent/80">↗</span>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-2 border-t border-border pt-3">
+                    <p className="text-base font-semibold">From {formatNaira(product.price_ngn)}</p>
+                    <p className="text-[0.62rem] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                      {product.colors.length} colour{product.colors.length === 1 ? "" : "s"}
+                    </p>
+                  </div>
                 </div>
               </Link>
             ))}
@@ -345,7 +435,7 @@ function Home() {
             {categories.map((c, i) => (
               <article
                 key={c.name}
-                className="group bg-background overflow-hidden border border-transparent hover:border-accent/40 transition-colors duration-500"
+                className="group overflow-hidden rounded-[1.8rem] border border-border bg-background shadow-[0_16px_38px_rgba(15,14,12,0.03)] transition-all duration-500 hover:-translate-y-1 hover:border-accent/40"
                 data-reveal
                 data-reveal-delay={String((i % 3) + 1)}
               >

@@ -31,9 +31,36 @@ export function Footer() {
   }
 
   return (
-    <footer className="bg-foreground text-primary-foreground mt-32">
-      <div className="mx-auto max-w-7xl px-6 lg:px-10 py-20">
-        <div className="grid gap-12 lg:grid-cols-12">
+    <footer className="mt-32 bg-foreground text-primary-foreground">
+      <div className="mx-auto max-w-7xl px-6 py-20 lg:px-10">
+        <div className="rounded-[2rem] border border-white/10 bg-white/3 p-5 sm:p-8">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <p className="eyebrow text-primary-foreground/60">Nomad circle</p>
+              <h3 className="mt-2 font-display text-3xl leading-none sm:text-4xl">
+                Design notes. New drops. Early access.
+              </h3>
+            </div>
+            <form onSubmit={onSubscribe} className="flex w-full max-w-xl gap-3">
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Join the Nomad Circle"
+                className="btn-pill flex-1 border-2 border-primary-foreground/30 bg-transparent px-5 py-3 text-sm text-white placeholder:text-primary-foreground/50 focus:border-accent focus:outline-none"
+              />
+              <button
+                disabled={loading}
+                className="btn-pill bg-accent px-6 text-xs font-bold uppercase tracking-[0.14em] text-accent-foreground disabled:opacity-60"
+              >
+                {loading ? "…" : "Join"}
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <div className="mt-14 grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-4">
             <BrandLogo variant="signature" theme="light" size="lg" className="hidden sm:block" />
             <div className="sm:hidden">
@@ -42,26 +69,10 @@ export function Footer() {
                 CRAFTED TO TRAVEL. MADE TO LAST.
               </p>
             </div>
-            <p className="mt-6 max-w-md text-sm text-primary-foreground/70 leading-relaxed">
+            <p className="mt-6 max-w-md text-sm leading-relaxed text-primary-foreground/70">
               A custom apparel studio for individuals, creatives and brands — translating identity
               into considered, wearable pieces. Rooted in culture. Designed for movement.
             </p>
-            <form onSubmit={onSubscribe} className="mt-8 flex gap-3 max-w-md">
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Join the Nomad Circle"
-                className="btn-pill flex-1 bg-transparent border-2 border-primary-foreground/30 px-5 py-3 text-sm placeholder:text-primary-foreground/50 focus:outline-none focus:border-accent"
-              />
-              <button
-                disabled={loading}
-                className="btn-pill bg-accent text-accent-foreground px-6 text-xs font-bold uppercase tracking-[0.14em] disabled:opacity-60"
-              >
-                {loading ? "…" : "Join"}
-              </button>
-            </form>
           </div>
 
           <FooterColumn
@@ -110,7 +121,7 @@ export function Footer() {
               nested
             />
             <div className="mt-5 text-xs leading-6 text-primary-foreground/60">
-              <a href={`mailto:${SITE.email}`} className="hover:text-accent">
+              <a href={`mailto:${SITE.email}`} className="transition hover:text-accent">
                 {SITE.email}
               </a>
               <br />
@@ -118,7 +129,7 @@ export function Footer() {
                 href={whatsappLink()}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-accent"
+                className="transition hover:text-accent"
               >
                 WhatsApp support
               </a>
@@ -130,7 +141,7 @@ export function Footer() {
                 aria-label="Instagram"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-accent"
+                className="transition hover:text-accent"
               >
                 <Instagram size={20} />
               </a>
@@ -139,7 +150,7 @@ export function Footer() {
                 aria-label="TikTok"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-accent"
+                className="transition hover:text-accent"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12.5 2h2.7a5.5 5.5 0 0 0 5 5.2v2.7a8 8 0 0 1-5-1.7v6.6a5.8 5.8 0 1 1-5.8-5.8c.3 0 .6 0 .9.1v2.8a3 3 0 1 0 2.2 2.9V2z" />
@@ -150,7 +161,7 @@ export function Footer() {
                 aria-label="Facebook"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-accent"
+                className="transition hover:text-accent"
               >
                 <Facebook size={20} />
               </a>
@@ -171,7 +182,7 @@ export function Footer() {
             Explore Garment Care →
           </span>
         </a>
-        <div className="mt-16 pt-8 border-t border-primary-foreground/15 flex flex-col sm:flex-row justify-between gap-4 text-xs text-primary-foreground/60">
+        <div className="mt-16 flex flex-col justify-between gap-4 border-t border-primary-foreground/15 pt-8 text-xs text-primary-foreground/60 sm:flex-row">
           <span>
             © {new Date().getFullYear()} {SITE.name}. All rights reserved.
           </span>
