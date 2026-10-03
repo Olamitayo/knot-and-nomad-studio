@@ -9,16 +9,13 @@ import {
   Sparkles,
   Star,
   Wand2,
-  MessageCircle,
-  ShoppingBag,
   X,
 } from "lucide-react";
 import fallbackHero from "@/assets/hero-editorial.jpg";
 import { supabase } from "@/integrations/supabase/client";
 import { formatNaira } from "@/lib/format";
-import { fallbackProducts, productGroup, type StoreProduct } from "@/lib/products";
-import { useCart } from "@/lib/cart";
-import { whatsappLink } from "@/lib/site";
+import { parseProductData } from "@/lib/product-data";
+import { productGroup, type StoreProduct } from "@/lib/products";
 
 export const Route = createFileRoute("/shop")({
   head: () => ({
@@ -39,21 +36,15 @@ export const Route = createFileRoute("/shop")({
   component: ShopRoute,
 });
 
-const SHOP_STRUCTURE = [
-  { name: "Tops", items: ["Plain Tees", "Custom Tees", "Collar Shirts", "Oversized Tees"] },
-  {
-    name: "Bottoms",
-    items: ["Wide-Leg Trousers", "Tailored Trousers", "Cargo / Streetwear Pants"],
-  },
-  { name: "Jackets", items: ["Zip Jackets", "Cropped Jackets", "Wool / Premium Jackets"] },
-  {
-    name: "Native Wear",
-    items: ["Embroidered Native Tops", "Panel Native Tops", "Custom Native Sets"],
-  },
-  { name: "Sets", items: ["Jacket + Trouser Sets", "Tee + Trouser Sets", "Wool Blend Sets"] },
-  { name: "Accessories", items: ["Caps", "Tote Bags", "Patches", "Branding accessories"] },
-] as const;
-const CATEGORIES = ["All Products", ...SHOP_STRUCTURE.map((group) => group.name)];
+const CATEGORIES = [
+  "All Products",
+  "Tops",
+  "Bottoms",
+  "Jackets",
+  "Native Wear",
+  "Sets",
+  "Accessories",
+];
 const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "One Size"];
 const COLORS = ["Black", "White", "Cream", "Charcoal", "Sand", "Olive", "Navy", "Gold"];
 const TAGS = ["All", "New", "Bestseller", "Customizable"];
@@ -72,11 +63,10 @@ function ShopRoute() {
 }
 
 function ShopPage() {
-  const [products, setProducts] = useState<StoreProduct[]>(fallbackProducts);
+  const [products, setProducts] = useState<StoreProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [catalogueNotice, setCatalogueNotice] = useState("");
   const [category, setCategory] = useState("All Products");
-  const [subcategory, setSubcategory] = useState("All");
   const [size, setSize] = useState<string>("All");
   const [color, setColor] = useState<string>("All");
   const [tag, setTag] = useState("All");
@@ -103,23 +93,19 @@ function ShopPage() {
 
         if (!active) return;
 
-        if (result.error || !result.data?.length) {
-          setProducts(fallbackProducts);
-          if (import.meta.env.DEV) {
-            setCatalogueNotice("Live catalogue unavailable; showing fallback studio products.");
-          }
+        if (result.error) {
+          setProducts([]);
+          setCatalogueNotice("The collection could not be loaded. Please try again.");
           return;
         }
 
-        setProducts(result.data.map(normalizeProduct));
+        setProducts(result.data.map(parseProductData).map(normalizeProduct));
         setCatalogueNotice("");
       } catch (error) {
         if (!active) return;
-        setProducts(fallbackProducts);
-        if (import.meta.env.DEV) {
-          console.warn("[Shop] Falling back to the local catalogue.", error);
-          setCatalogueNotice("Live catalogue unavailable; showing fallback studio products.");
-        }
+        console.warn("[Shop] Catalogue request failed.", error);
+        setProducts([]);
+        setCatalogueNotice("The collection could not be loaded. Please try again.");
       } finally {
         if (active) setLoading(false);
       }
@@ -141,17 +127,10 @@ function ShopPage() {
     if (maxPrice === 0) setMaxPrice(priceCeiling);
   }, [priceCeiling, maxPrice]);
 
-  const featuredProduct = useMemo(
-    () =>
-      products.find((p) => p.is_bestseller && p.images[0]) ??
-      products.find((p) => p.images[0]) ??
-      products[0],
-    [products],
-  );
+  const featuredProduct = useMemo(() => products.find((p) => p.images[0]), [products]);
 
   const activeFilterCount = [
     category !== "All Products",
-    subcategory !== "All",
     size !== "All",
     color !== "All",
     tag !== "All",
@@ -161,7 +140,6 @@ function ShopPage() {
 
   const resetFilters = () => {
     setCategory("All Products");
-    setSubcategory("All");
     setSize("All");
     setColor("All");
     setTag("All");
@@ -174,12 +152,6 @@ function ShopPage() {
     const term = search.trim().toLowerCase();
     const result = products.filter((p) => {
       if (category !== "All Products" && productGroup(p) !== category) return false;
-      if (
-        subcategory !== "All" &&
-        p.subcategory !== subcategory &&
-        !matchesSubcategory(p, subcategory)
-      )
-        return false;
       if (size !== "All" && !p.sizes.includes(size)) return false;
       if (color !== "All" && !p.colors.includes(color)) return false;
       if (tag === "New" && !p.is_new_arrival) return false;
@@ -206,7 +178,7 @@ function ShopPage() {
         Number(b.is_new_arrival) - Number(a.is_new_arrival)
       );
     });
-  }, [products, category, subcategory, size, color, tag, maxPrice, search, sort]);
+  }, [products, category, size, color, tag, maxPrice, search, sort]);
 
   const heroImage = featuredProduct?.images[0] ?? fallbackHero;
 
@@ -217,13 +189,13 @@ function ShopPage() {
           <img src={heroImage} alt="" className="h-full w-full object-cover opacity-80" />
           <div className="absolute inset-0 bg-gradient-to-r from-foreground via-foreground/35 to-transparent" />
         </div>
-        <div className="relative mx-auto grid min-h-[34rem] max-w-7xl items-end px-6 py-16 lg:grid-cols-12 lg:px-10 lg:py-20">
+        <div className="relative mx-auto grid max-w-7xl items-end px-6 py-10 sm:py-14 lg:min-h-[30rem] lg:grid-cols-12 lg:px-10 lg:py-16">
           <div className="lg:col-span-7">
             <p className="eyebrow mb-5 text-primary-foreground/60">Knot & Nomad Shop</p>
-            <h1 className="font-display text-5xl leading-[0.98] sm:text-6xl lg:text-7xl">
+            <h1 className="font-display text-4xl leading-[0.98] sm:text-6xl lg:text-7xl">
               Elevated essentials.
               <br />
-              Cut for <span className="text-accent">motion</span>.
+              Cut for <span className="text-[#b7c8b3]">motion</span>.
             </h1>
             <p className="mt-6 max-w-xl text-sm leading-7 text-primary-foreground/70 sm:text-base">
               Ready-to-wear essentials and customisable studio pieces, priced in Nigerian Naira and
@@ -258,17 +230,22 @@ function ShopPage() {
         </div>
       </section>
 
-      <section className="border-b border-border bg-card">
+      <section className="border-b border-border bg-card" aria-label="Product categories">
         <div className="mx-auto max-w-7xl px-6 py-4 lg:px-10">
-          <div className="flex gap-2 overflow-x-auto pb-1">
+          <div
+            className="relative flex gap-2 overflow-x-auto pb-2 pr-8 [scrollbar-width:thin]"
+            role="group"
+            aria-label="Filter products by category"
+          >
             {CATEGORIES.map((item) => (
               <button
                 key={item}
+                type="button"
+                aria-pressed={category === item}
                 onClick={() => {
                   setCategory(item);
-                  setSubcategory("All");
                 }}
-                className={`shrink-0 border px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] transition ${
+                className={`inline-flex min-h-11 shrink-0 items-center border px-4 text-xs font-bold uppercase tracking-[0.18em] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                   category === item
                     ? "border-foreground bg-foreground text-primary-foreground"
                     : "border-border bg-background text-muted-foreground hover:border-foreground hover:text-foreground"
@@ -277,88 +254,39 @@ function ShopPage() {
                 {item}
               </button>
             ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="border-b border-border bg-background">
-        <div className="mx-auto max-w-7xl px-6 py-8 lg:px-10">
-          <div className="mb-5 flex items-end justify-between gap-4">
-            <div>
-              <p className="eyebrow">Shop by category</p>
-              <h2 className="mt-2 font-display text-3xl">Find your piece.</h2>
-            </div>
-            <p className="hidden text-sm text-muted-foreground md:block">
-              Ready-to-wear and customisable options
-            </p>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {SHOP_STRUCTURE.map((group) => (
-              <div key={group.name} className="border border-border bg-card p-5">
-                <button
-                  onClick={() => {
-                    setCategory(group.name);
-                    setSubcategory("All");
-                    document.querySelector("#shop-grid")?.scrollIntoView();
-                  }}
-                  className="flex w-full items-center justify-between text-left"
-                >
-                  <span className="font-display text-xl">{group.name}</span>
-                  <ArrowRight size={15} />
-                </button>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {group.items.map((item) => (
-                    <button
-                      key={item}
-                      onClick={() => {
-                        setCategory(group.name);
-                        setSubcategory(item);
-                        document.querySelector("#shop-grid")?.scrollIntoView();
-                      }}
-                      className="text-left text-xs leading-5 text-muted-foreground underline-offset-4 transition hover:text-foreground hover:underline"
-                    >
-                      {item}
-                      {item === "Plain Tees"
-                        ? " · ₦12k–₦18k"
-                        : item === "Custom Tees"
-                          ? " · ₦18k–₦25k"
-                          : item === "Collar Shirts"
-                            ? " · ₦15k–₦35k"
-                            : ""}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ))}
+            <span
+              className="pointer-events-none sticky right-0 my-1 ml-auto flex shrink-0 items-center bg-gradient-to-l from-card via-card pl-4 pr-1 text-[9px] font-bold uppercase tracking-[0.12em] text-muted-foreground sm:hidden"
+              aria-hidden="true"
+            >
+              Swipe →
+            </span>
           </div>
         </div>
       </section>
 
       <section id="shop-grid" className="mx-auto max-w-7xl px-6 py-10 lg:px-10 lg:py-14">
         {catalogueNotice && (
-          <div className="mb-8 flex flex-wrap items-center justify-between gap-4 border border-accent/30 bg-accent/5 px-5 py-4 text-sm">
-            <p>{catalogueNotice}</p>
-            <a
-              href={whatsappLink("Hi, I would like to confirm current ready-to-wear availability.")}
-              target="_blank"
-              rel="noreferrer"
-              className="font-bold uppercase tracking-[0.16em] text-accent"
+          <p className="mb-6 border border-border bg-card p-4 text-sm" role="alert">
+            {catalogueNotice}{" "}
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+              className="ml-2 underline underline-offset-4"
             >
-              Check availability
-            </a>
-          </div>
+              Reload
+            </button>
+          </p>
         )}
         <div className="mb-8 grid gap-4 lg:grid-cols-[18rem_1fr] lg:items-end">
           <div>
             <p className="eyebrow mb-2">Current edit</p>
             <p className="text-sm text-muted-foreground">
-              {loading
-                ? "Refreshing live stock…"
-                : `${filtered.length} of ${products.length} pieces`}
+              {loading ? "Loading pieces…" : `${filtered.length} of ${products.length} pieces`}
             </p>
           </div>
           <div className="grid gap-3 md:grid-cols-[1fr_13rem_auto]">
             <label className="relative block">
+              <span className="sr-only">Search products</span>
               <Search
                 size={16}
                 className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
@@ -366,14 +294,19 @@ function ShopPage() {
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
+                aria-label="Search products"
                 placeholder="Search tees, trousers, jackets, native wear..."
-                className="h-12 w-full border border-border bg-card pl-11 pr-4 text-sm outline-none transition placeholder:text-muted-foreground focus:border-foreground"
+                className="h-12 w-full border border-border bg-card pl-11 pr-4 text-sm outline-none transition placeholder:text-muted-foreground focus:border-foreground focus-visible:ring-2 focus-visible:ring-accent"
               />
             </label>
+            <label className="sr-only" htmlFor="shop-sort">
+              Sort products
+            </label>
             <select
+              id="shop-sort"
               value={sort}
               onChange={(e) => setSort(e.target.value as Sort)}
-              className="h-12 border border-border bg-card px-4 text-sm outline-none transition focus:border-foreground"
+              className="h-12 border border-border bg-card px-4 text-sm outline-none transition focus:border-foreground focus-visible:ring-2 focus-visible:ring-accent"
             >
               {SORTS.map((item) => (
                 <option key={item}>{item}</option>
@@ -381,6 +314,8 @@ function ShopPage() {
             </select>
             <button
               onClick={() => setShowFilters((v) => !v)}
+              aria-expanded={showFilters}
+              aria-controls="mobile-shop-filters"
               className="btn-pill inline-flex h-12 items-center justify-center gap-2 border-2 border-foreground px-5 text-xs font-bold uppercase tracking-[0.22em] transition hover:bg-foreground hover:text-primary-foreground lg:hidden"
             >
               <Filter size={14} />
@@ -391,7 +326,7 @@ function ShopPage() {
         </div>
 
         {showFilters && (
-          <div className="mb-8 border border-border bg-card p-5 lg:hidden">
+          <div id="mobile-shop-filters" className="mb-8 border border-border bg-card p-5 lg:hidden">
             <ShopFilters
               size={size}
               color={color}
@@ -434,12 +369,11 @@ function ShopPage() {
             </div>
           </aside>
 
-          <div>
+          <div aria-live="polite" aria-busy={loading}>
             {activeFilterCount > 0 && (
               <div className="mb-6 flex flex-wrap items-center gap-2">
                 {[
                   category !== "All Products" ? category : null,
-                  subcategory !== "All" ? subcategory : null,
                   size !== "All" ? size : null,
                   color !== "All" ? color : null,
                   tag !== "All" ? tag : null,
@@ -550,10 +484,13 @@ function ShopFilters({
       <FilterGroup label="Collection" options={TAGS} value={tag} onChange={onTag} />
       <div>
         <div className="mb-3 flex items-end justify-between gap-3">
-          <p className="eyebrow">Max price</p>
+          <label htmlFor="max-price" className="eyebrow">
+            Max price
+          </label>
           <p className="text-sm font-medium">{formatNaira(maxPrice)}</p>
         </div>
         <input
+          id="max-price"
           type="range"
           min={0}
           max={priceCeiling}
@@ -569,7 +506,7 @@ function ShopFilters({
       </div>
       <button
         onClick={onReset}
-        className="w-full border border-border py-3 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground transition hover:border-foreground hover:text-foreground"
+        className="min-h-11 w-full border border-border py-3 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground transition hover:border-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
       >
         Reset all
       </button>
@@ -591,14 +528,16 @@ function FilterGroup({
   swatches?: boolean;
 }) {
   return (
-    <div>
-      <p className="eyebrow mb-3">{label}</p>
+    <fieldset>
+      <legend className="eyebrow mb-3">{label}</legend>
       <div className="flex flex-wrap gap-2">
         {options.map((option) => (
           <button
             key={option}
+            type="button"
+            aria-pressed={value === option}
             onClick={() => onChange(option)}
-            className={`inline-flex min-h-9 items-center gap-2 border px-3 py-2 text-xs transition ${
+            className={`inline-flex min-h-11 items-center gap-2 border px-3 py-2 text-xs transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
               value === option
                 ? "border-foreground bg-foreground text-primary-foreground"
                 : "border-border bg-background text-muted-foreground hover:border-foreground hover:text-foreground"
@@ -609,32 +548,20 @@ function FilterGroup({
           </button>
         ))}
       </div>
-    </div>
+    </fieldset>
   );
 }
 
 function ProductCard({ p }: { p: StoreProduct }) {
   const secondImage = p.images[1];
-  const add = useCart((state) => state.add);
-  const canAdd =
-    !p.isFallback &&
-    !p.is_sold_out &&
-    p.stock_level > 0 &&
-    p.sizes.length > 0 &&
-    p.colors.length > 0;
-
-  const quickAdd = () => {
-    if (!canAdd) return;
-    add({
-      productId: p.id,
-      name: p.name,
-      image: p.images[0] ?? "",
-      unitPrice: p.starting_price_ngn || p.price_ngn,
-      size: p.sizes[0],
-      color: p.colors[0],
-      quantity: 1,
-    });
-  };
+  const startingPrice = p.starting_price_ngn != null && p.starting_price_ngn !== p.price_ngn;
+  const availability = p.is_sold_out
+    ? "Unavailable"
+    : p.stock_level > 0
+      ? "In stock"
+      : p.is_ready_to_wear === false
+        ? "Made to order"
+        : "Ask about availability";
 
   return (
     <article className="group flex h-full flex-col">
@@ -645,6 +572,8 @@ function ProductCard({ p }: { p: StoreProduct }) {
               <img
                 src={p.images[0]}
                 alt={p.name}
+                width={900}
+                height={1125}
                 className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.025]"
                 loading="lazy"
               />
@@ -702,17 +631,20 @@ function ProductCard({ p }: { p: StoreProduct }) {
           )}
         </div>
         <div className="shrink-0 text-right">
-          <p className="text-[0.62rem] font-bold uppercase tracking-[0.16em] text-muted-foreground">
-            Starting at
-          </p>
+          {startingPrice && (
+            <p className="text-[0.62rem] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+              Starting at
+            </p>
+          )}
           <p className="mt-1 text-sm font-semibold">
-            {formatNaira(p.starting_price_ngn || p.price_ngn)}
+            {formatNaira(p.starting_price_ngn ?? p.price_ngn)}
           </p>
         </div>
       </div>
 
       <div className="mt-4 flex min-h-5 items-center justify-between gap-3">
         <div
+          role="img"
           className="flex items-center gap-1.5"
           aria-label={`Available colours: ${p.colors.join(", ") || "Ask the studio"}`}
         >
@@ -745,31 +677,14 @@ function ProductCard({ p }: { p: StoreProduct }) {
             </span>
           ))}
       </div>
-      <div className="mt-auto grid grid-cols-2 gap-2 border-t border-border pt-4">
+      <div className="mt-auto border-t border-border pt-4">
         <Link
           to="/shop/$slug"
           params={{ slug: p.slug }}
-          className="inline-flex min-h-11 items-center justify-center gap-2 border border-foreground px-3 text-[0.65rem] font-bold uppercase tracking-[0.16em] transition hover:bg-foreground hover:text-primary-foreground"
+          className="inline-flex min-h-11 w-full items-center justify-center gap-2 border border-foreground px-3 text-[0.65rem] font-bold uppercase tracking-[0.16em] transition hover:bg-foreground hover:text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
         >
-          View product <ArrowRight size={13} />
+          {availability} · View piece <ArrowRight size={13} />
         </Link>
-        {canAdd ? (
-          <button
-            onClick={quickAdd}
-            className="inline-flex min-h-11 items-center justify-center gap-2 bg-foreground px-3 text-[0.65rem] font-bold uppercase tracking-[0.16em] text-primary-foreground transition hover:bg-accent"
-          >
-            <ShoppingBag size={13} /> Add to cart
-          </button>
-        ) : (
-          <a
-            href={whatsappLink(`Hi, I am interested in ${p.name}. Please confirm availability.`)}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex min-h-11 items-center justify-center gap-2 bg-foreground px-3 text-[0.65rem] font-bold uppercase tracking-[0.16em] text-primary-foreground transition hover:bg-accent"
-          >
-            <MessageCircle size={13} /> Inquire
-          </a>
-        )}
       </div>
     </article>
   );
@@ -839,32 +754,4 @@ function colorValue(color: string) {
   };
 
   return map[color] ?? color.toLowerCase();
-}
-
-function matchesSubcategory(product: StoreProduct, subcategory: string) {
-  const value =
-    `${product.category} ${product.name} ${product.short_description ?? ""}`.toLowerCase();
-  const terms: Record<string, string[]> = {
-    "Plain Tees": ["plain tee", "basic tee"],
-    "Custom Tees": ["custom tee", "printed tee"],
-    "Collar Shirts": ["collar", "polo"],
-    "Oversized Tees": ["oversized tee"],
-    "Wide-Leg Trousers": ["wide-leg", "wide leg"],
-    "Tailored Trousers": ["tailored trouser"],
-    "Cargo / Streetwear Pants": ["cargo", "streetwear pant"],
-    "Zip Jackets": ["zip jacket", "zip-up"],
-    "Cropped Jackets": ["cropped jacket"],
-    "Wool / Premium Jackets": ["wool jacket", "premium jacket"],
-    "Embroidered Native Tops": ["embroidered native"],
-    "Panel Native Tops": ["panel native"],
-    "Custom Native Sets": ["custom native", "native set"],
-    "Jacket + Trouser Sets": ["jacket + trouser", "jacket set"],
-    "Tee + Trouser Sets": ["tee + trouser", "tee set"],
-    "Wool Blend Sets": ["wool blend set"],
-    Caps: ["cap"],
-    "Tote Bags": ["tote"],
-    Patches: ["patch"],
-    "Branding accessories": ["branding accessory", "label", "badge"],
-  };
-  return (terms[subcategory] ?? [subcategory.toLowerCase()]).some((term) => value.includes(term));
 }

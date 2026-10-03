@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { Mail, MessageCircle, Instagram, Facebook } from "lucide-react";
+import { Mail, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import { submitContact } from "@/lib/orders.functions";
 import { SITE, whatsappLink } from "@/lib/site";
@@ -37,7 +37,7 @@ function Contact() {
           email: String(fd.get("email") || ""),
           phone: String(fd.get("phone") || ""),
           message: String(fd.get("message") || ""),
-        } as any,
+        },
       });
       if (res.ok) {
         toast.success("Message sent. We'll be in touch.");
@@ -45,8 +45,8 @@ function Contact() {
       } else {
         toast.error(res.error || "Failed to send");
       }
-    } catch (err: any) {
-      toast.error(err?.message || "Check the form");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Check the form");
     } finally {
       setLoading(false);
     }
@@ -82,37 +82,6 @@ function Contact() {
               <MessageCircle size={16} /> Chat on WhatsApp
             </a>
           </div>
-          <div>
-            <div className="eyebrow">Follow</div>
-            <div className="mt-3 flex gap-4">
-              <a
-                href={SITE.socials.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-accent"
-              >
-                <Instagram size={22} />
-              </a>
-              <a
-                href={SITE.socials.tiktok}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-accent"
-              >
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12.5 2h2.7a5.5 5.5 0 0 0 5 5.2v2.7a8 8 0 0 1-5-1.7v6.6a5.8 5.8 0 1 1-5.8-5.8c.3 0 .6 0 .9.1v2.8a3 3 0 1 0 2.2 2.9V2z" />
-                </svg>
-              </a>
-              <a
-                href={SITE.socials.facebook}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-accent"
-              >
-                <Facebook size={22} />
-              </a>
-            </div>
-          </div>
           <p className="text-sm text-muted-foreground max-w-sm pt-6 border-t border-border">
             For custom design briefs, please use our{" "}
             <a href="/custom-order" className="underline hover:text-accent">
@@ -124,6 +93,7 @@ function Contact() {
 
         <form
           onSubmit={onSubmit}
+          aria-busy={loading}
           className="lg:col-span-7 space-y-6 bg-card border border-border p-8 lg:p-10"
         >
           <div className="grid md:grid-cols-2 gap-6">
@@ -135,7 +105,7 @@ function Contact() {
                 id="name"
                 name="name"
                 required
-                className="mt-3 w-full bg-background border border-border px-4 py-3 text-sm focus:outline-none focus:border-accent"
+                className="mt-3 min-h-12 w-full border border-border bg-background px-4 py-3 text-sm focus:border-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
               />
             </div>
             <div>
@@ -147,7 +117,7 @@ function Contact() {
                 name="email"
                 type="email"
                 required
-                className="mt-3 w-full bg-background border border-border px-4 py-3 text-sm focus:outline-none focus:border-accent"
+                className="mt-3 min-h-12 w-full border border-border bg-background px-4 py-3 text-sm focus:border-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
               />
             </div>
           </div>
@@ -158,7 +128,7 @@ function Contact() {
             <input
               id="phone"
               name="phone"
-              className="mt-3 w-full bg-background border border-border px-4 py-3 text-sm focus:outline-none focus:border-accent"
+              className="mt-3 min-h-12 w-full border border-border bg-background px-4 py-3 text-sm focus:border-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             />
           </div>
           <div>
@@ -170,12 +140,12 @@ function Contact() {
               name="message"
               required
               rows={6}
-              className="mt-3 w-full bg-background border border-border px-4 py-3 text-sm focus:outline-none focus:border-accent"
+              className="mt-3 w-full border border-border bg-background px-4 py-3 text-sm focus:border-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             />
           </div>
           <button
             disabled={loading}
-            className="btn-pill bg-foreground text-primary-foreground px-8 py-4 text-xs font-bold uppercase tracking-[0.3em] hover:bg-accent hover:text-accent-foreground transition disabled:opacity-60"
+            className="btn-pill min-h-12 bg-foreground px-8 py-4 text-xs font-bold uppercase tracking-[0.3em] text-primary-foreground transition hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:opacity-60"
           >
             {loading ? "Sending…" : "Send message"}
           </button>

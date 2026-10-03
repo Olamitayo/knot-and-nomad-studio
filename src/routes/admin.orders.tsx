@@ -72,7 +72,7 @@ function AdminOrders() {
   }, [open]);
 
   const updateStatus = async (id: string, payment_status?: string, status?: string) => {
-    const patch: any = {};
+    const patch: Partial<Order> = {};
     if (payment_status) patch.payment_status = payment_status;
     if (status) patch.status = status;
     const { error } = await supabase.from("orders").update(patch).eq("id", id);

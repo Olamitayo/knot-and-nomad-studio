@@ -54,7 +54,6 @@ export const fallbackProducts: StoreProduct[] = [
     slug: "nomad-ribbed-wide-leg-trousers",
     name: "Nomad Ribbed Wide-Leg Trousers",
     short_description: "A fluid wide-leg silhouette with a clean structured waist.",
-    description: "A studio reference product shown while the live catalogue reconnects.",
     category: "Bottoms",
     subcategory: "Wide-Leg Trousers",
     price_ngn: 28000,

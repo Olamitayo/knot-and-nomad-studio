@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { parseProductData } from "@/lib/product-data";
+import type { GalleryItem, ProductVariant } from "@/lib/products";
 import { formatNaira } from "@/lib/format";
 import { toast } from "sonner";
 import { Plus, Trash2, Upload } from "lucide-react";
@@ -41,18 +43,6 @@ interface Product {
   size_guide: Record<string, string>[];
 }
 
-interface GalleryItem {
-  url: string;
-  color: string;
-  shot: string;
-}
-interface ProductVariant {
-  colour: string;
-  sku: string;
-  stockLevel: number;
-  images: { url: string; shot: string }[];
-  priceOverride?: number | null;
-}
 const SHOT_TYPES = [
   "Editorial",
   "Front",
@@ -107,7 +97,7 @@ function AdminProducts() {
       .from("products")
       .select("*")
       .order("sort_order")
-      .then(({ data }) => setProducts((data as Product[]) ?? []));
+      .then(({ data }) => setProducts((data ?? []).map(parseProductData)));
   useEffect(() => {
     reload();
   }, []);
