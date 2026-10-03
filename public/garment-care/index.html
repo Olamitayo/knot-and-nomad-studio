@@ -42,9 +42,9 @@
             knotnomad.com host  ->  opens at knotnomad.com/garment-care
   CONTACTS: phone/WhatsApp/email filled from the Knot & Nomad
             brand config (src/lib/site.ts in the main repo).
-  PLACEHOLDERS STILL TO EDIT:  hours, service-area city,
-            social links, prices (NGN) as your rates settle.
-  Search this file for the word  EDIT:  to find each one.
+  BUSINESS OWNER REVIEW: confirm guide prices (NGN), service area,
+            pickup charges and operating hours before publishing.
+  Search this file for the word  EDIT:  to find remaining contact fields.
   ============================================================
 -->
     <style>
@@ -99,6 +99,23 @@
       a {
         color: inherit;
         text-decoration: none;
+      }
+      :focus-visible {
+        outline: 2px solid var(--gold-deep);
+        outline-offset: 3px;
+      }
+      .skip-link {
+        position: fixed;
+        z-index: 1000;
+        top: 8px;
+        left: 8px;
+        padding: 12px 16px;
+        background: var(--cream);
+        color: var(--ink);
+        transform: translateY(-160%);
+      }
+      .skip-link:focus {
+        transform: none;
       }
       section {
         scroll-margin-top: 84px;
@@ -248,6 +265,7 @@
         justify-content: space-between;
         gap: 16px;
         height: 38px;
+        min-height: 38px;
       }
       .topbar a {
         color: #fff;
@@ -1215,6 +1233,14 @@
         gap: 52px;
         align-items: start;
       }
+      .contact-grid > * {
+        min-width: 0;
+        width: 100%;
+      }
+      .cinfo > div {
+        min-width: 0;
+        overflow-wrap: anywhere;
+      }
       .contact-info h2 {
         font-size: clamp(28px, 3.6vw, 42px);
         margin: 16px 0 18px;
@@ -1564,6 +1590,10 @@
           margin: 0 auto;
           width: 100%;
         }
+        .hero-visual .chip {
+          max-width: min(220px, 70vw);
+          overflow-wrap: anywhere;
+        }
         .split,
         .contact-grid {
           grid-template-columns: 1fr;
@@ -1593,6 +1623,34 @@
         }
       }
       @media (max-width: 640px) {
+        .topbar .container {
+          height: auto;
+          min-height: 0;
+          flex-wrap: wrap;
+          gap: 4px 12px;
+          padding-top: 7px;
+          padding-bottom: 7px;
+          font-size: 11px;
+          line-height: 1.4;
+        }
+        .topbar .container > div:first-child {
+          flex: 1 1 100%;
+          overflow-wrap: anywhere;
+        }
+        .topbar .tb-right {
+          flex-wrap: wrap;
+          gap: 4px 12px;
+          min-width: 0;
+          font-size: 10px;
+        }
+        .topbar .tb-right > span {
+          display: none;
+        }
+        .topbar .tb-right a {
+          min-height: 24px;
+          display: inline-flex;
+          align-items: center;
+        }
         .nav-links,
         .nav-cta .btn {
           display: none;
@@ -1602,18 +1660,23 @@
         }
         .nav-links.open {
           display: flex;
-          position: absolute;
+          position: fixed;
           top: 72px;
+          bottom: 0;
           left: 0;
           right: 0;
+          z-index: 100;
+          overflow-y: auto;
+          overscroll-behavior: contain;
           flex-direction: column;
           background: var(--cream);
-          border-bottom: 1px solid var(--line);
-          padding: 18px 28px;
+          padding: 20px 28px calc(24px + env(safe-area-inset-bottom));
           gap: 6px;
-          box-shadow: var(--shadow-md);
         }
         .nav-links.open a {
+          min-height: 48px;
+          display: flex;
+          align-items: center;
           padding: 12px 0;
           border-bottom: 1px solid var(--line-soft);
           width: 100%;
@@ -1704,22 +1767,13 @@
     </style>
   </head>
   <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
     <!-- ===== Top bar ===== -->
     <div class="topbar">
       <div class="container">
-        <div>
-          Free pickup &amp; delivery on orders over
-          <b style="color: #fff; font-weight: 600">₦10,000</b> <span class="dot">•</span> 48-hour
-          turnaround
-        </div>
+        <div>Knot &amp; Nomad Garment Care</div>
         <div class="tb-right">
           <a href="/">← Back to Knot &amp; Nomad</a>
-          <span
-            >An affiliate of
-            <a href="https://knotnomad.com" target="_blank" rel="noopener"
-              >Knot &amp; Nomad</a
-            ></span
-          >
           <!-- EDIT: phone --><a href="tel:+2348129894036">+234 812 989 4036</a>
         </div>
       </div>
@@ -1737,7 +1791,7 @@
             <span>Professional Fabric Care</span>
           </span>
         </a>
-        <nav class="nav-links" id="navLinks">
+        <nav class="nav-links" id="navLinks" aria-label="Garment Care navigation">
           <a href="#services">Services</a>
           <a href="#process">How it works</a>
           <a href="#pricing">Pricing</a>
@@ -1747,11 +1801,12 @@
         </nav>
         <div class="nav-cta">
           <a href="#contact" class="btn btn-primary">Schedule a pickup</a>
-          <button class="nav-toggle" id="navToggle" aria-label="Menu"><span></span></button>
+          <button class="nav-toggle" id="navToggle" aria-label="Open navigation" aria-expanded="false" aria-controls="navLinks"><span></span></button>
         </div>
       </div>
     </header>
 
+    <main id="main-content">
     <!-- ===== Hero ===== -->
     <section class="hero">
       <div class="container">
@@ -1759,9 +1814,8 @@
           <span class="eyebrow">Garment care for pieces made to move with you</span>
           <h1>Knot &amp; Nomad <em>Garment Care</em></h1>
           <p class="lede">
-            Laundry, steaming, stain treatment, folding, and pickup care for everyday and premium
-            garments. Fabric-safe handling, tracked service, and doorstep delivery bring the Knot
-            &amp; Nomad standard to every piece you wear.
+            Laundry, steaming, stain treatment, folding and pickup options for everyday and premium
+            garments. Contact the team to confirm the right service and timing for your pieces.
           </p>
           <div class="hero-actions">
             <a href="#contact" class="btn btn-primary btn-lg"
@@ -1778,10 +1832,6 @@
               </svg>
             </a>
             <a href="#services" class="btn btn-ghost btn-lg">Explore Garment Care</a>
-          </div>
-          <div class="hero-trust">
-            <span class="stars">★★★★★</span>
-            <span><b>4.9/5</b> from 1,200+ happy customers</span>
           </div>
         </div>
 
@@ -1800,7 +1850,7 @@
                   d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"
                 /></svg
             ></span>
-            <div><small>Eco-friendly</small>Plant-based clean</div>
+            <div><small>Services</small>Wash, steam &amp; press</div>
           </div>
           <div class="chip c2">
             <span class="ic-badge"
@@ -1815,7 +1865,7 @@
                 <circle cx="12" cy="12" r="9" />
                 <path d="M12 7v5l3 2" /></svg
             ></span>
-            <div><small>Turnaround</small>48 hours</div>
+            <div><small>Booking</small>Timing confirmed by the team</div>
           </div>
 
           <div class="care-card">
@@ -1893,28 +1943,6 @@
       </div>
     </section>
 
-    <!-- ===== Stats ===== -->
-    <div class="stats">
-      <div class="container">
-        <div class="stat reveal">
-          <b>10,000<span class="u">+</span></b
-          ><span>Garments cared for</span>
-        </div>
-        <div class="stat reveal">
-          <b>48<span class="u">h</span></b
-          ><span>Average turnaround</span>
-        </div>
-        <div class="stat reveal">
-          <b>100<span class="u">%</span></b
-          ><span>Eco-friendly detergents</span>
-        </div>
-        <div class="stat reveal">
-          <b>4.9<span class="u">★</span></b
-          ><span>Average customer rating</span>
-        </div>
-      </div>
-    </div>
-
     <!-- ===== Services ===== -->
     <section class="section" id="services">
       <div class="container">
@@ -1962,7 +1990,7 @@
                 <path d="M8 3h8l-1 4H9L8 3Z" />
                 <path d="M9 7l-4 3v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V10l-4-3" /></svg
             ></span>
-            <h3>Premium Garment Cleaning</h3>
+            <h3>Specialist garment cleaning</h3>
             <p>
               Suits, dresses, coats and delicates handled with solvent-safe, fabric-first methods
               that protect colour, structure and finish.
@@ -2003,7 +2031,7 @@
                   d="M12 3l2.5 5 5.5.8-4 3.9.9 5.5L12 15.5 7.1 18.2l.9-5.5-4-3.9L9.5 8 12 3Z"
                 /></svg
             ></span>
-            <h3>Premium Garment Care</h3>
+            <h3>Delicate &amp; specialist care</h3>
             <p>
               Specialist treatment for statement pieces, heavyweight streetwear and Knot &amp; Nomad
               originals — cared for by people who understand how they're made.
@@ -2026,10 +2054,10 @@
             ></span>
             <h3>Pickup &amp; Delivery</h3>
             <p>
-              Doorstep collection and return across the city, tracked end to end. Choose your slot —
-              we handle the rest, contact-free.
+              Share your preferred pickup details when booking. The team will confirm availability,
+              timing and any applicable charges before collection.
             </p>
-            <span class="tag">Free over ₦10,000</span>
+            <span class="tag">By arrangement</span>
           </div>
           <div class="svc reveal">
             <span class="ic"
@@ -2086,7 +2114,7 @@
           <div class="step reveal">
             <div class="num">4</div>
             <h3>Delivered fresh</h3>
-            <p>Back to you within 48 hours — folded, pressed and ready to wear.</p>
+            <p>We’ll confirm the expected return timing with you before the service is arranged.</p>
           </div>
         </div>
       </div>
@@ -2100,91 +2128,10 @@
           <h2 class="section-title" style="margin-bottom: 14px">
             Care built by people who make clothes.
           </h2>
-          <p style="color: var(--stone); font-size: 16px; margin-bottom: 34px; max-width: 460px">
-            We started inside a studio obsessed with craft. That same eye for detail now goes into
-            how your everyday wardrobe is washed, pressed and returned.
+          <p style="color: var(--stone); font-size: 16px; max-width: 460px">
+            Knot &amp; Nomad Garment Care is the care service from the Knot &amp; Nomad apparel
+            studio. Ask the team about laundry, pressing, specialist cleaning and pickup options.
           </p>
-          <div class="values">
-            <div class="value">
-              <span class="ic"
-                ><svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.7"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path
-                    d="M12 3l2.5 5 5.5.8-4 3.9.9 5.5L12 15.5 7.1 18.2l.9-5.5-4-3.9L9.5 8 12 3Z"
-                  /></svg
-              ></span>
-              <div>
-                <h3>Craft-grade finishing</h3>
-                <p>Hand-inspected, hand-pressed. The details you'd expect from a bespoke tailor.</p>
-              </div>
-            </div>
-            <div class="value">
-              <span class="ic"
-                ><svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.7"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4" />
-                  <circle cx="12" cy="12" r="3.2" /></svg
-              ></span>
-              <div>
-                <h3>Eco-conscious cleaning</h3>
-                <p>
-                  Plant-based, hypoallergenic detergents and low-water machines — kinder on skin and
-                  planet.
-                </p>
-              </div>
-            </div>
-            <div class="value">
-              <span class="ic"
-                ><svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.7"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <rect x="3" y="4" width="18" height="16" rx="2" />
-                  <path d="M3 9h18M8 14l3 3 5-5" /></svg
-              ></span>
-              <div>
-                <h3>Track every order</h3>
-                <p>
-                  Live updates from pickup to delivery, so you always know where your garment-care
-                  order is.
-                </p>
-              </div>
-            </div>
-            <div class="value">
-              <span class="ic"
-                ><svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.7"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M9 12l2 2 4-4" />
-                  <path d="M12 3l7 3v5c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6l7-3Z" /></svg
-              ></span>
-              <div>
-                <h3>Fresh-guarantee</h3>
-                <p>Not happy with an item? We'll re-clean it free, no questions asked.</p>
-              </div>
-            </div>
-          </div>
         </div>
 
         <div class="brand-panel reveal">
@@ -2198,14 +2145,9 @@
           <span class="eyebrow">The Knot &amp; Nomad family</span>
           <h3>Wardrobe care, made effortless.</h3>
           <p>
-            Knot &amp; Nomad is an apparel brand built around craft, movement and respect for
-            fabric. Knot &amp; Nomad Garment Care is its care arm for customers who want their
-            everyday and premium garments cleaned, handled, and delivered with attention to detail.
-            From laundry and steaming to stain treatment and folding, we care for garments the same
-            way we approach apparel: with structure, quality, and respect for fabric.
-          </p>
-          <p style="margin-top: 14px">
-            From the clothes we make to the clothes you already love — it's all handled with craft.
+            Garment Care is a distinct service from Knot &amp; Nomad for customers seeking laundry,
+            garment cleaning, steaming and pickup arrangements. Contact the team to confirm current
+            services and availability.
           </p>
           <a class="kn-link" href="https://knotnomad.com" target="_blank" rel="noopener"
             >Visit Knot &amp; Nomad
@@ -2231,8 +2173,8 @@
           <span class="eyebrow center">Simple pricing</span>
           <h2 class="section-title">Honest prices. No surprises.</h2>
           <p>
-            Introductory launch rates while we earn your trust — with free pickup &amp; delivery on
-            orders over ₦10,000.
+            Guide prices are shown below. Confirm the current rate and any pickup or delivery charge
+            with the team before booking.
             <!-- EDIT: adjust prices below as your rates settle -->
           </p>
         </div>
@@ -2276,7 +2218,7 @@
                   stroke-linejoin="round"
                 >
                   <path d="M20 6L9 17l-5-5" /></svg
-                >72-hour turnaround
+                >Timing confirmed before collection
               </li>
               <li>
                 <svg
@@ -2288,7 +2230,7 @@
                   stroke-linejoin="round"
                 >
                   <path d="M20 6L9 17l-5-5" /></svg
-                >Free pickup on orders ₦10,000+
+                >Pickup charge confirmed at booking
               </li>
             </ul>
             <a href="#contact" class="btn btn-ghost">Book Garment Care</a>
@@ -2333,7 +2275,7 @@
                   stroke-linejoin="round"
                 >
                   <path d="M20 6L9 17l-5-5" /></svg
-                >48-hour turnaround
+                >Timing confirmed before collection
               </li>
               <li>
                 <svg
@@ -2345,7 +2287,7 @@
                   stroke-linejoin="round"
                 >
                   <path d="M20 6L9 17l-5-5" /></svg
-                >Free pickup on orders ₦10,000+
+                >Pickup charge confirmed at booking
               </li>
             </ul>
             <a href="#contact" class="btn btn-primary">Book Garment Care</a>
@@ -2389,7 +2331,7 @@
                   stroke-linejoin="round"
                 >
                   <path d="M20 6L9 17l-5-5" /></svg
-                >24–48h priority turnaround
+                >Timing confirmed before collection
               </li>
               <li>
                 <svg
@@ -2401,7 +2343,7 @@
                   stroke-linejoin="round"
                 >
                   <path d="M20 6L9 17l-5-5" /></svg
-                >Free pickup on orders ₦10,000+
+                >Pickup charge confirmed at booking
               </li>
             </ul>
             <a href="#contact" class="btn btn-ghost">Book Garment Care</a>
@@ -2524,192 +2466,9 @@
           <div class="prow"><span>Suit</span><span class="dots"></span><b>₦1,000 – ₦1,500</b></div>
         </div>
         <p class="pl-note">
-          Prices are guide ranges and may vary with fabric and condition — we confirm your exact
-          quote at pickup. Express (same-day) service adds 30–50% to the bill.
+          Prices are guide ranges. We’ll confirm the current rate and any applicable collection,
+          delivery or priority-service charge with you before the booking is accepted.
         </p>
-
-        <!-- Pickup & delivery fees -->
-        <div class="pl-head reveal">
-          <span class="eyebrow center">Pickup &amp; delivery</span>
-          <h3 style="margin-top: 14px">Doorstep collection &amp; return</h3>
-          <p>Tracked end to end, from your door and back again.</p>
-        </div>
-        <div class="deliv">
-          <div class="dcard reveal">
-            <span class="ic"
-              ><svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.7"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-                <circle cx="12" cy="10" r="3" /></svg
-            ></span>
-            <h4>Within 3 km</h4>
-            <div class="fee">Free</div>
-            <p>Free on orders over ₦10,000 — otherwise a flat ₦500 applies.</p>
-          </div>
-          <div class="dcard reveal">
-            <span class="ic"
-              ><svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.7"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M3 7h11v8H3zM14 10h4l3 3v2h-7z" />
-                <circle cx="7" cy="17" r="2" />
-                <circle cx="17.5" cy="17" r="2" /></svg
-            ></span>
-            <h4>3 – 10 km</h4>
-            <div class="fee">₦1,000 – ₦2,000</div>
-            <p>Based on distance — confirmed when you book your pickup slot.</p>
-          </div>
-          <div class="dcard reveal">
-            <span class="ic"
-              ><svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.7"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M13 2 4.5 13.5H11L9.5 22 19 9.5h-6.5L13 2Z" /></svg
-            ></span>
-            <h4>Express · Same day</h4>
-            <div class="fee">+30 – 50%</div>
-            <p>Need it back today? Add express to any service for a rush finish.</p>
-          </div>
-        </div>
-
-        <!-- Offers -->
-        <div class="perks reveal">
-          <div class="perks-grid">
-            <div class="perk">
-              <h4>
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.8"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M20.6 13.4 12 22 2 12V2h10l8.6 8.6a2 2 0 0 1 0 2.8Z" />
-                  <circle cx="7" cy="7" r="1.5" /></svg
-                >Launch pricing
-              </h4>
-              <p>
-                We're new to the neighbourhood — enjoy introductory rates below the going market
-                price, plus 15% off your very first order.
-              </p>
-            </div>
-            <div class="perk">
-              <h4>
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.8"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <rect x="3" y="5" width="18" height="16" rx="2" />
-                  <path d="M8 3v4M16 3v4M3 10h18" /></svg
-                >Weekly &amp; monthly plans
-              </h4>
-              <p>
-                Need garment care on repeat? Subscribe to a weekly or monthly bundle and save on
-                every load — we'll tailor one to your household.
-              </p>
-            </div>
-            <div class="perk">
-              <h4>
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.8"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <rect x="3" y="7" width="18" height="13" rx="2" />
-                  <path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" /></svg
-                >Business discounts
-              </h4>
-              <p>
-                Offices, salons, hotels, Airbnb hosts and schools get 10–20% off recurring orders,
-                with scheduled pickups and monthly invoicing.
-              </p>
-            </div>
-          </div>
-          <div class="perks-cta">
-            <a
-              href="https://wa.me/2348129894036?text=Hi%20Knot%20%26%20Nomad%20Garment%20Care%2C%20I%27d%20like%20to%20schedule%20a%20pickup."
-              target="_blank"
-              rel="noopener"
-              class="btn btn-wa"
-            >
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path
-                  d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1 0 12 2Zm5.8 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.2.1-1.9-.1-.4-.1-1-.3-1.7-.6-3-1.3-4.9-4.3-5.1-4.5-.1-.2-1.2-1.5-1.2-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5.2.5.7 1.8.8 1.9.1.1.1.3 0 .5-.1.2-.2.4-.3.5l-.4.5c-.2.2-.3.3-.1.6.2.3.9 1.4 1.9 2.3 1.3 1.1 2.3 1.5 2.6 1.6.3.1.4.1.6-.1l.9-1c.2-.2.4-.2.6-.1.2.1 1.5.7 1.7.9.2.1.4.2.4.3.1.2.1.6-.1 1.2Z"
-                />
-              </svg>
-              WhatsApp us for a custom plan
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== Testimonials ===== -->
-    <section class="section">
-      <div class="container">
-        <div class="section-head center reveal">
-          <span class="eyebrow center">Loved by locals</span>
-          <h2 class="section-title">Care that keeps every piece in motion.</h2>
-        </div>
-        <div class="quotes">
-          <div class="quote reveal">
-            <div class="stars">★★★★★</div>
-            <p>
-              "My hoodies come back looking better than the day I bought them. The pickup is so easy
-              I've genuinely forgotten what a laundromat looks like."
-            </p>
-            <div class="who">
-              <span class="av">A</span>
-              <div><b>Amara O.</b><small>Weekly plan member</small></div>
-            </div>
-          </div>
-          <div class="quote reveal">
-            <div class="stars">★★★★★</div>
-            <p>
-              "They treated a delicate silk dress like it was couture. Perfectly pressed,
-              beautifully folded, delivered on time. This is care on another level."
-            </p>
-            <div class="who">
-              <span class="av">D</span>
-              <div><b>Daniel K.</b><small>Dry cleaning customer</small></div>
-            </div>
-          </div>
-          <div class="quote reveal">
-            <div class="stars">★★★★★</div>
-            <p>
-              "We run a boutique gym and switched our towel service to Nomad. Reliable, spotless,
-              and the invoicing is effortless. Highly recommend."
-            </p>
-            <div class="who">
-              <span class="av">R</span>
-              <div><b>Rachel M.</b><small>Business account</small></div>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
 
@@ -2719,10 +2478,7 @@
         <div class="contact-info reveal">
           <span class="eyebrow">Get started</span>
           <h2>Book Garment Care.</h2>
-          <p>
-            Tell us when and where — we'll collect, care for and return your garments fresh in 48
-            hours. First-time customers get <b style="color: var(--ink)">15% off</b>.
-          </p>
+            <p>Tell us what you need and your preferred pickup details. We’ll confirm service availability, pricing and expected timing before the booking is accepted.</p>
           <div class="contact-list">
             <div class="cinfo">
               <span class="ic"
@@ -2773,7 +2529,7 @@
                   <circle cx="12" cy="10" r="3" /></svg
               ></span>
               <div>
-                <b>Service area</b><span><!-- EDIT: area -->Citywide + surrounding suburbs</span>
+                <b>Service area</b><span>Ask us to confirm availability for your area.</span>
               </div>
             </div>
             <div class="cinfo">
@@ -2790,7 +2546,7 @@
                   <path d="M12 7v5l3 2" /></svg
               ></span>
               <div>
-                <b>Hours</b><span><!-- EDIT: hours -->Mon–Sat, 7am – 8pm</span>
+                <b>Hours</b><span>Contact the team to confirm availability.</span>
               </div>
             </div>
           </div>
@@ -2811,8 +2567,8 @@
         </div>
 
         <form class="book reveal" id="bookForm" novalidate>
-          <div class="form-success" id="formSuccess"></div>
-          <div class="form-error" id="formError"></div>
+          <div class="form-success" id="formSuccess" role="status" aria-live="polite" tabindex="-1"></div>
+          <div class="form-error" id="formError" role="alert" tabindex="-1"></div>
           <h3>Start your Garment Care order</h3>
           <p class="sub">
             Add your garments and pickup details. We'll email your official quote for approval
@@ -2933,9 +2689,9 @@
               <label for="service">Service</label>
               <select id="service" name="service" required>
                 <option>Wash, Fold &amp; Package</option>
-                <option>Premium Garment Cleaning</option>
+                <option>Specialist garment cleaning</option>
                 <option>Steam &amp; Press</option>
-                <option>Premium Garment Care</option>
+                <option>Delicate &amp; specialist care</option>
                 <option>Fabric Care for Business</option>
               </select>
             </div>
@@ -2958,8 +2714,8 @@
             <div class="field">
               <label for="turnaround">Turnaround</label
               ><select id="turnaround" name="turnaround" required>
-                <option>Standard (48 hours)</option>
-                <option>Express (24 hours)</option>
+                <option>Standard timing (confirm with team)</option>
+                <option>Priority timing (subject to confirmation)</option>
                 <option>Flexible / no rush</option>
               </select>
             </div>
@@ -3004,7 +2760,7 @@
         <div class="cta-band reveal">
           <h2>Give your wardrobe the care it deserves.</h2>
           <p>
-            Doorstep pickup, expert hand-finishing, fresh in 48 hours. Your first order is 15% off.
+            Share your garments and preferred pickup details. We’ll confirm service, price and timing before you book.
           </p>
           <div class="hero-actions">
             <a
@@ -3024,6 +2780,7 @@
       </div>
     </section>
 
+    </main>
     <!-- ===== Footer ===== -->
     <footer class="site">
       <div class="container">
@@ -3039,17 +2796,10 @@
               >
             </a>
             <p>
-              Premium garment care with doorstep pickup and delivery — from the makers at Knot &amp;
+              Premium garment care with pickup and delivery options — from the makers at Knot &amp;
               Nomad. Rooted in motion, refined in care.
             </p>
             <div class="foot-social">
-              <!-- EDIT: social links -->
-              <a href="#" aria-label="Instagram"
-                ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                  <rect x="3" y="3" width="18" height="18" rx="5" />
-                  <circle cx="12" cy="12" r="4" />
-                  <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" /></svg
-              ></a>
               <a
                 href="https://wa.me/2348129894036?text=Hi%20Knot%20%26%20Nomad%20Garment%20Care%2C%20I%27d%20like%20to%20schedule%20a%20pickup."
                 aria-label="WhatsApp"
@@ -3068,9 +2818,9 @@
           <div class="foot-col">
             <h4>Services</h4>
             <a href="#services">Wash, Fold &amp; Package</a>
-            <a href="#services">Premium Garment Cleaning</a>
+            <a href="#services">Specialist garment cleaning</a>
             <a href="#services">Steam &amp; Press</a>
-            <a href="#services">Premium Garment Care</a>
+            <a href="#services">Delicate &amp; specialist care</a>
             <a href="#services">Fabric Care for Business</a>
           </div>
           <div class="foot-col">
@@ -3097,17 +2847,70 @@
     </footer>
 
     <script>
-      // Mobile nav
+      // Accessible mobile navigation
       var toggle = document.getElementById("navToggle"),
-        links = document.getElementById("navLinks");
+        links = document.getElementById("navLinks"),
+        pageMain = document.getElementById("main-content"),
+        pageFooter = document.querySelector("footer"),
+        siteHeader = document.querySelector("header.site"),
+        previousBodyOverflow = "";
+      function positionNavigation() {
+        links.style.top = siteHeader.getBoundingClientRect().bottom + "px";
+      }
+      function closeNavigation(restoreFocus) {
+        toggle.classList.remove("open");
+        links.classList.remove("open");
+        toggle.setAttribute("aria-expanded", "false");
+        toggle.setAttribute("aria-label", "Open navigation");
+        document.body.style.overflow = previousBodyOverflow;
+        pageMain.inert = false;
+        pageFooter.inert = false;
+        window.removeEventListener("resize", positionNavigation);
+        if (restoreFocus) toggle.focus();
+      }
       toggle.addEventListener("click", function () {
-        toggle.classList.toggle("open");
-        links.classList.toggle("open");
+        var isOpen = toggle.getAttribute("aria-expanded") === "true";
+        if (isOpen) {
+          closeNavigation(true);
+          return;
+        }
+        previousBodyOverflow = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+        pageMain.inert = true;
+        pageFooter.inert = true;
+        positionNavigation();
+        window.addEventListener("resize", positionNavigation);
+        toggle.classList.add("open");
+        links.classList.add("open");
+        toggle.setAttribute("aria-expanded", "true");
+        toggle.setAttribute("aria-label", "Close navigation");
+        requestAnimationFrame(function () {
+          var first = links.querySelector("a[href]");
+          if (first) first.focus();
+        });
+      });
+      document.addEventListener("keydown", function (event) {
+        if (toggle.getAttribute("aria-expanded") !== "true") return;
+        if (event.key === "Escape") {
+          event.preventDefault();
+          closeNavigation(true);
+          return;
+        }
+        if (event.key === "Tab") {
+          var focusable = Array.prototype.slice.call(links.querySelectorAll("a[href], button:not([disabled])"));
+          var first = focusable[0], last = focusable[focusable.length - 1];
+          if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+          } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+          }
+        }
       });
       links.querySelectorAll("a").forEach(function (a) {
         a.addEventListener("click", function () {
-          toggle.classList.remove("open");
-          links.classList.remove("open");
+          closeNavigation(true);
         });
       });
 
@@ -3183,6 +2986,7 @@
           errorEl.textContent = "Please add at least one garment before requesting a quote.";
           errorEl.classList.add("show");
           errorEl.scrollIntoView({ behavior: "smooth", block: "center" });
+          errorEl.focus();
           return;
         }
         button.disabled = true;
@@ -3223,6 +3027,7 @@
           errorEl.textContent = error.message || "Something went wrong. Please try again.";
           errorEl.classList.add("show");
           errorEl.scrollIntoView({ behavior: "smooth", block: "center" });
+          errorEl.focus();
         } finally {
           button.disabled = false;
           button.textContent = "Start Garment Care Order";

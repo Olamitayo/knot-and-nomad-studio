@@ -3,15 +3,12 @@ import { useEffect, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
-  CheckCircle2,
   MessageCircle,
   Minus,
   Palette,
   Plus,
   Ruler,
-  ShieldCheck,
   ShoppingBag,
-  Truck,
   Upload,
   Wand2,
 } from "lucide-react";
@@ -20,13 +17,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatNaira } from "@/lib/format";
 import { useCart } from "@/lib/cart";
 import { whatsappLink } from "@/lib/site";
-import {
-  displayPrice,
-  fallbackProducts,
-  productGroup,
-  type GalleryItem,
-  type StoreProduct,
-} from "@/lib/products";
+import { parseProductData } from "@/lib/product-data";
+import { displayPrice, productGroup, type GalleryItem, type StoreProduct } from "@/lib/products";
 
 export const Route = createFileRoute("/shop/$slug")({
   component: ProductDetail,
@@ -49,6 +41,7 @@ function ProductDetail() {
   const [product, setProduct] = useState<StoreProduct | null>(null);
   const [related, setRelated] = useState<StoreProduct[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [imgIdx, setImgIdx] = useState(0);
   const [size, setSize] = useState<string>("");
   const [color, setColor] = useState<string>("");
@@ -60,38 +53,69 @@ function ProductDetail() {
   const add = useCart((s) => s.add);
 
   useEffect(() => {
-    supabase
-      .from("products")
-      .select("*")
-      .eq("slug", slug)
-      .maybeSingle()
-      .then(({ data, error }) => {
-        const resolved =
-          !error && data
-            ? (data as StoreProduct)
-            : (fallbackProducts.find((item) => item.slug === slug) ?? null);
-        setProduct(resolved);
-        if (resolved) {
-          setSize(resolved.sizes[0] ?? "");
-          setColor(resolved.colors[0] ?? "");
+    let active = true;
+    setLoading(true);
+    setLoadError(false);
+    setImgIdx(0);
+    setQty(1);
+    setCustomize(false);
+    setCustomNotes("");
+    setCustomFile(null);
+    setRelated([]);
+    const loadProduct = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("products")
+          .select("*")
+          .eq("slug", slug)
+          .maybeSingle();
+        if (!active) return;
+        if (error || !data) {
+          setLoadError(Boolean(error));
+          setProduct(null);
+          return;
         }
-        setLoading(false);
-      });
+        const resolved = parseProductData(data);
+        setProduct(resolved);
+        setSize(resolved.sizes[0] ?? "");
+        setColor(resolved.colors[0] ?? "");
+      } catch {
+        if (active) {
+          setLoadError(true);
+          setProduct(null);
+        }
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+    void loadProduct();
     supabase
       .from("products")
       .select("*")
       .eq("is_active", true)
       .limit(12)
       .then(({ data }) => {
-        if (data)
-          setRelated((data as StoreProduct[]).filter((item) => item.slug !== slug).slice(0, 4));
+        if (active && data)
+          setRelated(
+            data
+              .map(parseProductData)
+              .filter((item) => item.slug !== slug)
+              .slice(0, 4),
+          );
       });
+    return () => {
+      active = false;
+    };
   }, [slug]);
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-7xl px-6 py-20 text-muted-foreground lg:px-10">
-        Loading piece...
+      <div
+        className="mx-auto max-w-7xl px-6 py-20 text-muted-foreground lg:px-10"
+        role="status"
+        aria-live="polite"
+      >
+        Loading product details…
       </div>
     );
   }
@@ -99,7 +123,14 @@ function ProductDetail() {
   if (!product) {
     return (
       <div className="mx-auto max-w-7xl px-6 py-24 text-center lg:px-10">
-        <h1 className="font-display text-4xl">Piece not found</h1>
+        <h1 className="font-display text-4xl">
+          {loadError ? "Product details unavailable" : "Piece not found"}
+        </h1>
+        <p className="mx-auto mt-4 max-w-md text-sm text-muted-foreground">
+          {loadError
+            ? "We couldn’t load this product right now. Please return to the shop and try again."
+            : "This piece may no longer be available."}
+        </p>
         <Link
           to="/shop"
           className="btn-pill mt-6 inline-flex items-center gap-2 border-2 border-foreground px-5 py-3 text-xs font-bold uppercase tracking-[0.22em] transition hover:bg-foreground hover:text-primary-foreground"
@@ -133,11 +164,13 @@ function ProductDetail() {
   const selectedImage = selectedItem?.url;
   const currentPrice = displayPrice(product, color);
   const availableStock = selectedVariant ? selectedVariant.stockLevel : product.stock_level;
+  const hasVariablePrice =
+    product.starting_price_ngn != null ||
+    product.variants?.some((variant) => variant.priceOverride != null);
+  const unavailable = product.is_sold_out || availableStock === 0;
 
   const onAdd = async () => {
-    if (product.isFallback)
-      return toast.info("Please use WhatsApp to confirm this studio reference piece.");
-    if (product.is_sold_out || availableStock === 0) return;
+    if (unavailable) return;
     if (qty > availableStock) return toast.error(`Only ${availableStock} left in stock`);
     if (product.sizes.length && !size) return toast.error("Choose a size");
     if (product.colors.length && !color) return toast.error("Choose a color");
@@ -196,6 +229,28 @@ function ProductDetail() {
         </div>
       </section>
 
+      <div className="mx-auto max-w-7xl px-6 pt-7 lg:hidden">
+        <p className="eyebrow">{product.category}</p>
+        <div className="mt-2 flex items-start justify-between gap-4">
+          <h1 className="font-display text-3xl leading-tight tracking-[-0.04em]">{product.name}</h1>
+          <p className="shrink-0 text-right text-base font-semibold">
+            {hasVariablePrice && (
+              <span className="block text-[9px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
+                From
+              </span>
+            )}
+            {formatNaira(currentPrice)}
+          </p>
+        </div>
+        <p className="mt-2 text-xs text-muted-foreground" role="status">
+          {unavailable
+            ? "Currently unavailable"
+            : availableStock <= 5
+              ? `Only ${availableStock} left`
+              : "In stock"}
+        </p>
+      </div>
+
       <section className="mx-auto grid max-w-7xl gap-10 px-6 py-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(25rem,0.92fr)] lg:px-10 lg:py-16">
         <div className="lg:sticky lg:top-28 lg:self-start">
           <div className="overflow-hidden rounded-[2rem] border border-border bg-muted shadow-[0_30px_80px_rgba(17,16,14,0.06)]">
@@ -203,6 +258,8 @@ function ProductDetail() {
               <img
                 src={selectedImage}
                 alt={product.name}
+                width={960}
+                height={1200}
                 className="aspect-[4/5] h-full w-full object-cover"
               />
             ) : (
@@ -247,12 +304,14 @@ function ProductDetail() {
               </p>
             )}
           </div>
-          <div className="flex flex-wrap items-start justify-between gap-5">
-            <h1 className="font-display text-5xl leading-[1.02] lg:text-6xl">{product.name}</h1>
+          <div className="hidden flex-wrap items-start justify-between gap-5 lg:flex">
+            <h1 className="font-display text-4xl leading-[1.02] xl:text-5xl">{product.name}</h1>
             <div className="rounded-full border border-border bg-background px-4 py-3 text-right">
-              <p className="text-[0.56rem] font-bold uppercase tracking-[0.16em] text-muted-foreground">
-                from
-              </p>
+              {hasVariablePrice && (
+                <p className="text-[0.56rem] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                  from
+                </p>
+              )}
               <p className="text-lg font-semibold">{formatNaira(currentPrice)}</p>
             </div>
           </div>
@@ -268,33 +327,39 @@ function ProductDetail() {
             </p>
           )}
 
-          <div className="mt-6 flex flex-wrap items-center gap-3 text-xs font-bold uppercase tracking-[0.16em]">
+          <div
+            className="mt-6 flex flex-wrap items-center gap-3 text-xs font-bold uppercase tracking-[0.16em]"
+            role="status"
+            aria-live="polite"
+          >
             <span
-              className={`inline-flex items-center gap-2 ${product.stock_level > 0 && !product.is_sold_out ? "text-accent" : "text-destructive"}`}
+              className={`inline-flex items-center gap-2 ${unavailable ? "text-destructive" : "text-accent"}`}
             >
               <span className="h-2 w-2 rounded-full bg-current" />
-              {product.isFallback
-                ? "Confirm availability"
-                : product.is_sold_out || availableStock === 0
-                  ? "Out of stock"
-                  : availableStock <= 5
-                    ? `Only ${availableStock} left`
-                    : "In stock"}
+              {unavailable
+                ? "Out of stock"
+                : availableStock <= 5
+                  ? `Only ${availableStock} left`
+                  : "In stock"}
             </span>
             {product.delivery_estimate && (
               <span className="text-muted-foreground">Delivery: {product.delivery_estimate}</span>
             )}
           </div>
 
-          <div className="my-8 grid grid-cols-2 gap-px overflow-hidden rounded-[1.5rem] border border-border bg-border text-sm sm:grid-cols-4">
-            <TrustItem icon={<ShieldCheck size={16} />} label="Quality finish" />
-            <TrustItem icon={<Truck size={16} />} label="Nigeria delivery" />
-            <TrustItem icon={<Ruler size={16} />} label="Size options" />
-            <TrustItem
-              icon={<Wand2 size={16} />}
-              label="Custom-ready"
-              muted={!product.is_customizable}
-            />
+          <div className="my-6 grid grid-cols-2 gap-2 border-y border-border py-4 text-[10px] font-bold uppercase tracking-[0.12em] sm:grid-cols-4">
+            <Link to="/delivery" className="underline underline-offset-4">
+              Delivery
+            </Link>
+            <Link to="/returns" className="underline underline-offset-4">
+              Returns
+            </Link>
+            <Link to="/payment" className="underline underline-offset-4">
+              Payment
+            </Link>
+            <Link to="/size-guide" className="underline underline-offset-4">
+              Fit help
+            </Link>
           </div>
 
           {product.sizes.length > 0 && (
@@ -307,8 +372,10 @@ function ProductDetail() {
                 {product.sizes.map((item) => (
                   <button
                     key={item}
+                    type="button"
+                    aria-pressed={size === item}
                     onClick={() => setSize(item)}
-                    className={`min-h-11 min-w-12 border px-4 text-sm transition ${
+                    className={`min-h-11 min-w-12 border px-4 text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                       size === item
                         ? "border-foreground bg-foreground text-primary-foreground"
                         : "border-border bg-card hover:border-foreground"
@@ -331,11 +398,13 @@ function ProductDetail() {
                 {product.colors.map((item) => (
                   <button
                     key={item}
+                    type="button"
+                    aria-pressed={color === item}
                     onClick={() => {
                       setColor(item);
                       setImgIdx(0);
                     }}
-                    className={`inline-flex min-h-11 items-center gap-2 border px-4 text-sm transition ${
+                    className={`inline-flex min-h-11 items-center gap-2 border px-4 text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                       color === item
                         ? "border-foreground bg-foreground text-primary-foreground"
                         : "border-border bg-card hover:border-foreground"
@@ -354,7 +423,7 @@ function ProductDetail() {
             <div className="inline-flex h-12 items-center border border-border bg-card">
               <button
                 onClick={() => setQty((q) => Math.max(1, q - 1))}
-                className="flex h-full w-11 items-center justify-center transition hover:bg-muted"
+                className="flex h-full w-11 items-center justify-center transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                 aria-label="Decrease quantity"
               >
                 <Minus size={14} />
@@ -362,7 +431,7 @@ function ProductDetail() {
               <span className="min-w-12 text-center text-sm">{qty}</span>
               <button
                 onClick={() => setQty((q) => Math.min(availableStock || 1, q + 1))}
-                className="flex h-full w-11 items-center justify-center transition hover:bg-muted"
+                className="flex h-full w-11 items-center justify-center transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                 aria-label="Increase quantity"
               >
                 <Plus size={14} />
@@ -408,19 +477,12 @@ function ProductDetail() {
           <div className="grid gap-3 sm:grid-cols-2">
             <button
               onClick={onAdd}
-              disabled={
-                product.isFallback || product.is_sold_out || availableStock === 0 || uploading
-              }
+              disabled={unavailable || uploading}
+              aria-describedby="purchase-help"
               className="inline-flex min-h-14 items-center justify-center gap-2 bg-foreground px-6 text-xs font-bold uppercase tracking-[0.22em] text-primary-foreground transition hover:bg-accent hover:text-accent-foreground disabled:opacity-50"
             >
               <ShoppingBag size={15} />
-              {product.isFallback
-                ? "Confirm availability"
-                : product.is_sold_out || availableStock === 0
-                  ? "Sold out"
-                  : uploading
-                    ? "Uploading..."
-                    : "Add to cart"}
+              {unavailable ? "Sold out" : uploading ? "Uploading..." : "Add to cart"}
             </button>
             <button
               onClick={onWhatsApp}
@@ -430,6 +492,13 @@ function ProductDetail() {
               WhatsApp inquiry
             </button>
           </div>
+          <p id="purchase-help" className="mt-3 text-xs text-muted-foreground" aria-live="polite">
+            {unavailable
+              ? "This item is currently unavailable."
+              : (product.sizes.length > 0 && !size) || (product.colors.length > 0 && !color)
+                ? "Select a size and colour to continue."
+                : "Your selected options and delivery details are confirmed before checkout."}
+          </p>
 
           <Link
             to="/custom-order"
@@ -605,30 +674,6 @@ function ProductInfo({
     <div className="grid gap-2 border-b border-border py-5 sm:grid-cols-[10rem_1fr]">
       <p className="eyebrow">{label}</p>
       <p className="text-sm leading-6 text-muted-foreground">{value || fallback}</p>
-    </div>
-  );
-}
-
-function TrustItem({
-  icon,
-  label,
-  muted,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  muted?: boolean;
-}) {
-  return (
-    <div
-      className={`flex min-h-24 flex-col justify-between bg-card p-4 ${
-        muted ? "text-muted-foreground" : ""
-      }`}
-    >
-      <div className="flex items-center justify-between gap-3">
-        {icon}
-        {!muted && <CheckCircle2 size={14} className="text-accent" />}
-      </div>
-      <span className="text-xs font-bold uppercase tracking-[0.18em]">{label}</span>
     </div>
   );
 }

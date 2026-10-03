@@ -40,7 +40,10 @@ function CartPage() {
       <div className="grid gap-12 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
           {items.map((it) => (
-            <div key={it.id} className="flex gap-4 rounded-[1.75rem] border border-border bg-card p-4 sm:p-5">
+            <div
+              key={it.id}
+              className="flex gap-4 rounded-[1.75rem] border border-border bg-card p-4 sm:p-5"
+            >
               <div className="h-28 w-24 shrink-0 overflow-hidden rounded-[1rem] bg-muted sm:h-32 sm:w-28">
                 {it.image && (
                   <img src={it.image} alt={it.name} className="h-full w-full object-cover" />

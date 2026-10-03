@@ -46,99 +46,48 @@ type Shot = {
   width: number;
   height: number;
   objectPosition: string;
-  span?: string;
 };
 
 const shots: Shot[] = [
   {
     id: "01",
-    src: "/images/lookbook/knot-nomad-lookbook-01.webp",
-    alt: "Look 01: Black male model wearing a lavender knit polo and relaxed grey tailored trousers.",
-    title: "Lavender in Motion",
-    category: "Refined Casual",
-    description:
-      "A lavender knit polo paired with relaxed grey tailoring for a calm, contemporary silhouette.",
-    tags: ["Knitwear", "Tailoring", "Neutral"],
-    filters: ["polos", "knitwear", "tailoring"],
-    width: 2246,
-    height: 3040,
-    objectPosition: "center 35%",
-    span: "lg:col-span-7 lg:row-span-2",
+    src: encodeURI("/images/lookbook/IMG-KNTNMD 001.png"),
+    alt: "Black male model posing in a white tee and relaxed black trousers while taking a selfie.",
+    title: "Self Shot — White Tee",
+    category: "Everyday Essential",
+    description: "Simple utility styling with a crisp white tee and a relaxed trouser silhouette.",
+    tags: ["Essential", "Minimal", "Tailored"],
+    filters: ["essentials", "tailoring"],
+    width: 896,
+    height: 1755,
+    objectPosition: "center bottom",
   },
   {
     id: "02",
-    src: "/images/lookbook/knot-nomad-lookbook-02.webp",
-    alt: "Look 02: Black male model wearing a white round-neck tee with wide beige tailored trousers.",
-    title: "The Essential Balance",
-    category: "Everyday Essentials",
+    src: encodeURI("/images/lookbook/ChatGPT Image Sep 24, 2026 at 06_52_40 PM (1).png"),
+    alt: "Black male model in a deep blue polo with ivory wide-leg trousers and a backpack.",
+    title: "Blue Polo — Motion",
+    category: "Refined Casual",
     description:
-      "A clean white round-neck tee styled with wide beige trousers for effortless everyday refinement.",
-    tags: ["Round Tee", "Tailoring", "Minimal"],
-    filters: ["essentials", "tailoring"],
-    width: 2338,
-    height: 2921,
-    objectPosition: "center 42%",
-    span: "lg:col-span-5",
+      "A deep blue polo paired with soft white tailoring for a polished everyday statement.",
+    tags: ["Polo", "Neutral", "Layered"],
+    filters: ["essentials", "polos"],
+    width: 878,
+    height: 1792,
+    objectPosition: "center bottom",
   },
   {
     id: "03",
-    src: "/images/lookbook/knot-nomad-lookbook-03.webp",
-    alt: "Look 03: Male model wearing a sage utility jacket and neutral trousers in a tropical garden.",
-    title: "Garden Utility",
-    category: "Modern Outerwear",
-    description:
-      "A sage utility jacket layered over soft neutral tailoring, photographed in a natural garden setting.",
-    tags: ["Jacket", "Layering", "Earth Tone"],
-    filters: ["outerwear", "tailoring"],
-    width: 2246,
-    height: 3040,
-    objectPosition: "center 35%",
-    span: "lg:col-span-5",
-  },
-  {
-    id: "04",
-    src: "/images/lookbook/knot-nomad-lookbook-04.webp",
-    alt: "Look 04: Black male model wearing an ivory polo with white tailored trousers.",
-    title: "Ivory Standard",
-    category: "Smart Casual",
-    description:
-      "A refined ivory polo and white tailored trousers styled for understated, polished dressing.",
-    tags: ["Polo", "Smart Casual", "Monochrome"],
-    filters: ["essentials", "polos", "tailoring"],
-    width: 2613,
-    height: 2613,
-    objectPosition: "center 30%",
-    span: "lg:col-span-7",
-  },
-  {
-    id: "05",
-    src: "/images/lookbook/knot-nomad-lookbook-05.webp",
-    alt: "Look 05: Black male model wearing a textured beige knitted polo in a studio portrait.",
-    title: "Textured Neutral",
-    category: "Knit Polo",
-    description:
-      "A close editorial portrait highlighting the structure and texture of a neutral knitted polo.",
-    tags: ["Polo", "Knitwear", "Texture"],
-    filters: ["polos", "knitwear"],
-    width: 2338,
-    height: 2921,
-    objectPosition: "center 28%",
-    span: "lg:col-span-4",
-  },
-  {
-    id: "06",
-    src: "/images/lookbook/knot-nomad-lookbook-06.webp",
-    alt: "Look 06: Close editorial view of a Black male model wearing a caramel cable-knit polo.",
-    title: "Caramel Structure",
-    category: "Knitwear Detail",
-    description:
-      "Warm caramel knitwear presented through rich texture, soft tailoring, and directional studio light.",
-    tags: ["Knitwear", "Detail", "Warm Neutral"],
-    filters: ["polos", "knitwear"],
-    width: 2132,
-    height: 3203,
-    objectPosition: "center 30%",
-    span: "lg:col-span-4",
+    src: encodeURI("/images/lookbook/9af53bb7-6899-4e34-bc0a-be192c069e03.png"),
+    alt: "Black male model in a black tee and burgundy wide-leg trousers taking a selfie portrait.",
+    title: "Muted Contrast — Black Tee",
+    category: "Studio Statement",
+    description: "A tonal black tee with burgundy volume creating a strong, understated contrast.",
+    tags: ["Tee", "Monochrome", "Statement"],
+    filters: ["essentials", "tailoring"],
+    width: 878,
+    height: 1791,
+    objectPosition: "center bottom",
   },
 ];
 
@@ -168,6 +117,7 @@ function Lookbook() {
     () => shots.filter((shot) => filter === "all" || shot.filters.includes(filter)),
     [filter],
   );
+  const galleryShots = filter === "all" ? filtered.filter((shot) => shot.id !== "01") : filtered;
 
   const reset = () => {
     navigate({ search: { filter: "all" }, replace: true });
@@ -175,31 +125,53 @@ function Lookbook() {
 
   return (
     <div ref={ref}>
-      {/* Hero */}
-      <section className="mx-auto max-w-7xl px-6 lg:px-10 pt-24 lg:pt-36 pb-12" data-reveal>
-        <div className="flex items-end justify-between flex-wrap gap-6">
-          <div>
-            <div className="eyebrow">Lookbook · Vol. 01</div>
-            <h1 className="mt-5 font-display text-5xl lg:text-7xl xl:text-8xl leading-[1.02] max-w-5xl">
-              An editorial of <span className="text-accent">motion</span>.
-            </h1>
-            <p className="mt-6 max-w-xl text-muted-foreground leading-relaxed">
-              Considered silhouettes, honest fabrics, and personal stories — captured between the
-              studio and the street.
-            </p>
+      {/* Editorial cover */}
+      <section
+        className="relative isolate flex min-h-[680px] items-center overflow-hidden bg-[#e9e2d7] px-5 py-16 text-[#201d19] sm:px-8 lg:min-h-[min(820px,calc(100svh-5rem))] lg:px-16"
+        data-reveal
+      >
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_72%_44%,rgba(255,255,255,0.72),transparent_42%),linear-gradient(115deg,#e9e2d7_0%,#e4dbce_100%)]" />
+        <div className="relative z-10 max-w-[58rem] pb-40 sm:pb-44 lg:pb-20">
+          <div className="mb-7 flex items-center gap-3 text-[9px] font-bold uppercase tracking-[0.34em] text-[#62594e] sm:text-[10px]">
+            <span className="h-px w-8 bg-[#8f806f]" />
+            Knot &amp; Nomad · Studio notes · 01
           </div>
-          <div className="text-xs font-bold uppercase tracking-[0.3em] text-muted-foreground">
-            <div>SS Capsule</div>
-            <div className="mt-1">6 Looks · 1 Story</div>
+          <h1 className="font-display text-[clamp(4rem,10vw,9.5rem)] leading-[0.78] tracking-[-0.09em]">
+            <span className="block">An editorial</span>
+            <span className="mt-3 block">
+              of <span className="text-accent">motion.</span>
+            </span>
+          </h1>
+          <p className="mt-8 max-w-sm text-sm leading-6 text-[#62594e] sm:text-base sm:leading-7">
+            Considered silhouettes, honest fabrics, and personal stories — captured between the
+            studio and the street.
+          </p>
+          <div className="mt-8 flex items-center gap-5 text-[9px] font-bold uppercase tracking-[0.25em] text-[#62594e]">
+            <span className="border-l border-[#9d9080] pl-4">SS Capsule</span>
+            <span>03 looks · 01 story</span>
           </div>
+        </div>
+        <div className="pointer-events-none absolute bottom-0 right-[-1.25rem] z-0 flex h-[58%] w-[68%] items-end justify-center sm:h-[72%] sm:w-[56%] lg:right-[7%] lg:h-[94%] lg:w-[43%]">
+          <img
+            src={shots[0].src}
+            alt="Model in a white tee and relaxed black trousers, carrying a leather bag."
+            width={shots[0].width}
+            height={shots[0].height}
+            fetchPriority="high"
+            className="h-full w-full object-contain object-bottom drop-shadow-[0_22px_26px_rgba(47,37,28,0.12)]"
+          />
+        </div>
+        <div className="absolute bottom-5 right-5 z-10 text-right text-[8px] font-bold uppercase tracking-[0.25em] text-[#62594e] sm:bottom-8 sm:right-8 lg:right-16">
+          <span className="block">Look 01 / 03</span>
+          <span className="mt-1 block font-normal tracking-[0.16em]">Everyday, considered</span>
         </div>
       </section>
 
       {/* Filters */}
-      <section className="mx-auto max-w-7xl px-6 lg:px-10 pb-10" data-reveal>
-        <div className="border-y border-border py-6 lg:py-8 space-y-5">
+      <section className="mx-auto max-w-[1500px] px-4 sm:px-6 lg:px-8 pb-8" data-reveal>
+        <div className="border-y border-border py-5 lg:py-7 space-y-5">
           <FilterRow label="Filter" options={filterOptions} value={filter} onChange={setFilter} />
-          <div className="flex items-center justify-between pt-1 text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">
+          <div className="flex items-center justify-between pt-1 text-[10px] font-bold uppercase tracking-[0.28em] text-muted-foreground">
             <span>
               {filtered.length} of {shots.length} looks
             </span>
@@ -212,8 +184,8 @@ function Lookbook() {
         </div>
       </section>
 
-      {/* Editorial grid */}
-      <section className="mx-auto max-w-7xl px-6 lg:px-10 pb-24">
+      {/* Editorial gallery */}
+      <section className="mx-auto max-w-[1600px] px-4 pb-24 pt-5 sm:px-6 lg:px-10 lg:pt-10">
         {filtered.length === 0 ? (
           <div className="py-24 text-center text-muted-foreground">
             <p className="font-display text-3xl text-foreground">No looks match those filters.</p>
@@ -225,49 +197,69 @@ function Lookbook() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 auto-rows-auto">
-            {filtered.map((shot) => {
-              const position = shots.findIndex((item) => item.id === shot.id) + 1;
-              return (
-                <button
-                  key={shot.id}
-                  type="button"
-                  onClick={() => setSelected(shot)}
-                  aria-label={`Open Look ${shot.id}: ${shot.title}`}
-                  data-reveal
-                  data-reveal-delay={(position % 4).toString()}
-                  className={`group relative overflow-hidden bg-secondary text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4 ${shot.span ?? "lg:col-span-6"}`}
-                >
-                  <div
-                    className="overflow-hidden"
-                    style={{ aspectRatio: `${shot.width} / ${shot.height}` }}
+          <>
+            <div className="mb-7 flex items-end justify-between border-b border-border pb-4 sm:mb-10 sm:pb-5">
+              <div>
+                <div className="text-[9px] font-bold uppercase tracking-[0.3em] text-muted-foreground">
+                  The collection
+                </div>
+                <h2 className="mt-2 font-display text-3xl tracking-[-0.06em] sm:text-4xl">
+                  Looks in focus
+                </h2>
+              </div>
+              <span className="pb-1 text-[9px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
+                01 — {String(filtered.length).padStart(2, "0")}
+              </span>
+            </div>
+            <div className="grid grid-cols-1 gap-x-5 gap-y-12 sm:grid-cols-2 sm:gap-x-8 lg:gap-x-12 lg:gap-y-16">
+              {galleryShots.map((shot) => {
+                const position = shots.findIndex((item) => item.id === shot.id) + 1;
+                return (
+                  <button
+                    key={shot.id}
+                    type="button"
+                    onClick={() => setSelected(shot)}
+                    aria-label={`Open Look ${shot.id}: ${shot.title}`}
+                    data-reveal
+                    data-reveal-delay={(position % 4).toString()}
+                    className="group text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4"
                   >
-                    <img
-                      src={shot.src}
-                      alt={shot.alt}
-                      loading={position <= 2 ? "eager" : "lazy"}
-                      decoding="async"
-                      width={shot.width}
-                      height={shot.height}
-                      style={{ objectPosition: shot.objectPosition }}
-                      className="w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.04]"
-                    />
-                  </div>
-                  <div className="absolute inset-x-0 bottom-0 p-5 lg:p-6 flex items-end justify-between gap-4 bg-gradient-to-t from-black/70 via-black/20 to-transparent text-primary-foreground opacity-100 lg:opacity-0 lg:group-hover:opacity-100 lg:group-focus-visible:opacity-100 transition-opacity duration-500">
-                    <div>
-                      <div className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-80">
-                        {shot.category}
+                    <div
+                      className={`relative overflow-hidden ${shot.id === "02" ? "bg-[#d8d0c4]" : "bg-[#dcd9d2]"}`}
+                      style={{ aspectRatio: "4 / 5" }}
+                    >
+                      <img
+                        src={shot.src}
+                        alt={shot.alt}
+                        loading={position <= 2 ? "eager" : "lazy"}
+                        decoding="async"
+                        width={shot.width}
+                        height={shot.height}
+                        style={{ objectPosition: shot.objectPosition }}
+                        className="h-full w-full object-contain object-bottom transition-transform duration-[1200ms] ease-out group-hover:scale-[1.025]"
+                      />
+                      <span className="absolute left-4 top-4 text-[9px] font-bold uppercase tracking-[0.25em] text-[#3f3931]/75 sm:left-6 sm:top-6">
+                        No. {shot.id}
+                      </span>
+                    </div>
+                    <div className="flex items-start justify-between gap-4 border-b border-border py-4 sm:py-5">
+                      <div>
+                        <div className="text-[9px] font-bold uppercase tracking-[0.23em] text-muted-foreground">
+                          {shot.category}
+                        </div>
+                        <div className="mt-2 font-display text-2xl tracking-[-0.04em] sm:text-3xl">
+                          {shot.title}
+                        </div>
                       </div>
-                      <div className="font-display text-xl lg:text-2xl mt-1">{shot.title}</div>
+                      <span className="mt-1 shrink-0 text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+                        View look ↗
+                      </span>
                     </div>
-                    <div className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-80">
-                      {shot.id} / 06
-                    </div>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
+                  </button>
+                );
+              })}
+            </div>
+          </>
         )}
       </section>
 

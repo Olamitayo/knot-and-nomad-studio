@@ -43,7 +43,7 @@ export const submitCustomOrder = createServerFn({ method: "POST" })
       ["Design file", data.design_file_url],
       ["Deadline", data.deadline],
       ["Budget", data.budget],
-      ["AI idea", data.ai_idea],
+      ["Idea description", data.ai_idea],
       ["Additional notes", data.additional_notes],
     ]);
     return { ok: true };

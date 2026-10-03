@@ -22,11 +22,13 @@ function AdminOverview() {
             .select("total_ngn")
             .in("payment_status", ["paid", "receipt_submitted"]),
         ]);
+      const paidTotals = (paid ?? []) as Array<{ total_ngn: number | null }>;
+
       setCounts({
         products: pCount ?? 0,
         orders: oCount ?? 0,
         pending: pending?.length ?? 0,
-        revenue: (paid ?? []).reduce((s, o: any) => s + (o.total_ngn ?? 0), 0),
+        revenue: paidTotals.reduce((s, o) => s + (o.total_ngn ?? 0), 0),
       });
     })();
   }, []);

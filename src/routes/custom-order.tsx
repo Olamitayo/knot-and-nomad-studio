@@ -1,15 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import {
-  Sparkles,
-  Upload,
-  ArrowRight,
-  MessageCircle,
-  Clock3,
-  CalendarDays,
-  ShieldCheck,
-} from "lucide-react";
+import { Sparkles, Upload, ArrowRight, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import { submitCustomOrder } from "@/lib/orders.functions";
 import { supabase } from "@/integrations/supabase/client";
@@ -36,7 +28,19 @@ export const Route = createFileRoute("/custom-order")({
   component: CustomOrder,
 });
 
-const clothingTypes = ["T-shirt", "Cap", "Hoodie", "Sweatshirt", "Polo", "Other"];
+const clothingTypes = [
+  "T-shirt",
+  "Polo or collar shirt",
+  "Hoodie or sweatshirt",
+  "Trousers",
+  "Jacket",
+  "Native wear",
+  "Set",
+  "Cap or accessory",
+  "Brand uniform",
+  "Capsule drop",
+  "Other",
+];
 const positions = ["Front", "Back", "Chest", "Sleeve", "Cap front", "Cap side", "Other"];
 const sizes = ["XS", "S", "M", "L", "XL", "XXL", "Custom"];
 const budgets = [
@@ -46,6 +50,7 @@ const budgets = [
   "₦700,000–₦1,500,000",
   "₦1,500,000+",
 ];
+const orderSteps = ["Garment", "Design & references", "Quantity & timing", "Your details"];
 
 function CustomOrder() {
   const submit = useServerFn(submitCustomOrder);
@@ -53,6 +58,57 @@ function CustomOrder() {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [fileUrl, setFileUrl] = useState<string | null>(null);
+  const [step, setStep] = useState(0);
+  const [formError, setFormError] = useState("");
+  const [briefSummary, setBriefSummary] = useState<string[]>([]);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  function refreshBriefSummary() {
+    const form = formRef.current;
+    if (!form) return;
+    const values = new FormData(form);
+    const value = (name: string) => String(values.get(name) ?? "").trim();
+    setBriefSummary(
+      [
+        `Garment: ${value("clothing_type")}`,
+        value("preferred_color") && `Colour: ${value("preferred_color")}`,
+        value("size") && `Size: ${value("size")}`,
+        value("ai_idea") && `Idea: ${value("ai_idea")}`,
+        value("design_description") && `Design notes: ${value("design_description")}`,
+        value("print_position") && `Placement: ${value("print_position")}`,
+        value("print_text") && `Text: ${value("print_text")}`,
+        value("quantity") && `Quantity: ${value("quantity")}`,
+        value("budget") && `Budget: ${value("budget")}`,
+        value("deadline") && `Preferred deadline: ${value("deadline")}`,
+        fileUrl && "Design reference attached",
+        value("full_name") && `Name: ${value("full_name")}`,
+        value("email") && `Email: ${value("email")}`,
+        value("whatsapp") && `WhatsApp: ${value("whatsapp")}`,
+      ].filter((item): item is string => Boolean(item)),
+    );
+  }
+
+  function validateStage(stage: number) {
+    const fields = Array.from(
+      formRef.current?.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(
+        `[data-order-stage="${stage}"] input, [data-order-stage="${stage}"] select, [data-order-stage="${stage}"] textarea`,
+      ) ?? [],
+    );
+    const invalid = fields.find((field) => !field.checkValidity());
+    if (invalid) {
+      invalid.focus();
+      invalid.reportValidity();
+      return false;
+    }
+    return true;
+  }
+
+  function goToStage(next: number) {
+    if (next === 3) refreshBriefSummary();
+    setFormError("");
+    setStep(Math.max(0, Math.min(orderSteps.length - 1, next)));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];
@@ -63,49 +119,76 @@ function CustomOrder() {
     }
     setUploading(true);
     const path = `${crypto.randomUUID()}-${f.name.replace(/[^a-zA-Z0-9.\-_]/g, "_")}`;
-    const { error } = await supabase.storage.from("design-uploads").upload(path, f);
-    if (error) {
-      toast.error("Upload failed");
+    try {
+      const { error } = await supabase.storage.from("design-uploads").upload(path, f);
+      if (error) throw error;
+      const { data } = supabase.storage.from("design-uploads").getPublicUrl(path);
+      setFileUrl(data.publicUrl);
+      toast.success("File uploaded");
+    } catch {
+      toast.error("Upload failed. Please try again.");
+    } finally {
       setUploading(false);
-      return;
     }
-    const { data } = supabase.storage.from("design-uploads").getPublicUrl(path);
-    setFileUrl(data.publicUrl);
-    setUploading(false);
-    toast.success("File uploaded");
   }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    const form = formRef.current;
+    if (!form) return;
+    const invalid = Array.from(
+      form.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(
+        "input, select, textarea",
+      ),
+    ).find((field) => !field.checkValidity());
+    if (invalid) {
+      const stageNode = invalid.closest<HTMLElement>("[data-order-stage]");
+      const invalidStage = Number(stageNode?.dataset.orderStage ?? step);
+      setFormError("Please complete the required fields before sending your brief.");
+      setStep(invalidStage);
+      requestAnimationFrame(() => {
+        invalid.focus();
+        invalid.reportValidity();
+      });
+      return;
+    }
     setLoading(true);
-    const fd = new FormData(e.currentTarget);
-    const data: Record<string, unknown> = {
-      full_name: fd.get("full_name"),
-      email: fd.get("email"),
-      whatsapp: fd.get("whatsapp"),
-      clothing_type: fd.get("clothing_type"),
-      preferred_color: fd.get("preferred_color"),
-      size: fd.get("size"),
-      quantity: fd.get("quantity") ? Number(fd.get("quantity")) : null,
-      print_position: fd.get("print_position"),
-      print_text: fd.get("print_text"),
-      design_description: fd.get("design_description"),
+    const fd = new FormData(form);
+    const text = (name: string) => {
+      const value = fd.get(name);
+      return typeof value === "string" ? value : "";
+    };
+    const rawQuantity = text("quantity");
+    const data = {
+      full_name: text("full_name"),
+      email: text("email"),
+      whatsapp: text("whatsapp"),
+      clothing_type: text("clothing_type"),
+      preferred_color: text("preferred_color") || null,
+      size: text("size") || null,
+      quantity: rawQuantity ? Number(rawQuantity) : null,
+      print_position: text("print_position") || null,
+      print_text: text("print_text") || null,
+      design_description: text("design_description") || null,
       design_file_url: fileUrl,
-      deadline: fd.get("deadline") || null,
-      budget: fd.get("budget"),
-      ai_idea: fd.get("ai_idea"),
-      additional_notes: fd.get("additional_notes"),
+      deadline: text("deadline") || null,
+      budget: text("budget") || null,
+      ai_idea: text("ai_idea") || null,
+      additional_notes: text("additional_notes") || null,
     };
     try {
-      const res = await submit({ data: data as any });
+      const res = await submit({ data });
       if (res.ok) {
         setSubmitted(true);
         window.scrollTo({ top: 0, behavior: "smooth" });
       } else {
+        setFormError(res.error || "Submission failed. Please try again.");
         toast.error(res.error || "Submission failed");
       }
-    } catch (err: any) {
-      toast.error(err?.message || "Please check the form");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Please check the form";
+      setFormError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -142,95 +225,58 @@ function CustomOrder() {
 
   return (
     <>
-      <section className="mx-auto max-w-7xl px-6 lg:px-10 pt-24 lg:pt-32 pb-12">
+      <section className="mx-auto max-w-7xl px-6 pb-7 pt-12 lg:px-10 lg:pt-16">
         <div className="eyebrow">Custom order</div>
-        <h1 className="mt-4 font-display text-5xl lg:text-7xl leading-[1.05] max-w-4xl">
+        <h1 className="mt-4 max-w-4xl font-display text-4xl leading-[1.05] sm:text-5xl lg:text-6xl">
           Create your <span className="text-accent">custom</span> design.
         </h1>
-        <p className="mt-6 max-w-2xl text-muted-foreground">
-          Tell us what you want to make. The more detail, the better — we'll follow up on WhatsApp
-          or email to confirm the design, materials, pricing and timeline.
+        <p className="mt-5 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
+          Tell us what you have in mind. We’ll review the brief and confirm the specification, quote
+          and timeline before you approve anything.
         </p>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 pb-14 lg:px-10">
-        <div className="grid gap-px bg-border lg:grid-cols-[1.35fr_0.65fr]">
-          <div className="bg-card p-7 lg:p-9">
-            <p className="eyebrow">How custom orders work</p>
-            <ol className="mt-7 grid gap-5 sm:grid-cols-2">
-              {[
-                "Submit your idea",
-                "We review your design",
-                "We confirm price and timeline",
-                "You approve and pay a deposit",
-                "We produce and deliver",
-              ].map((step, index) => (
-                <li key={step} className="flex items-start gap-4">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-foreground text-xs font-bold text-primary-foreground">
-                    {index + 1}
-                  </span>
-                  <span className="pt-1 text-sm font-semibold">{step}</span>
-                </li>
-              ))}
-            </ol>
-          </div>
-          <div className="bg-foreground p-7 text-primary-foreground lg:p-9">
-            <p className="eyebrow !text-primary-foreground/55">Before you submit</p>
-            <div className="mt-7 space-y-5 text-sm">
-              <TrustSignal icon={Clock3} text="Response within 24 hours" />
-              <TrustSignal
-                icon={CalendarDays}
-                text="Production takes 5–14 working days, depending on complexity"
-              />
-              <TrustSignal icon={ShieldCheck} text="A deposit is required before production" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-5xl px-6 lg:px-10 pb-12">
-        <div className="border border-accent/40 bg-accent/5 p-6 lg:p-8 flex gap-4">
-          <Sparkles className="shrink-0 text-accent mt-1" size={22} />
-          <div>
-            <div className="eyebrow">AI design assistant</div>
-            <h2 className="mt-2 font-display text-2xl">Describe your dream apparel.</h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              In plain words — colours, materials, vibe, references. Example:
-              <span className="italic">
-                {" "}
-                "Black oversized tee, gold embroidered logo on the chest, bold quote on the back in
-                serif type."
-              </span>
+      <section className="mx-auto max-w-5xl px-6 pb-24 lg:px-10">
+        <form
+          ref={formRef}
+          onChange={refreshBriefSummary}
+          onSubmit={onSubmit}
+          noValidate
+          className="border border-border bg-card p-5 sm:p-8 lg:p-10"
+        >
+          <ol
+            aria-label="Custom order progress"
+            className="grid grid-cols-4 border-b border-border pb-5"
+          >
+            {orderSteps.map((label, index) => (
+              <li key={label}>
+                <button
+                  type="button"
+                  onClick={() => index < step && goToStage(index)}
+                  disabled={index >= step}
+                  aria-current={index === step ? "step" : undefined}
+                  className={`flex min-h-12 w-full flex-col gap-1 border-b-2 px-1 pb-2 text-left text-[9px] font-bold uppercase tracking-[0.09em] transition sm:px-3 sm:text-[10px] sm:tracking-[0.14em] ${index === step ? "border-accent text-foreground" : index < step ? "border-border text-muted-foreground" : "border-transparent text-muted-foreground/60"}`}
+                >
+                  <span>0{index + 1}</span>
+                  <span>{label}</span>
+                </button>
+              </li>
+            ))}
+          </ol>
+          <p className="sr-only" aria-live="polite">
+            Step {step + 1} of {orderSteps.length}: {orderSteps[step]}
+          </p>
+          {formError && (
+            <p
+              className="mt-6 border border-destructive/40 bg-destructive/5 p-4 text-sm text-destructive"
+              role="alert"
+            >
+              {formError}
             </p>
-          </div>
-        </div>
-      </section>
+          )}
 
-      <section className="mx-auto max-w-5xl px-6 lg:px-10 pb-32">
-        <form onSubmit={onSubmit} className="space-y-10">
-          <Field
-            label="Describe your idea (AI assist)"
-            name="ai_idea"
-            textarea
-            placeholder="e.g. Black oversized tee, gold logo at the front, bold quote at the back…"
-            rows={4}
-          />
-
-          <Group title="Your details">
-            <div className="grid md:grid-cols-2 gap-6">
-              <Field label="Full name" name="full_name" required />
-              <Field label="Email address" name="email" type="email" required />
-              <Field
-                label="WhatsApp number"
-                name="whatsapp"
-                required
-                placeholder="+234 800 000 0000"
-              />
-            </div>
-          </Group>
-
-          <Group title="The garment">
-            <div className="grid md:grid-cols-2 gap-6">
+          <Group title="Choose your garment" stage={0} active={step === 0}>
+            <div className="grid gap-6 sm:grid-cols-2">
               <Select label="Clothing type" name="clothing_type" required options={clothingTypes} />
               <Field
                 label="Preferred colour"
@@ -238,60 +284,143 @@ function CustomOrder() {
                 placeholder="e.g. Cream, charcoal"
               />
               <Select label="Size" name="size" options={sizes} />
-              <Field label="Quantity" name="quantity" type="number" placeholder="1" />
             </div>
           </Group>
 
-          <Group title="Print & design">
-            <div className="grid md:grid-cols-2 gap-6">
-              <Select label="Print position" name="print_position" options={positions} />
+          <Group title="Design and references" stage={1} active={step === 1}>
+            <Field
+              label="What are you imagining?"
+              name="ai_idea"
+              textarea
+              rows={3}
+              placeholder="Describe the idea in your own words — shape, colour, fabric, mood or use."
+            />
+            <div className="grid gap-6 sm:grid-cols-2">
+              <Select
+                label="Print or embroidery position"
+                name="print_position"
+                options={positions}
+              />
               <Field label="Text or slogan to print" name="print_text" />
             </div>
             <Field
-              label="Design description / instructions"
+              label="Design details or instructions"
               name="design_description"
               textarea
               rows={4}
-              placeholder="Style, references, fonts, mood, anything we should know…"
+              placeholder="Include placement, references, fonts or anything else the studio should know."
             />
             <div>
-              <label className="eyebrow">Upload logo or design file</label>
-              <label className="mt-3 flex items-center gap-3 border border-dashed border-border p-4 cursor-pointer hover:border-accent transition">
-                <Upload size={18} className="text-muted-foreground" />
+              <p className="eyebrow">Upload a logo or reference (optional)</p>
+              <label
+                htmlFor="design-file"
+                className="mt-3 flex min-h-14 cursor-pointer items-center gap-3 border border-dashed border-border p-4 transition hover:border-accent focus-within:ring-2 focus-within:ring-accent"
+              >
+                <Upload size={18} className="shrink-0 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground">
                   {uploading
                     ? "Uploading…"
                     : fileUrl
-                      ? "File uploaded — replace?"
-                      : "Click to upload (PNG, JPG, PDF, AI — up to 10MB)"}
+                      ? "File uploaded — choose another to replace"
+                      : "Choose PNG, JPG or PDF (up to 10 MB)"}
                 </span>
                 <input
+                  id="design-file"
                   type="file"
-                  className="hidden"
+                  className="sr-only"
                   onChange={handleFile}
-                  accept="image/*,application/pdf,.ai,.psd"
+                  accept="image/png,image/jpeg,application/pdf"
+                  aria-describedby="design-file-help"
                 />
               </label>
+              <p id="design-file-help" className="mt-2 text-xs text-muted-foreground">
+                Your uploaded reference stays attached while you move between steps.
+              </p>
             </div>
           </Group>
 
-          <Group title="Logistics">
-            <div className="grid md:grid-cols-2 gap-6">
-              <Field label="Preferred deadline" name="deadline" type="date" />
+          <Group title="Quantity, budget and timing" stage={2} active={step === 2}>
+            <div className="grid gap-6 sm:grid-cols-2">
+              <Field
+                label="Quantity"
+                name="quantity"
+                type="number"
+                min="1"
+                max="100000"
+                placeholder="1"
+              />
               <Select label="Budget range" name="budget" options={budgets} />
+              <Field label="Preferred deadline" name="deadline" type="date" />
             </div>
             <Field label="Additional notes" name="additional_notes" textarea rows={3} />
           </Group>
 
-          <button
-            disabled={loading || uploading}
-            className="btn-pill group inline-flex items-center gap-2 bg-foreground text-primary-foreground px-9 py-5 text-xs font-bold uppercase tracking-[0.3em] hover:bg-accent hover:text-accent-foreground transition disabled:opacity-60"
-          >
-            {loading ? "Submitting…" : "Submit custom request"}{" "}
-            <ArrowRight size={16} className="group-hover:translate-x-1 transition" />
-          </button>
-          <p className="text-xs text-muted-foreground">
-            By submitting, you agree to be contacted by our studio via WhatsApp or email.
+          <Group title="Contact details" stage={3} active={step === 3}>
+            <div className="border border-border bg-background p-4 sm:p-5">
+              <h2 className="font-display text-xl">Review your brief</h2>
+              <ul className="mt-3 space-y-1 text-sm text-muted-foreground">
+                {briefSummary.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+              <p className="mt-3 text-xs text-muted-foreground">
+                Use Back to make changes before sending.
+              </p>
+            </div>
+            <div className="grid gap-6 sm:grid-cols-2">
+              <Field label="Full name" name="full_name" required autoComplete="name" />
+              <Field
+                label="Email address"
+                name="email"
+                type="email"
+                required
+                autoComplete="email"
+              />
+              <Field
+                label="WhatsApp number"
+                name="whatsapp"
+                required
+                type="tel"
+                autoComplete="tel"
+                placeholder="+234 800 000 0000"
+              />
+            </div>
+            <p className="mt-5 text-sm leading-6 text-muted-foreground">
+              We’ll contact you about this brief. No production begins until you have reviewed and
+              approved the quote and deposit terms.
+            </p>
+          </Group>
+
+          <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-6">
+            <button
+              type="button"
+              onClick={() => goToStage(step - 1)}
+              disabled={step === 0 || loading}
+              className="inline-flex min-h-12 items-center gap-2 border border-border px-5 text-xs font-bold uppercase tracking-[0.16em] transition hover:border-foreground disabled:opacity-40"
+            >
+              Back
+            </button>
+            {step < orderSteps.length - 1 ? (
+              <button
+                type="button"
+                onClick={() => validateStage(step) && goToStage(step + 1)}
+                disabled={uploading}
+                className="btn-pill inline-flex min-h-12 items-center gap-2 bg-foreground px-6 text-xs font-bold uppercase tracking-[0.16em] text-primary-foreground transition hover:bg-accent hover:text-accent-foreground disabled:opacity-60"
+              >
+                Continue <ArrowRight size={15} />
+              </button>
+            ) : (
+              <button
+                type="submit"
+                disabled={loading || uploading}
+                className="btn-pill inline-flex min-h-12 items-center gap-2 bg-foreground px-6 text-xs font-bold uppercase tracking-[0.16em] text-primary-foreground transition hover:bg-accent hover:text-accent-foreground disabled:opacity-60"
+              >
+                {loading ? "Sending brief…" : "Review and send brief"} <ArrowRight size={15} />
+              </button>
+            )}
+          </div>
+          <p className="mt-4 text-xs text-muted-foreground">
+            By sending, you agree to be contacted by our studio via WhatsApp or email.
           </p>
         </form>
       </section>
@@ -299,25 +428,54 @@ function CustomOrder() {
   );
 }
 
-function TrustSignal({ icon: Icon, text }: { icon: typeof Clock3; text: string }) {
+function Group({
+  title,
+  stage,
+  active,
+  children,
+}: {
+  title: string;
+  stage: number;
+  active: boolean;
+  children: React.ReactNode;
+}) {
   return (
-    <div className="flex items-start gap-3">
-      <Icon size={18} className="mt-0.5 shrink-0 text-accent" />
-      <span className="leading-6 text-primary-foreground/75">{text}</span>
-    </div>
-  );
-}
-
-function Group({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div className="border-t border-border pt-8 space-y-6">
-      <div className="eyebrow">{title}</div>
+    <fieldset
+      data-order-stage={stage}
+      hidden={!active}
+      className="mt-8 min-w-0 space-y-6 border-t border-border pt-8"
+    >
+      <legend className="eyebrow">{title}</legend>
       {children}
-    </div>
+    </fieldset>
   );
 }
 
-function Field({ label, name, type = "text", required, placeholder, textarea, rows }: any) {
+type FieldProps = {
+  label: string;
+  name: string;
+  type?: string;
+  required?: boolean;
+  placeholder?: string;
+  textarea?: boolean;
+  rows?: number;
+  autoComplete?: string;
+  min?: string;
+  max?: string;
+};
+
+function Field({
+  label,
+  name,
+  type = "text",
+  required,
+  placeholder,
+  textarea,
+  rows,
+  autoComplete,
+  min,
+  max,
+}: FieldProps) {
   return (
     <div>
       <label htmlFor={name} className="eyebrow">
@@ -331,7 +489,7 @@ function Field({ label, name, type = "text", required, placeholder, textarea, ro
           required={required}
           rows={rows || 3}
           placeholder={placeholder}
-          className="mt-3 w-full bg-card border border-border px-4 py-3 text-sm focus:outline-none focus:border-accent transition"
+          className="mt-3 w-full border border-border bg-card px-4 py-3 text-sm transition focus:border-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
         />
       ) : (
         <input
@@ -340,14 +498,27 @@ function Field({ label, name, type = "text", required, placeholder, textarea, ro
           type={type}
           required={required}
           placeholder={placeholder}
-          className="mt-3 w-full bg-card border border-border px-4 py-3 text-sm focus:outline-none focus:border-accent transition"
+          autoComplete={autoComplete}
+          min={min}
+          max={max}
+          className="mt-3 min-h-12 w-full border border-border bg-card px-4 py-3 text-sm transition focus:border-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
         />
       )}
     </div>
   );
 }
 
-function Select({ label, name, required, options }: any) {
+function Select({
+  label,
+  name,
+  required,
+  options,
+}: {
+  label: string;
+  name: string;
+  required?: boolean;
+  options: string[];
+}) {
   return (
     <div>
       <label htmlFor={name} className="eyebrow">
@@ -358,7 +529,7 @@ function Select({ label, name, required, options }: any) {
         id={name}
         name={name}
         required={required}
-        className="mt-3 w-full bg-card border border-border px-4 py-3 text-sm focus:outline-none focus:border-accent transition"
+        className="mt-3 min-h-12 w-full border border-border bg-card px-4 py-3 text-sm transition focus:border-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
       >
         <option value="">Select…</option>
         {options.map((o: string) => (

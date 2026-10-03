@@ -50,7 +50,10 @@ function About() {
                 ["Made", "Worldwide"],
                 ["Focus", "Identity"],
               ].map(([label, value]) => (
-                <div key={label} className="rounded-2xl border border-border bg-background p-3 text-center">
+                <div
+                  key={label}
+                  className="rounded-2xl border border-border bg-background p-3 text-center"
+                >
                   <p className="text-[0.58rem] font-bold uppercase tracking-[0.18em] text-muted-foreground">
                     {label}
                   </p>
@@ -146,7 +149,10 @@ function About() {
       </section>
 
       <section className="mx-auto max-w-7xl px-6 py-24 lg:px-10 lg:py-32">
-        <div className="mb-12 rounded-[2rem] border border-border bg-card p-6 text-center shadow-[0_18px_50px_rgba(15,14,12,0.04)] sm:p-8" data-reveal>
+        <div
+          className="mb-12 rounded-[2rem] border border-border bg-card p-6 text-center shadow-[0_18px_50px_rgba(15,14,12,0.04)] sm:p-8"
+          data-reveal
+        >
           <div className="eyebrow">What we believe</div>
           <p className="mx-auto mt-4 max-w-4xl font-display text-3xl leading-tight text-foreground sm:text-4xl lg:text-5xl">
             “Style should feel like a second skin — personal, confident, and built for real life.”

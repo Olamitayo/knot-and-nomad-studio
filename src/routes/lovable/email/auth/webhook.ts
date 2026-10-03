@@ -21,14 +21,14 @@ const EMAIL_SUBJECTS: Record<string, string> = {
 };
 
 // Template mapping
-const EMAIL_TEMPLATES: Record<string, React.ComponentType<any>> = {
+const EMAIL_TEMPLATES = {
   signup: SignupEmail,
   invite: InviteEmail,
   magiclink: MagicLinkEmail,
   recovery: RecoveryEmail,
   email_change: EmailChangeEmail,
   reauthentication: ReauthenticationEmail,
-};
+} as const;
 
 // Configuration
 const SITE_NAME = "knot-nomad-custom-studio";
@@ -54,8 +54,21 @@ export const Route = createFileRoute("/lovable/email/auth/webhook")({
           return Response.json({ error: "Server configuration error" }, { status: 500 });
         }
 
+        type AuthWebhookPayload = {
+          version?: string;
+          run_id?: string;
+          data: {
+            action_type?: string;
+            email?: string;
+            url?: string;
+            token?: string;
+            old_email?: string;
+            new_email?: string;
+          };
+        };
+
         // Verify signature + timestamp, then parse payload.
-        let payload: any;
+        let payload: AuthWebhookPayload | null = null;
         let run_id = "";
         try {
           const verified = await verifyWebhookRequest({
@@ -63,8 +76,8 @@ export const Route = createFileRoute("/lovable/email/auth/webhook")({
             secret: apiKey,
             parser: parseEmailWebhookPayload,
           });
-          payload = verified.payload;
-          run_id = payload.run_id;
+          payload = verified.payload as AuthWebhookPayload;
+          run_id = payload.run_id ?? "";
         } catch (error) {
           if (error instanceof WebhookError) {
             switch (error.code) {
@@ -100,14 +113,14 @@ export const Route = createFileRoute("/lovable/email/auth/webhook")({
 
         // The email action type is in payload.data.action_type (e.g., "signup", "recovery")
         // payload.type is the hook event type ("auth")
-        const emailType = payload.data.action_type;
+        const emailType = payload.data.action_type ?? "";
         console.log("Received auth event", {
           emailType,
           email_redacted: redactEmail(payload.data.email),
           run_id,
         });
 
-        const EmailTemplate = EMAIL_TEMPLATES[emailType];
+        const EmailTemplate = EMAIL_TEMPLATES[emailType as keyof typeof EMAIL_TEMPLATES];
         if (!EmailTemplate) {
           console.error("Unknown email type", { emailType, run_id });
           return Response.json({ error: `Unknown email type: ${emailType}` }, { status: 400 });
@@ -117,12 +130,12 @@ export const Route = createFileRoute("/lovable/email/auth/webhook")({
         const templateProps = {
           siteName: SITE_NAME,
           siteUrl: `https://${ROOT_DOMAIN}`,
-          recipient: payload.data.email,
-          confirmationUrl: payload.data.url,
-          token: payload.data.token,
-          email: payload.data.email,
-          oldEmail: payload.data.old_email,
-          newEmail: payload.data.new_email,
+          recipient: payload.data.email ?? "",
+          confirmationUrl: payload.data.url ?? "",
+          token: payload.data.token ?? "",
+          email: payload.data.email ?? "",
+          oldEmail: payload.data.old_email ?? "",
+          newEmail: payload.data.new_email ?? "",
         };
 
         // Render React Email to HTML and plain text

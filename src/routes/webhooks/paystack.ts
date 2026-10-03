@@ -39,17 +39,25 @@ export const Route = createFileRoute("/webhooks/paystack")({
           return Response.json({ error: "Invalid signature" }, { status: 401 });
         }
 
-        let event: any;
+        let event: Record<string, unknown> | null = null;
         try {
-          event = JSON.parse(rawBody);
+          event = JSON.parse(rawBody) as Record<string, unknown>;
         } catch {
           return Response.json({ error: "Invalid payload" }, { status: 400 });
         }
 
-        if (event?.event === "charge.success" && event?.data?.reference) {
-          const result = await verifyAndMarkPaid(event.data.reference);
+        const isChargeSuccess =
+          event?.event === "charge.success" &&
+          typeof event?.data === "object" &&
+          event.data !== null &&
+          "reference" in event.data &&
+          typeof event.data.reference === "string";
+
+        if (isChargeSuccess) {
+          const reference = event.data.reference;
+          const result = await verifyAndMarkPaid(reference);
           if (!result.ok) {
-            console.error("[paystack webhook] verify failed", event.data.reference, result.error);
+            console.error("[paystack webhook] verify failed", reference, result.error);
           }
         }
 
