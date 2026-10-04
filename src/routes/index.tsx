@@ -5,6 +5,7 @@ import { useReveal } from "@/hooks/useReveal";
 import { supabase } from "@/integrations/supabase/client";
 import { formatNaira } from "@/lib/format";
 import { whatsappLink } from "@/lib/site";
+import { isCatalogueReadyProduct } from "@/lib/product-data";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -39,6 +40,9 @@ type HomeProduct = {
   is_ready_to_wear?: boolean;
   images: string[];
   colors: string[];
+  sizes: string[];
+  short_description: string | null;
+  description?: string | null;
   is_customizable: boolean;
 };
 
@@ -49,13 +53,14 @@ function Home() {
     supabase
       .from("products")
       .select(
-        "id,slug,name,category,price_ngn,starting_price_ngn,stock_level,is_sold_out,is_ready_to_wear,images,colors,is_customizable",
+        "id,slug,name,category,price_ngn,starting_price_ngn,stock_level,is_sold_out,is_ready_to_wear,images,colors,sizes,short_description,description,is_customizable",
       )
       .eq("is_active", true)
       .order("is_bestseller", { ascending: false })
       .order("sort_order")
-      .limit(4)
-      .then(({ data, error }) => setFeatured(error ? [] : (data ?? [])));
+      .then(({ data, error }) =>
+        setFeatured(error ? [] : (data ?? []).filter(isCatalogueReadyProduct).slice(0, 4)),
+      );
   }, []);
   return (
     <div ref={ref}>

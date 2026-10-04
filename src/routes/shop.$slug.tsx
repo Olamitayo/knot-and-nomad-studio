@@ -17,7 +17,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatNaira } from "@/lib/format";
 import { useCart } from "@/lib/cart";
 import { whatsappLink } from "@/lib/site";
-import { parseProductData } from "@/lib/product-data";
+import { isCatalogueReadyProduct, parseProductData } from "@/lib/product-data";
 import { displayPrice, productGroup, type GalleryItem, type StoreProduct } from "@/lib/products";
 
 export const Route = createFileRoute("/shop/$slug")({
@@ -76,6 +76,10 @@ function ProductDetail() {
           return;
         }
         const resolved = parseProductData(data);
+        if (!resolved.is_active || !isCatalogueReadyProduct(resolved)) {
+          setProduct(null);
+          return;
+        }
         setProduct(resolved);
         setSize(resolved.sizes[0] ?? "");
         setColor(resolved.colors[0] ?? "");
@@ -99,7 +103,7 @@ function ProductDetail() {
           setRelated(
             data
               .map(parseProductData)
-              .filter((item) => item.slug !== slug)
+              .filter((item) => item.slug !== slug && isCatalogueReadyProduct(item))
               .slice(0, 4),
           );
       });

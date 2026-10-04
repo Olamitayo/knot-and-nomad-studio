@@ -142,7 +142,7 @@ export function Footer() {
           <div>
             <p className="font-display text-xl">Garment Care</p>
             <p className="mt-1 text-sm text-primary-foreground/65">
-              Premium laundry, steaming, stain treatment and pickup service by Knot & Nomad.
+              Contact the team to confirm available services, pricing and pickup arrangements.
             </p>
           </div>
           <span className="text-xs font-bold uppercase tracking-[0.18em]">
