@@ -14,7 +14,12 @@ import {
 import fallbackHero from "@/assets/hero-editorial.jpg";
 import { supabase } from "@/integrations/supabase/client";
 import { formatNaira } from "@/lib/format";
-import { parseProductData } from "@/lib/product-data";
+import {
+  isCatalogueReadyProduct,
+  isValidProductColour,
+  isValidProductSize,
+  parseProductData,
+} from "@/lib/product-data";
 import { productGroup, type StoreProduct } from "@/lib/products";
 
 export const Route = createFileRoute("/shop")({
@@ -45,8 +50,6 @@ const CATEGORIES = [
   "Sets",
   "Accessories",
 ];
-const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "One Size"];
-const COLORS = ["Black", "White", "Cream", "Charcoal", "Sand", "Olive", "Navy", "Gold"];
 const TAGS = ["All", "New", "Bestseller", "Customizable"];
 const SORTS = ["Featured", "Price: low to high", "Price: high to low", "Newest"] as const;
 
@@ -99,7 +102,9 @@ function ShopPage() {
           return;
         }
 
-        setProducts(result.data.map(parseProductData).map(normalizeProduct));
+        setProducts(
+          result.data.map(parseProductData).map(normalizeProduct).filter(isCatalogueReadyProduct),
+        );
         setCatalogueNotice("");
       } catch (error) {
         if (!active) return;
@@ -127,7 +132,21 @@ function ShopPage() {
     if (maxPrice === 0) setMaxPrice(priceCeiling);
   }, [priceCeiling, maxPrice]);
 
-  const featuredProduct = useMemo(() => products.find((p) => p.images[0]), [products]);
+  const availableCategories = useMemo(
+    () =>
+      CATEGORIES.filter(
+        (item) => item === "All Products" || products.some((p) => productGroup(p) === item),
+      ),
+    [products],
+  );
+  const availableSizes = useMemo(
+    () => [...new Set(products.flatMap((product) => product.sizes.filter(isValidProductSize)))],
+    [products],
+  );
+  const availableColors = useMemo(
+    () => [...new Set(products.flatMap((product) => product.colors.filter(isValidProductColour)))],
+    [products],
+  );
 
   const activeFilterCount = [
     category !== "All Products",
@@ -180,7 +199,7 @@ function ShopPage() {
     });
   }, [products, category, size, color, tag, maxPrice, search, sort]);
 
-  const heroImage = featuredProduct?.images[0] ?? fallbackHero;
+  const heroImage = fallbackHero;
 
   return (
     <div className="bg-background">
@@ -198,16 +217,19 @@ function ShopPage() {
               Cut for <span className="text-[#b7c8b3]">motion</span>.
             </h1>
             <p className="mt-6 max-w-xl text-sm leading-7 text-primary-foreground/70 sm:text-base">
-              Ready-to-wear essentials and customisable studio pieces, priced in Nigerian Naira and
-              built for sharp everyday presence.
+              {products.length > 0
+                ? "Ready-to-wear essentials and customisable studio pieces, priced in Nigerian Naira."
+                : "Ready-to-wear pieces are being confirmed. Contact the studio to discuss a custom request."}
             </p>
             <div className="mt-9 flex flex-wrap gap-3">
-              <a
-                href="#shop-grid"
-                className="btn-pill inline-flex items-center gap-2 bg-primary-foreground px-6 py-3 text-xs font-bold uppercase tracking-[0.22em] text-foreground transition hover:bg-accent hover:text-accent-foreground"
-              >
-                Shop pieces <ArrowRight size={15} />
-              </a>
+              {products.length > 0 && (
+                <a
+                  href="#shop-grid"
+                  className="btn-pill inline-flex items-center gap-2 bg-primary-foreground px-6 py-3 text-xs font-bold uppercase tracking-[0.22em] text-foreground transition hover:bg-accent hover:text-accent-foreground"
+                >
+                  Shop pieces <ArrowRight size={15} />
+                </a>
+              )}
               <Link
                 to="/custom-order"
                 className="btn-pill inline-flex items-center gap-2 border-2 border-primary-foreground/35 px-6 py-3 text-xs font-bold uppercase tracking-[0.22em] text-primary-foreground transition hover:border-accent hover:text-accent"
@@ -215,54 +237,62 @@ function ShopPage() {
                 Custom order
               </Link>
             </div>
-            <div className="mt-12 grid max-w-2xl grid-cols-3 border-y border-primary-foreground/15 text-xs">
-              {["Ready-to-wear", "Customisable", "Naira pricing"].map((item) => (
-                <div
-                  key={item}
-                  className="flex items-center gap-2 py-4 pr-3 text-primary-foreground/70"
-                >
-                  <CheckCircle2 size={14} className="text-accent" />
-                  <span>{item}</span>
-                </div>
-              ))}
+            <div
+              className={`mt-12 grid max-w-2xl border-y border-primary-foreground/15 text-xs ${
+                products.length > 0 ? "grid-cols-2" : "grid-cols-1"
+              }`}
+            >
+              {(products.length > 0 ? ["Custom studio", "Naira pricing"] : ["Custom studio"]).map(
+                (item) => (
+                  <div
+                    key={item}
+                    className="flex items-center gap-2 py-4 pr-3 text-primary-foreground/70"
+                  >
+                    <CheckCircle2 size={14} className="text-accent" />
+                    <span>{item}</span>
+                  </div>
+                ),
+              )}
             </div>
           </div>
         </div>
       </section>
 
-      <section className="border-b border-border bg-card" aria-label="Product categories">
-        <div className="mx-auto max-w-7xl px-6 py-4 lg:px-10">
-          <div
-            className="relative flex gap-2 overflow-x-auto pb-2 pr-8 [scrollbar-width:thin]"
-            role="group"
-            aria-label="Filter products by category"
-          >
-            {CATEGORIES.map((item) => (
-              <button
-                key={item}
-                type="button"
-                aria-pressed={category === item}
-                onClick={() => {
-                  setCategory(item);
-                }}
-                className={`inline-flex min-h-11 shrink-0 items-center border px-4 text-xs font-bold uppercase tracking-[0.18em] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
-                  category === item
-                    ? "border-foreground bg-foreground text-primary-foreground"
-                    : "border-border bg-background text-muted-foreground hover:border-foreground hover:text-foreground"
-                }`}
-              >
-                {item}
-              </button>
-            ))}
-            <span
-              className="pointer-events-none sticky right-0 my-1 ml-auto flex shrink-0 items-center bg-gradient-to-l from-card via-card pl-4 pr-1 text-[9px] font-bold uppercase tracking-[0.12em] text-muted-foreground sm:hidden"
-              aria-hidden="true"
+      {products.length > 0 && (
+        <section className="border-b border-border bg-card" aria-label="Product categories">
+          <div className="mx-auto max-w-7xl px-6 py-4 lg:px-10">
+            <div
+              className="relative flex gap-2 overflow-x-auto pb-2 pr-8 [scrollbar-width:thin]"
+              role="group"
+              aria-label="Filter products by category"
             >
-              Swipe →
-            </span>
+              {availableCategories.map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  aria-pressed={category === item}
+                  onClick={() => {
+                    setCategory(item);
+                  }}
+                  className={`inline-flex min-h-11 shrink-0 items-center border px-4 text-xs font-bold uppercase tracking-[0.18em] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                    category === item
+                      ? "border-foreground bg-foreground text-primary-foreground"
+                      : "border-border bg-background text-muted-foreground hover:border-foreground hover:text-foreground"
+                  }`}
+                >
+                  {item}
+                </button>
+              ))}
+              <span
+                className="pointer-events-none sticky right-0 my-1 ml-auto flex shrink-0 items-center bg-gradient-to-l from-card via-card pl-4 pr-1 text-[9px] font-bold uppercase tracking-[0.12em] text-muted-foreground sm:hidden"
+                aria-hidden="true"
+              >
+                Swipe →
+              </span>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       <section id="shop-grid" className="mx-auto max-w-7xl px-6 py-10 lg:px-10 lg:py-14">
         {catalogueNotice && (
@@ -277,55 +307,65 @@ function ShopPage() {
             </button>
           </p>
         )}
-        <div className="mb-8 grid gap-4 lg:grid-cols-[18rem_1fr] lg:items-end">
+        <div
+          className={`mb-8 gap-4 ${
+            products.length > 0 ? "grid lg:grid-cols-[18rem_1fr] lg:items-end" : ""
+          }`}
+        >
           <div>
-            <p className="eyebrow mb-2">Current edit</p>
+            <p className="eyebrow mb-2">Ready-to-wear</p>
             <p className="text-sm text-muted-foreground">
-              {loading ? "Loading pieces…" : `${filtered.length} of ${products.length} pieces`}
+              {loading
+                ? "Loading pieces…"
+                : products.length === 0
+                  ? "0 pieces available"
+                  : `${filtered.length} of ${products.length} pieces`}
             </p>
           </div>
-          <div className="grid gap-3 md:grid-cols-[1fr_13rem_auto]">
-            <label className="relative block">
-              <span className="sr-only">Search products</span>
-              <Search
-                size={16}
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
-              />
-              <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                aria-label="Search products"
-                placeholder="Search tees, trousers, jackets, native wear..."
-                className="h-12 w-full border border-border bg-card pl-11 pr-4 text-sm outline-none transition placeholder:text-muted-foreground focus:border-foreground focus-visible:ring-2 focus-visible:ring-accent"
-              />
-            </label>
-            <label className="sr-only" htmlFor="shop-sort">
-              Sort products
-            </label>
-            <select
-              id="shop-sort"
-              value={sort}
-              onChange={(e) => setSort(e.target.value as Sort)}
-              className="h-12 border border-border bg-card px-4 text-sm outline-none transition focus:border-foreground focus-visible:ring-2 focus-visible:ring-accent"
-            >
-              {SORTS.map((item) => (
-                <option key={item}>{item}</option>
-              ))}
-            </select>
-            <button
-              onClick={() => setShowFilters((v) => !v)}
-              aria-expanded={showFilters}
-              aria-controls="mobile-shop-filters"
-              className="btn-pill inline-flex h-12 items-center justify-center gap-2 border-2 border-foreground px-5 text-xs font-bold uppercase tracking-[0.22em] transition hover:bg-foreground hover:text-primary-foreground lg:hidden"
-            >
-              <Filter size={14} />
-              Filters
-              {activeFilterCount > 0 && <span>({activeFilterCount})</span>}
-            </button>
-          </div>
+          {products.length > 0 && (
+            <div className="grid gap-3 md:grid-cols-[1fr_13rem_auto]">
+              <label className="relative block">
+                <span className="sr-only">Search products</span>
+                <Search
+                  size={16}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
+                />
+                <input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  aria-label="Search products"
+                  placeholder="Search tees, trousers, jackets, native wear..."
+                  className="h-12 w-full border border-border bg-card pl-11 pr-4 text-sm outline-none transition placeholder:text-muted-foreground focus:border-foreground focus-visible:ring-2 focus-visible:ring-accent"
+                />
+              </label>
+              <label className="sr-only" htmlFor="shop-sort">
+                Sort products
+              </label>
+              <select
+                id="shop-sort"
+                value={sort}
+                onChange={(e) => setSort(e.target.value as Sort)}
+                className="h-12 border border-border bg-card px-4 text-sm outline-none transition focus:border-foreground focus-visible:ring-2 focus-visible:ring-accent"
+              >
+                {SORTS.map((item) => (
+                  <option key={item}>{item}</option>
+                ))}
+              </select>
+              <button
+                onClick={() => setShowFilters((v) => !v)}
+                aria-expanded={showFilters}
+                aria-controls="mobile-shop-filters"
+                className="btn-pill inline-flex h-12 items-center justify-center gap-2 border-2 border-foreground px-5 text-xs font-bold uppercase tracking-[0.22em] transition hover:bg-foreground hover:text-primary-foreground lg:hidden"
+              >
+                <Filter size={14} />
+                Filters
+                {activeFilterCount > 0 && <span>({activeFilterCount})</span>}
+              </button>
+            </div>
+          )}
         </div>
 
-        {showFilters && (
+        {products.length > 0 && showFilters && (
           <div id="mobile-shop-filters" className="mb-8 border border-border bg-card p-5 lg:hidden">
             <ShopFilters
               size={size}
@@ -333,6 +373,8 @@ function ShopPage() {
               tag={tag}
               maxPrice={maxPrice}
               priceCeiling={priceCeiling}
+              sizeOptions={availableSizes}
+              colorOptions={availableColors}
               onSize={setSize}
               onColor={setColor}
               onTag={setTag}
@@ -343,31 +385,35 @@ function ShopPage() {
         )}
 
         <div className="grid gap-8 lg:grid-cols-[18rem_1fr]">
-          <aside className="hidden lg:block">
-            <div className="sticky top-28 border border-border bg-card p-5">
-              <div className="mb-6 flex items-center justify-between gap-3">
-                <div>
-                  <p className="eyebrow">Refine</p>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    {activeFilterCount ? `${activeFilterCount} active` : "No filters"}
-                  </p>
+          {products.length > 0 && (
+            <aside className="hidden lg:block">
+              <div className="sticky top-28 border border-border bg-card p-5">
+                <div className="mb-6 flex items-center justify-between gap-3">
+                  <div>
+                    <p className="eyebrow">Refine</p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {activeFilterCount ? `${activeFilterCount} active` : "No filters"}
+                    </p>
+                  </div>
+                  <SlidersHorizontal size={18} className="text-muted-foreground" />
                 </div>
-                <SlidersHorizontal size={18} className="text-muted-foreground" />
+                <ShopFilters
+                  size={size}
+                  color={color}
+                  tag={tag}
+                  maxPrice={maxPrice}
+                  priceCeiling={priceCeiling}
+                  sizeOptions={availableSizes}
+                  colorOptions={availableColors}
+                  onSize={setSize}
+                  onColor={setColor}
+                  onTag={setTag}
+                  onMaxPrice={setMaxPrice}
+                  onReset={resetFilters}
+                />
               </div>
-              <ShopFilters
-                size={size}
-                color={color}
-                tag={tag}
-                maxPrice={maxPrice}
-                priceCeiling={priceCeiling}
-                onSize={setSize}
-                onColor={setColor}
-                onTag={setTag}
-                onMaxPrice={setMaxPrice}
-                onReset={resetFilters}
-              />
-            </div>
-          </aside>
+            </aside>
+          )}
 
           <div aria-live="polite" aria-busy={loading}>
             {activeFilterCount > 0 && (
@@ -403,16 +449,31 @@ function ShopPage() {
               <ProductSkeleton />
             ) : filtered.length === 0 ? (
               <div className="flex min-h-[22rem] flex-col items-center justify-center border border-border bg-card px-6 text-center">
-                <p className="font-display text-3xl">No pieces found.</p>
-                <p className="mt-3 max-w-md text-sm text-muted-foreground">
-                  Try another category, remove a filter, or start a custom request with the studio.
+                <p className="font-display text-3xl">
+                  {products.length === 0
+                    ? "Ready-to-wear details are being confirmed."
+                    : "No pieces found."}
                 </p>
-                <button
-                  onClick={resetFilters}
-                  className="btn-pill mt-6 border-2 border-foreground px-5 py-3 text-xs font-bold uppercase tracking-[0.22em] transition hover:bg-foreground hover:text-primary-foreground"
-                >
-                  Reset filters
-                </button>
+                <p className="mt-3 max-w-md text-sm text-muted-foreground">
+                  {products.length === 0
+                    ? "Contact the studio to discuss a custom request."
+                    : "Try another category, remove a filter, or start a custom request with the studio."}
+                </p>
+                {products.length > 0 ? (
+                  <button
+                    onClick={resetFilters}
+                    className="btn-pill mt-6 border-2 border-foreground px-5 py-3 text-xs font-bold uppercase tracking-[0.22em] transition hover:bg-foreground hover:text-primary-foreground"
+                  >
+                    Reset filters
+                  </button>
+                ) : (
+                  <Link
+                    to="/custom-order"
+                    className="btn-pill mt-6 border-2 border-foreground px-5 py-3 text-xs font-bold uppercase tracking-[0.22em] transition hover:bg-foreground hover:text-primary-foreground"
+                  >
+                    Start custom order
+                  </Link>
+                )}
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-x-5 gap-y-10 sm:grid-cols-2 xl:grid-cols-3">
@@ -454,6 +515,8 @@ function ShopFilters({
   tag,
   maxPrice,
   priceCeiling,
+  sizeOptions,
+  colorOptions,
   onSize,
   onColor,
   onTag,
@@ -465,6 +528,8 @@ function ShopFilters({
   tag: string;
   maxPrice: number;
   priceCeiling: number;
+  sizeOptions: string[];
+  colorOptions: string[];
   onSize: (v: string) => void;
   onColor: (v: string) => void;
   onTag: (v: string) => void;
@@ -473,10 +538,10 @@ function ShopFilters({
 }) {
   return (
     <div className="space-y-7">
-      <FilterGroup label="Size" options={["All", ...SIZES]} value={size} onChange={onSize} />
+      <FilterGroup label="Size" options={["All", ...sizeOptions]} value={size} onChange={onSize} />
       <FilterGroup
         label="Color"
-        options={["All", ...COLORS]}
+        options={["All", ...colorOptions]}
         value={color}
         onChange={onColor}
         swatches

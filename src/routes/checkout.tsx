@@ -7,6 +7,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { openPaystackCheckout } from "@/lib/paystack";
 import { verifyPaystackPayment, notifyNewOrder } from "@/lib/payments.functions";
 import { NIGERIA_STATES } from "@/lib/nigeria-states";
+import {
+  isCatalogueReadyProduct,
+  isValidProductColour,
+  isValidProductSize,
+  parseProductData,
+} from "@/lib/product-data";
+import { displayPrice } from "@/lib/products";
 import { toast } from "sonner";
 import { CreditCard, Banknote, Lock, MessageCircle, Truck, Wand2, ShieldCheck } from "lucide-react";
 import { BrandLogo } from "@/components/BrandLogo";
@@ -152,6 +159,48 @@ function CheckoutPage() {
     }
 
     setSubmitting(true);
+
+    const { data: catalogue, error: catalogueError } = await supabase
+      .from("products")
+      .select("*")
+      .in("id", [...new Set(items.map((item) => item.productId))])
+      .eq("is_active", true);
+
+    if (catalogueError) {
+      toast.error("Could not confirm product availability. Please try again.");
+      setSubmitting(false);
+      return;
+    }
+
+    const currentProducts = new Map(
+      (catalogue ?? [])
+        .map(parseProductData)
+        .filter(isCatalogueReadyProduct)
+        .map((product) => [product.id, product]),
+    );
+    const unavailableItems = items.filter((item) => {
+      const product = currentProducts.get(item.productId);
+      if (!product) return true;
+      if (displayPrice(product, item.color) !== item.unitPrice) return true;
+      if (
+        product.sizes.length > 0 &&
+        (!item.size || !isValidProductSize(item.size) || !product.sizes.includes(item.size))
+      )
+        return true;
+      if (
+        product.colors.length > 0 &&
+        (!item.color || !isValidProductColour(item.color) || !product.colors.includes(item.color))
+      )
+        return true;
+      return false;
+    });
+
+    if (unavailableItems.length > 0) {
+      unavailableItems.forEach((item) => useCart.getState().remove(item.id));
+      toast.error("Unavailable or changed items were removed. Please review your cart.");
+      setSubmitting(false);
+      return;
+    }
 
     // If a card order was already created (e.g. the customer closed the
     // Paystack popup last time), reopen payment for it instead of creating
