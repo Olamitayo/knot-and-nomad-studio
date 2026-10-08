@@ -89,11 +89,11 @@ export const Route = createFileRoute("/api/laundry-order")({
             <a href="https://knotnomad.com" aria-label="KnotNomad home"><img src="https://knotnomad.com/brand/knotnomad-logo-primary.png" width="196" height="90" alt="KnotNomad" style="display:block;margin:0 0 24px"></a>
             <h1 style="font-size:26px">Your garment care request is in.</h1>
             <p>Hi ${escapeHtml(order.name)},</p>
-            <p>We received your pickup and quote request. Our team will review the garments and email your official quote for approval.</p>
+            <p>We received your garment care enquiry. No booking is confirmed and no payment has been taken. Our team will reply with service availability and pricing so you can decide whether to proceed.</p>
             <p><strong>Reference:</strong> ${reference}</p>
             <table style="width:100%;border-collapse:collapse"><tbody>${rows}<tr><td style="padding:10px 0"><strong>Total pieces</strong></td><td style="padding:10px 0;text-align:right"><strong>${total}</strong></td></tr></tbody></table>
             <p><strong>Pickup:</strong> ${escapeHtml(order.pickupDate)} · ${escapeHtml(order.pickupWindow)}<br><strong>Service:</strong> ${escapeHtml(order.service)}<br><strong>Turnaround:</strong> ${escapeHtml(order.turnaround)}</p>
-            <p>This is a request confirmation, not a final price. Reply to this email if anything needs changing.</p>
+            <p>This email confirms receipt of your enquiry only. Reply if any details need changing.</p>
             <p>Knot &amp; Nomad Garment Care<br>Professional fabric care by Knot &amp; Nomad</p>
           </div>`,
         );

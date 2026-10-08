@@ -7,7 +7,7 @@ import { BrandLogo } from "@/components/BrandLogo";
 
 const nav = [
   { to: "/", label: "Home" },
-  { to: "/shop", label: "Shop" },
+  { to: "/shop", label: "Ready-to-wear" },
   { to: "/custom-studio", label: "Custom Studio" },
   { to: "/lookbook", label: "Lookbook" },
   { to: "/about", label: "About" },
@@ -70,7 +70,7 @@ export function Header() {
           <BrandLogo variant="monogram" size="md" priority decorative className="sm:hidden" />
         </Link>
 
-        <nav className="hidden items-center gap-6 lg:flex">
+        <nav className="hidden items-center gap-5 xl:flex">
           {nav.map((n) => (
             <Link
               key={n.to}
@@ -84,40 +84,40 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2 lg:gap-3">
-          <Link
-            to="/cart"
-            className="relative inline-flex h-11 w-11 items-center justify-center transition hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-            aria-label="Cart"
-          >
-            <ShoppingBag size={20} strokeWidth={2.25} />
-            {count > 0 && (
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          {count > 0 && (
+            <Link
+              to="/cart"
+              className="relative inline-flex h-11 w-11 items-center justify-center transition hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              aria-label={`Cart, ${count} items`}
+            >
+              <ShoppingBag size={20} strokeWidth={2.25} />
               <span className="absolute -right-0.5 -top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold text-accent-foreground">
                 {count}
               </span>
-            )}
-          </Link>
+            </Link>
+          )}
 
           <a
             href={whatsappLink()}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-pill hidden border-2 border-foreground px-5 py-2.5 text-[0.68rem] font-bold uppercase tracking-[0.14em] transition hover:bg-foreground hover:text-primary-foreground lg:inline-block"
+            className="btn-pill hidden min-h-11 items-center border-2 border-foreground px-4 text-[0.68rem] font-bold uppercase tracking-[0.12em] transition hover:bg-foreground hover:text-primary-foreground xl:inline-flex"
           >
             WhatsApp
           </a>
 
           <Link
-            to="/shop"
-            className="btn-pill hidden bg-foreground px-5 py-2.5 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-primary-foreground transition hover:bg-accent hover:text-accent-foreground lg:inline-block"
+            to="/custom-order"
+            className="btn-pill hidden min-h-11 items-center bg-foreground px-4 text-[0.68rem] font-bold uppercase tracking-[0.12em] text-primary-foreground transition hover:bg-accent hover:text-accent-foreground xl:inline-flex"
           >
-            Shop now
+            Custom order
           </Link>
 
           <button
             ref={menuButtonRef}
             type="button"
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card transition hover:border-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent lg:hidden"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card transition hover:border-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent xl:hidden"
             onClick={() => setOpen(!open)}
             aria-label={open ? "Close navigation" : "Open navigation"}
             aria-controls="mobile-navigation"
@@ -129,7 +129,7 @@ export function Header() {
       </div>
 
       <div
-        className={`${open ? "fixed" : "hidden"} inset-x-0 bottom-0 top-20 z-50 overflow-y-auto border-t border-border bg-background lg:hidden`}
+        className={`${open ? "fixed" : "hidden"} inset-x-0 bottom-0 top-20 z-50 overflow-y-auto border-t border-border bg-background xl:hidden`}
         data-mobile-menu
         aria-hidden={!open}
       >
@@ -144,11 +144,11 @@ export function Header() {
               Menu
             </span>
             <Link
-              to="/shop"
+              to="/custom-order"
               onClick={() => setOpen(false)}
               className="btn-pill inline-flex min-h-11 items-center bg-foreground px-4 py-2 text-[0.58rem] font-bold uppercase tracking-[0.18em] text-primary-foreground"
             >
-              Shop now
+              Start a custom order
             </Link>
           </div>
 

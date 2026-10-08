@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { formatNaira } from "@/lib/format";
@@ -45,15 +45,18 @@ function ConfirmationPage() {
   const verifyPayment = useServerFn(verifyPaystackPayment);
   const notifyReceipt = useServerFn(notifyReceiptSubmitted);
 
-  const reload = () =>
-    supabase
-      .from("orders")
-      .select(
-        "id, reference, full_name, email, whatsapp, city, state, subtotal_ngn, total_ngn, payment_method, payment_status, delivery_fee_status, receipt_url",
-      )
-      .eq("reference", reference)
-      .maybeSingle()
-      .then(({ data }) => setOrder(data as Order | null));
+  const reload = useCallback(
+    () =>
+      supabase
+        .from("orders")
+        .select(
+          "id, reference, full_name, email, whatsapp, city, state, subtotal_ngn, total_ngn, payment_method, payment_status, delivery_fee_status, receipt_url",
+        )
+        .eq("reference", reference)
+        .maybeSingle()
+        .then(({ data }) => setOrder(data as Order | null)),
+    [reference],
+  );
 
   useEffect(() => {
     reload();
@@ -65,7 +68,7 @@ function ConfirmationPage() {
       .then(({ data }) => {
         if (data) setSettings(data as Settings);
       });
-  }, [reference]);
+  }, [reference, reload]);
 
   const onUploadReceipt = async (file: File) => {
     if (!order) return;

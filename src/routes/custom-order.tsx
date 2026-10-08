@@ -58,34 +58,38 @@ function CustomOrder() {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [fileUrl, setFileUrl] = useState<string | null>(null);
+  const [fileName, setFileName] = useState("");
   const [step, setStep] = useState(0);
   const [formError, setFormError] = useState("");
   const [briefSummary, setBriefSummary] = useState<string[]>([]);
   const formRef = useRef<HTMLFormElement>(null);
+  const errorSummaryRef = useRef<HTMLDivElement>(null);
 
   function refreshBriefSummary() {
     const form = formRef.current;
     if (!form) return;
     const values = new FormData(form);
     const value = (name: string) => String(values.get(name) ?? "").trim();
-    setBriefSummary(
-      [
-        `Garment: ${value("clothing_type")}`,
-        value("preferred_color") && `Colour: ${value("preferred_color")}`,
-        value("size") && `Size: ${value("size")}`,
-        value("ai_idea") && `Idea: ${value("ai_idea")}`,
-        value("design_description") && `Design notes: ${value("design_description")}`,
-        value("print_position") && `Placement: ${value("print_position")}`,
-        value("print_text") && `Text: ${value("print_text")}`,
-        value("quantity") && `Quantity: ${value("quantity")}`,
-        value("budget") && `Budget: ${value("budget")}`,
-        value("deadline") && `Preferred deadline: ${value("deadline")}`,
-        fileUrl && "Design reference attached",
-        value("full_name") && `Name: ${value("full_name")}`,
-        value("email") && `Email: ${value("email")}`,
-        value("whatsapp") && `WhatsApp: ${value("whatsapp")}`,
-      ].filter((item): item is string => Boolean(item)),
-    );
+    const instructions = [
+      value("ai_idea"),
+      value("design_description"),
+      value("print_position") && `Placement: ${value("print_position")}`,
+      value("print_text") && `Text: ${value("print_text")}`,
+      value("additional_notes"),
+    ]
+      .filter(Boolean)
+      .join("; ");
+    setBriefSummary([
+      `Garment type: ${value("clothing_type") || "Not selected"}`,
+      `Colour: ${value("preferred_color") || "Not specified"}`,
+      `Size: ${value("size") || "Not specified"}`,
+      `Design instructions: ${instructions || "Not provided"}`,
+      `Uploaded references: ${fileName || "None"}`,
+      `Quantity: ${value("quantity") || "Not specified"}`,
+      `Budget: ${value("budget") || "Not specified"}`,
+      `Deadline: ${value("deadline") || "Not specified"}`,
+      `Contact details: ${value("full_name") || "Name not entered"}; ${value("email") || "Email not entered"}; ${value("whatsapp") || "WhatsApp not entered"}`,
+    ]);
   }
 
   function validateStage(stage: number) {
@@ -124,6 +128,7 @@ function CustomOrder() {
       if (error) throw error;
       const { data } = supabase.storage.from("design-uploads").getPublicUrl(path);
       setFileUrl(data.publicUrl);
+      setFileName(f.name);
       toast.success("File uploaded");
     } catch {
       toast.error("Upload failed. Please try again.");
@@ -184,11 +189,13 @@ function CustomOrder() {
       } else {
         setFormError(res.error || "Submission failed. Please try again.");
         toast.error(res.error || "Submission failed");
+        requestAnimationFrame(() => errorSummaryRef.current?.focus());
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : "Please check the form";
       setFormError(message);
       toast.error(message);
+      requestAnimationFrame(() => errorSummaryRef.current?.focus());
     } finally {
       setLoading(false);
     }
@@ -244,35 +251,51 @@ function CustomOrder() {
           noValidate
           className="border border-border bg-card p-5 sm:p-8 lg:p-10"
         >
+          <p
+            className="mb-3 text-sm font-semibold"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            Step {step + 1} of {orderSteps.length}: {orderSteps[step]}
+          </p>
           <ol
             aria-label="Custom order progress"
             className="grid grid-cols-4 border-b border-border pb-5"
           >
             {orderSteps.map((label, index) => (
-              <li key={label}>
-                <button
-                  type="button"
-                  onClick={() => index < step && goToStage(index)}
-                  disabled={index >= step}
-                  aria-current={index === step ? "step" : undefined}
-                  className={`flex min-h-12 w-full flex-col gap-1 border-b-2 px-1 pb-2 text-left text-[9px] font-bold uppercase tracking-[0.09em] transition sm:px-3 sm:text-[10px] sm:tracking-[0.14em] ${index === step ? "border-accent text-foreground" : index < step ? "border-border text-muted-foreground" : "border-transparent text-muted-foreground/60"}`}
-                >
-                  <span>0{index + 1}</span>
-                  <span>{label}</span>
-                </button>
+              <li key={label} aria-current={index === step ? "step" : undefined}>
+                {index < step ? (
+                  <button
+                    type="button"
+                    onClick={() => goToStage(index)}
+                    aria-label={`Step ${index + 1}: ${label}, completed. Revisit this step.`}
+                    className="flex min-h-12 w-full flex-col gap-1 border-b-2 border-border px-1 pb-2 text-left text-[9px] font-bold uppercase tracking-[0.09em] text-muted-foreground transition hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent sm:px-3 sm:text-[10px] sm:tracking-[0.14em]"
+                  >
+                    <span>0{index + 1}</span>
+                    <span>{label}</span>
+                  </button>
+                ) : (
+                  <span
+                    className={`flex min-h-12 w-full flex-col gap-1 border-b-2 px-1 pb-2 text-left text-[9px] font-bold uppercase tracking-[0.09em] sm:px-3 sm:text-[10px] sm:tracking-[0.14em] ${index === step ? "border-accent text-foreground" : "border-transparent text-muted-foreground/60"}`}
+                  >
+                    <span>0{index + 1}</span>
+                    <span>{label}</span>
+                  </span>
+                )}
               </li>
             ))}
           </ol>
-          <p className="sr-only" aria-live="polite">
-            Step {step + 1} of {orderSteps.length}: {orderSteps[step]}
-          </p>
           {formError && (
-            <p
+            <div
+              ref={errorSummaryRef}
+              tabIndex={-1}
               className="mt-6 border border-destructive/40 bg-destructive/5 p-4 text-sm text-destructive"
               role="alert"
             >
-              {formError}
-            </p>
+              <h2 className="font-bold">We couldn’t send your brief.</h2>
+              <p className="mt-1">{formError}</p>
+            </div>
           )}
 
           <Group title="Choose your garment" stage={0} active={step === 0}>
@@ -355,7 +378,7 @@ function CustomOrder() {
             <Field label="Additional notes" name="additional_notes" textarea rows={3} />
           </Group>
 
-          <Group title="Contact details" stage={3} active={step === 3}>
+          <Group title="Your details" stage={3} active={step === 3}>
             <div className="border border-border bg-background p-4 sm:p-5">
               <h2 className="font-display text-xl">Review your brief</h2>
               <ul className="mt-3 space-y-1 text-sm text-muted-foreground">
@@ -389,6 +412,9 @@ function CustomOrder() {
               We’ll contact you about this brief. No production begins until you have reviewed and
               approved the quote and deposit terms.
             </p>
+            <p className="mt-4 text-sm text-muted-foreground">
+              By sending, you agree to be contacted by our studio via WhatsApp or email.
+            </p>
           </Group>
 
           <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-6">
@@ -419,9 +445,6 @@ function CustomOrder() {
               </button>
             )}
           </div>
-          <p className="mt-4 text-xs text-muted-foreground">
-            By sending, you agree to be contacted by our studio via WhatsApp or email.
-          </p>
         </form>
       </section>
     </>
@@ -480,7 +503,9 @@ function Field({
     <div>
       <label htmlFor={name} className="eyebrow">
         {label}
-        {required && <span className="text-accent ml-1">*</span>}
+        <span className="ml-1 text-xs font-normal text-muted-foreground">
+          {required ? "(required)" : "(optional)"}
+        </span>
       </label>
       {textarea ? (
         <textarea
@@ -523,7 +548,9 @@ function Select({
     <div>
       <label htmlFor={name} className="eyebrow">
         {label}
-        {required && <span className="text-accent ml-1">*</span>}
+        <span className="ml-1 text-xs font-normal text-muted-foreground">
+          {required ? "(required)" : "(optional)"}
+        </span>
       </label>
       <select
         id={name}
