@@ -1,7 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { useCart, cartSubtotal } from "@/lib/cart";
 import { formatNaira } from "@/lib/format";
 import { Minus, Plus, X, ShoppingBag } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import {
+  isCatalogueReadyProduct,
+  isValidProductColour,
+  isValidProductSize,
+  parseProductData,
+} from "@/lib/product-data";
+import { displayPrice } from "@/lib/products";
 
 export const Route = createFileRoute("/cart")({
   head: () => ({ meta: [{ title: "Cart — Knot & Nomad" }] }),
@@ -13,6 +22,108 @@ function CartPage() {
   const setQuantity = useCart((s) => s.setQuantity);
   const remove = useCart((s) => s.remove);
   const subtotal = cartSubtotal(items);
+  const [cartState, setCartState] = useState<"checking" | "ready" | "error">("checking");
+
+  useEffect(() => {
+    let active = true;
+
+    const verifyCart = async () => {
+      setCartState("checking");
+      const currentItems = useCart.getState().items;
+      if (currentItems.length === 0) {
+        if (active) setCartState("ready");
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .in("id", [...new Set(currentItems.map((item) => item.productId))])
+        .eq("is_active", true);
+
+      if (!active) return;
+      if (error) {
+        setCartState("error");
+        return;
+      }
+
+      const availableProducts = new Map(
+        (data ?? [])
+          .map(parseProductData)
+          .filter(isCatalogueReadyProduct)
+          .map((product) => [product.id, product]),
+      );
+      const unavailableItems = currentItems.filter((item) => {
+        const product = availableProducts.get(item.productId);
+        if (!product || product.name !== item.name) return true;
+        if (displayPrice(product, item.color) !== item.unitPrice) return true;
+        if (
+          product.sizes.length > 0 &&
+          (!item.size || !isValidProductSize(item.size) || !product.sizes.includes(item.size))
+        )
+          return true;
+        if (
+          product.colors.length > 0 &&
+          (!item.color || !isValidProductColour(item.color) || !product.colors.includes(item.color))
+        )
+          return true;
+        const variant = product.variants?.find(
+          (entry) => entry.colour.toLowerCase() === item.color?.toLowerCase(),
+        );
+        const stock = variant?.stockLevel ?? product.stock_level;
+        if (product.is_sold_out || stock <= 0 || item.quantity > stock) return true;
+        const currentImages = new Set([
+          ...product.images,
+          ...(product.gallery ?? []).map((entry) => entry.url),
+          ...(product.variants ?? []).flatMap((entry) => entry.images.map((image) => image.url)),
+        ]);
+        return !currentImages.has(item.image);
+      });
+
+      unavailableItems.forEach((item) => useCart.getState().remove(item.id));
+      if (active) setCartState("ready");
+    };
+
+    const hasHydrated = useCart.persist?.hasHydrated() ?? true;
+    let unsubscribe: (() => void) | undefined;
+    if (hasHydrated) {
+      void verifyCart();
+    } else {
+      unsubscribe = useCart.persist?.onFinishHydration(() => void verifyCart());
+    }
+
+    return () => {
+      active = false;
+      unsubscribe?.();
+    };
+  }, [items]);
+
+  if (cartState === "checking") {
+    return (
+      <div className="mx-auto max-w-3xl px-6 py-24 text-center" role="status" aria-live="polite">
+        Checking your cart availability…
+      </div>
+    );
+  }
+
+  if (cartState === "error") {
+    return (
+      <div className="mx-auto max-w-3xl px-6 py-24 text-center">
+        <h1 className="font-display text-4xl">We couldn’t verify your cart.</h1>
+        <p className="mt-3 text-sm text-muted-foreground">
+          Your saved cart has been kept, but its items and prices are hidden until availability can
+          be checked.
+        </p>
+        <button
+          type="button"
+          onClick={() => window.location.reload()}
+          className="btn-pill mt-6 inline-flex min-h-12 items-center justify-center border-2 border-foreground px-6 text-xs font-bold uppercase tracking-[0.18em]"
+        >
+          Try again
+        </button>
+      </div>
+    );
+  }
 
   if (items.length === 0) {
     return (
@@ -20,14 +131,26 @@ function CartPage() {
         <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border border-border bg-card">
           <ShoppingBag size={32} className="text-muted-foreground" />
         </div>
-        <h1 className="mt-6 font-display text-4xl">Your cart is empty</h1>
-        <p className="mt-3 text-muted-foreground">Begin building your edit.</p>
-        <Link
-          to="/shop"
-          className="btn-pill mt-8 inline-block bg-foreground px-8 py-4 text-xs font-bold uppercase tracking-[0.25em] text-primary-foreground transition hover:bg-accent hover:text-accent-foreground"
-        >
-          Browse the shop
-        </Link>
+        <p className="eyebrow mt-6">Ready-to-wear</p>
+        <h1 className="mt-3 font-display text-4xl">Your cart is clear.</h1>
+        <p className="mx-auto mt-3 max-w-md text-muted-foreground">
+          Ready-to-wear releases are being prepared. Start a custom brief or join Nomad Circle for
+          release updates.
+        </p>
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <Link
+            to="/custom-order"
+            className="btn-pill inline-flex min-h-12 items-center justify-center bg-foreground px-6 text-xs font-bold uppercase tracking-[0.18em] text-primary-foreground transition hover:bg-accent hover:text-accent-foreground"
+          >
+            Start a custom order
+          </Link>
+          <a
+            href="/shop#nomad-circle"
+            className="inline-flex min-h-12 items-center justify-center border-2 border-foreground px-6 text-xs font-bold uppercase tracking-[0.18em] transition hover:bg-foreground hover:text-primary-foreground"
+          >
+            Join for drop updates
+          </a>
+        </div>
       </div>
     );
   }

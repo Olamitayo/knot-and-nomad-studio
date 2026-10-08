@@ -14,12 +14,12 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Design your own premium T-shirts, caps, hoodies and streetwear with Knot & Nomad. Custom apparel made around your identity.",
+          "Knot & Nomad is a custom-apparel studio. Ready-to-wear releases are coming soon; share a brief with the studio.",
       },
       { property: "og:title", content: "Knot & Nomad — Custom Premium Apparel" },
       {
         property: "og:description",
-        content: "Premium custom apparel designed around your identity.",
+        content: "A custom-apparel studio. Ready-to-wear releases are coming soon.",
       },
       { property: "og:image", content: "https://knotnomad.com/og-knotnomad.png" },
       { name: "twitter:image", content: "https://knotnomad.com/og-knotnomad.png" },
@@ -85,21 +85,20 @@ function Home() {
               <span className="text-[#b7c8b3]">Ready or custom.</span>
             </h1>
             <p className="mt-6 max-w-lg text-sm leading-7 text-white/80 sm:text-base">
-              Shop considered ready-to-wear, or work with our studio on custom pieces for yourself,
-              your creative project or your brand.
+              KnotNomad is a custom-apparel studio. Ready-to-wear releases are coming soon.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
-                to="/shop"
+                to="/custom-order"
                 className="btn-pill inline-flex items-center gap-2 bg-white px-6 py-4 text-[10px] font-bold uppercase tracking-[0.18em] text-[#171411] transition-colors hover:bg-[#b7c8b3]"
               >
-                Shop ready-to-wear <ArrowRight size={15} />
+                Start a custom brief <ArrowRight size={15} />
               </Link>
               <Link
-                to="/custom-order"
+                to="/shop"
                 className="btn-pill inline-flex items-center border border-white/65 px-6 py-4 text-[10px] font-bold uppercase tracking-[0.18em] text-white transition-colors hover:border-white hover:bg-white hover:text-[#171411]"
               >
-                Create your own
+                Ready-to-wear coming soon
               </Link>
             </div>
           </div>
@@ -255,7 +254,7 @@ function FeaturedProducts({ products }: { products: HomeProduct[] }) {
           to="/shop"
           className="inline-flex min-h-11 items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em]"
         >
-          Shop all <ArrowRight size={14} />
+          Ready-to-wear <ArrowRight size={14} />
         </Link>
       </div>
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">

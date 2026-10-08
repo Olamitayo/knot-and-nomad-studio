@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
   ArrowLeft,
@@ -21,6 +21,27 @@ import { isCatalogueReadyProduct, parseProductData } from "@/lib/product-data";
 import { displayPrice, productGroup, type GalleryItem, type StoreProduct } from "@/lib/products";
 
 export const Route = createFileRoute("/shop/$slug")({
+  head: () => ({
+    meta: [
+      { title: "Ready-to-wear — Knot & Nomad" },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
+  loader: async ({ params }) => {
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .eq("slug", params.slug)
+      .maybeSingle();
+
+    if (error) throw error;
+
+    const product = data ? parseProductData(data) : null;
+    if (!product?.is_active || !isCatalogueReadyProduct(product)) throw notFound();
+
+    return product;
+  },
+  notFoundComponent: UnavailableProduct,
   component: ProductDetail,
 });
 
@@ -35,13 +56,46 @@ const SHOT_TYPES = [
   "Styling reference",
 ];
 
+function UnavailableProduct() {
+  return (
+    <section className="mx-auto max-w-3xl px-6 py-24 text-center lg:px-10 lg:py-32">
+      <p className="eyebrow">Ready-to-wear</p>
+      <h1 className="mt-4 font-display text-4xl leading-tight sm:text-5xl">
+        This piece is currently unavailable.
+      </h1>
+      <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-muted-foreground">
+        We’re reviewing our ready-to-wear releases. No product details or purchase options are
+        available for this piece right now.
+      </p>
+      <div className="mt-8 flex flex-wrap justify-center gap-3">
+        <Link
+          to="/custom-studio"
+          className="btn-pill inline-flex min-h-12 items-center justify-center gap-2 bg-foreground px-6 text-xs font-bold uppercase tracking-[0.18em] text-primary-foreground transition hover:bg-accent hover:text-accent-foreground"
+        >
+          Explore custom
+        </Link>
+        <Link
+          to="/contact"
+          className="btn-pill inline-flex min-h-12 items-center justify-center border-2 border-foreground px-6 text-xs font-bold uppercase tracking-[0.18em] transition hover:bg-foreground hover:text-primary-foreground"
+        >
+          Contact the studio
+        </Link>
+        <a
+          href="/shop#nomad-circle"
+          className="inline-flex min-h-12 items-center justify-center px-4 text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground transition hover:text-foreground"
+        >
+          Ready-to-wear updates
+        </a>
+      </div>
+    </section>
+  );
+}
+
 function ProductDetail() {
   const { slug } = Route.useParams();
+  const product = Route.useLoaderData();
   const navigate = useNavigate();
-  const [product, setProduct] = useState<StoreProduct | null>(null);
   const [related, setRelated] = useState<StoreProduct[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState(false);
   const [imgIdx, setImgIdx] = useState(0);
   const [size, setSize] = useState<string>("");
   const [color, setColor] = useState<string>("");
@@ -54,45 +108,14 @@ function ProductDetail() {
 
   useEffect(() => {
     let active = true;
-    setLoading(true);
-    setLoadError(false);
+    setRelated([]);
     setImgIdx(0);
     setQty(1);
     setCustomize(false);
     setCustomNotes("");
     setCustomFile(null);
-    setRelated([]);
-    const loadProduct = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("products")
-          .select("*")
-          .eq("slug", slug)
-          .maybeSingle();
-        if (!active) return;
-        if (error || !data) {
-          setLoadError(Boolean(error));
-          setProduct(null);
-          return;
-        }
-        const resolved = parseProductData(data);
-        if (!resolved.is_active || !isCatalogueReadyProduct(resolved)) {
-          setProduct(null);
-          return;
-        }
-        setProduct(resolved);
-        setSize(resolved.sizes[0] ?? "");
-        setColor(resolved.colors[0] ?? "");
-      } catch {
-        if (active) {
-          setLoadError(true);
-          setProduct(null);
-        }
-      } finally {
-        if (active) setLoading(false);
-      }
-    };
-    void loadProduct();
+    setSize(product.sizes[0] ?? "");
+    setColor(product.colors[0] ?? "");
     supabase
       .from("products")
       .select("*")
@@ -110,41 +133,7 @@ function ProductDetail() {
     return () => {
       active = false;
     };
-  }, [slug]);
-
-  if (loading) {
-    return (
-      <div
-        className="mx-auto max-w-7xl px-6 py-20 text-muted-foreground lg:px-10"
-        role="status"
-        aria-live="polite"
-      >
-        Loading product details…
-      </div>
-    );
-  }
-
-  if (!product) {
-    return (
-      <div className="mx-auto max-w-7xl px-6 py-24 text-center lg:px-10">
-        <h1 className="font-display text-4xl">
-          {loadError ? "Product details unavailable" : "Piece not found"}
-        </h1>
-        <p className="mx-auto mt-4 max-w-md text-sm text-muted-foreground">
-          {loadError
-            ? "We couldn’t load this product right now. Please return to the shop and try again."
-            : "This piece may no longer be available."}
-        </p>
-        <Link
-          to="/shop"
-          className="btn-pill mt-6 inline-flex items-center gap-2 border-2 border-foreground px-5 py-3 text-xs font-bold uppercase tracking-[0.22em] transition hover:bg-foreground hover:text-primary-foreground"
-        >
-          <ArrowLeft size={14} />
-          Back to shop
-        </Link>
-      </div>
-    );
-  }
+  }, [product, slug]);
 
   const selectedVariant = product.variants?.find(
     (variant) => variant.colour.toLowerCase() === color.toLowerCase(),

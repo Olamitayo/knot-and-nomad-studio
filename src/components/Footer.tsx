@@ -37,7 +37,10 @@ export function Footer() {
   return (
     <footer className="mt-32 bg-foreground text-primary-foreground">
       <div className="mx-auto max-w-7xl px-6 py-20 lg:px-10">
-        <div className="rounded-[2rem] border border-white/10 bg-white/3 p-5 sm:p-8">
+        <div
+          id="nomad-circle"
+          className="scroll-mt-24 rounded-[2rem] border border-white/10 bg-white/3 p-5 sm:p-8"
+        >
           <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <p className="eyebrow text-primary-foreground/60">Nomad circle</p>
@@ -46,7 +49,10 @@ export function Footer() {
               </h3>
             </div>
             <form onSubmit={onSubscribe} className="w-full max-w-xl" aria-busy={loading}>
-              <label htmlFor="newsletter-email" className="sr-only">
+              <label
+                htmlFor="newsletter-email"
+                className="mb-2 block text-xs font-bold text-primary-foreground"
+              >
                 Email address
               </label>
               <div className="flex gap-3">
@@ -58,7 +64,7 @@ export function Footer() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   aria-describedby="newsletter-status"
-                  placeholder="Your email address"
+                  placeholder="you@example.com"
                   className="btn-pill min-h-12 min-w-0 flex-1 border-2 border-primary-foreground/30 bg-transparent px-5 py-3 text-sm text-white placeholder:text-primary-foreground/70 focus:border-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                 />
                 <button
@@ -76,6 +82,9 @@ export function Footer() {
                 aria-live="polite"
               >
                 {message}
+              </p>
+              <p className="text-xs text-primary-foreground/70">
+                We’ll use your email for Nomad Circle release and studio updates.
               </p>
             </form>
           </div>
@@ -99,7 +108,7 @@ export function Footer() {
           <FooterColumn
             title="Explore"
             links={[
-              ["/shop", "Shop all"],
+              ["/shop", "Ready-to-wear"],
               ["/custom-studio", "Custom Studio"],
               ["/custom-order", "Start Custom Order"],
               ["/lookbook", "Lookbook"],

@@ -378,6 +378,17 @@
       .nav-links a:hover::after {
         width: 100%;
       }
+      .nav-links a.nav-primary {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        padding: 12px 18px;
+        color: var(--cream);
+        white-space: nowrap;
+      }
+      .nav-links a.nav-primary::after {
+        display: none;
+      }
       .nav-cta {
         display: flex;
         align-items: center;
@@ -1580,6 +1591,44 @@
       }
 
       /* ---------- Responsive ---------- */
+      @media (max-width: 1120px) {
+        .nav-links {
+          display: none;
+        }
+        .nav-toggle {
+          display: flex;
+        }
+        .nav-links.open {
+          display: flex;
+          position: fixed;
+          top: 72px;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          z-index: 100;
+          overflow-y: auto;
+          overscroll-behavior: contain;
+          flex-direction: column;
+          background: var(--cream);
+          padding: 20px 28px calc(24px + env(safe-area-inset-bottom));
+          gap: 6px;
+        }
+        .nav-links.open a {
+          min-height: 48px;
+          display: flex;
+          align-items: center;
+          padding: 12px 0;
+          border-bottom: 1px solid var(--line-soft);
+          width: 100%;
+        }
+        .nav-links.open a.nav-primary {
+          justify-content: center;
+          margin-top: 10px;
+          padding: 14px 18px;
+          border: 0;
+          color: var(--cream);
+        }
+      }
       @media (max-width: 960px) {
         .hero .container {
           grid-template-columns: 1fr;
@@ -1797,13 +1846,11 @@
         <nav class="nav-links" id="navLinks" aria-label="Garment Care navigation">
           <a href="#services">Services</a>
           <a href="#process">How it works</a>
-          <a href="#pricing">Quotes</a>
-          <a href="#about">About</a>
+          <a href="#quotes">Quotes</a>
           <a href="#contact">Contact</a>
-          <a href="#contact" class="btn btn-primary">Book Garment Care</a>
+          <a href="#contact" class="btn btn-primary nav-primary">Schedule a pickup</a>
         </nav>
         <div class="nav-cta">
-          <a href="#contact" class="btn btn-primary">Schedule a pickup</a>
           <button class="nav-toggle" id="navToggle" aria-label="Open navigation" aria-expanded="false" aria-controls="navLinks"><span></span></button>
         </div>
       </div>
@@ -1817,8 +1864,8 @@
           <span class="eyebrow">Garment care for pieces made to move with you</span>
           <h1>Knot &amp; Nomad <em>Garment Care</em></h1>
           <p class="lede">
-            Contact the team to confirm available garment care services, pickup options and timing
-            for your pieces.
+            Services, pricing, timing and pickup availability are confirmed before your booking is
+            accepted.
           </p>
           <div class="hero-actions">
             <a href="#contact" class="btn btn-primary btn-lg"
@@ -1853,7 +1900,7 @@
                   d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"
                 /></svg
             ></span>
-            <div><small>Services</small>Availability confirmed by the team</div>
+            <div><small>Services</small>Laundry and garment care</div>
           </div>
           <div class="chip c2">
             <span class="ic-badge"
@@ -1868,7 +1915,7 @@
                 <circle cx="12" cy="12" r="9" />
                 <path d="M12 7v5l3 2" /></svg
             ></span>
-            <div><small>Booking</small>Timing confirmed by the team</div>
+            <div><small>Pickup</small>By arrangement</div>
           </div>
 
           <div class="care-card">
@@ -1974,8 +2021,7 @@
                 <path d="M7 4l1.5 2M17 4l-1.5 2" /></svg
             ></span>
             <h3>Everyday laundry</h3>
-            <p>Ask the team whether this service is available for your items.</p>
-            <span class="tag">Confirm availability</span>
+            <p>Laundry enquiries for everyday clothing and household items.</p>
           </div>
           <div class="svc reveal">
             <span class="ic"
@@ -1991,8 +2037,7 @@
                 <path d="M9 7l-4 3v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V10l-4-3" /></svg
             ></span>
             <h3>Garment cleaning</h3>
-            <p>Share garment details so the team can confirm whether care is available.</p>
-            <span class="tag">Confirm availability</span>
+            <p>Cleaning enquiries for garments that need item-specific attention.</p>
           </div>
           <div class="svc reveal">
             <span class="ic"
@@ -2008,8 +2053,7 @@
                 <path d="M4 18.5h12.5" /></svg
             ></span>
             <h3>Pressing</h3>
-            <p>Contact the team to confirm pressing options for your items.</p>
-            <span class="tag">Confirm availability</span>
+            <p>Pressing enquiries for shirts, trousers and other garments.</p>
           </div>
           <div class="svc feature reveal">
             <span class="ic"
@@ -2026,8 +2070,7 @@
                 /></svg
             ></span>
             <h3>Delicate garments</h3>
-            <p>Describe the garment and care label so the team can advise on available options.</p>
-            <span class="tag">Confirm availability</span>
+            <p>Share the care label, fabric details and any special handling notes.</p>
           </div>
           <div class="svc reveal">
             <span class="ic"
@@ -2044,11 +2087,7 @@
                 <circle cx="17.5" cy="17" r="2" /></svg
             ></span>
             <h3>Pickup arrangements</h3>
-            <p>
-              Share your preferred pickup details when booking. The team will confirm availability,
-              timing and any applicable charges before collection.
-            </p>
-            <span class="tag">By arrangement</span>
+            <p>Include your area and preferred pickup date in the enquiry.</p>
           </div>
           <div class="svc reveal">
             <span class="ic"
@@ -2065,8 +2104,7 @@
                 /></svg
             ></span>
             <h3>Business enquiries</h3>
-            <p>Contact the team to discuss whether garment care is currently available for your business.</p>
-            <span class="tag">Ask the team</span>
+            <p>Tell us about your team’s requirements in the enquiry form.</p>
           </div>
         </div>
       </div>
@@ -2078,10 +2116,7 @@
         <div class="section-head center reveal">
           <span class="eyebrow center">How it works</span>
           <h2 class="section-title">Request a service in four steps.</h2>
-          <p>
-            Service availability, pricing, pickup arrangements and timing are confirmed before a
-            booking is accepted.
-          </p>
+          <p>Send a request, review the quote, then decide whether you’d like to proceed.</p>
         </div>
         <div class="process">
           <div class="step reveal">
@@ -2091,8 +2126,8 @@
           </div>
           <div class="step reveal">
             <div class="num">2</div>
-            <h3>Review confirmation</h3>
-            <p>The team confirms service availability, pricing and timing.</p>
+            <h3>Receive a quote</h3>
+            <p>The team replies with service details, pricing and timing.</p>
           </div>
           <div class="step reveal">
             <div class="num">3</div>
@@ -2101,363 +2136,24 @@
           </div>
           <div class="step reveal">
             <div class="num">4</div>
-            <h3>Arrange handover</h3>
-            <p>Pickup and return arrangements are confirmed with you.</p>
+            <h3>Arrange pickup</h3>
+            <p>Pickup details are agreed after you approve the quote.</p>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== Why / About brand ===== -->
-    <section class="section" id="about">
-      <div class="container split">
-        <div class="reveal">
-          <span class="eyebrow">About Garment Care</span>
-          <h2 class="section-title" style="margin-bottom: 14px">
-            Garment Care by Knot &amp; Nomad.
-          </h2>
-          <p style="color: var(--stone); font-size: 16px; max-width: 460px">
-            Contact the team to ask about currently available services, pricing and pickup options.
-          </p>
-        </div>
-
-        <div class="brand-panel reveal">
-          <img
-            class="parent-brand-logo"
-            src="/brand/knotnomad-logo-primary.svg"
-            alt="KnotNomad"
-            width="490"
-            height="225"
-          />
-          <span class="eyebrow">The Knot &amp; Nomad family</span>
-          <h3>Garment care enquiries.</h3>
-          <p>
-            Contact the team to confirm current services and availability before booking.
-          </p>
-          <a class="kn-link" href="https://knotnomad.com" target="_blank" rel="noopener"
-            >Visit Knot &amp; Nomad
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M7 17L17 7M8 7h9v9" />
-            </svg>
-          </a>
         </div>
       </div>
     </section>
 
     <!-- ===== Pricing ===== -->
-    <section class="section alt" id="pricing">
+    <section class="section alt" id="quotes">
       <div class="container">
         <div class="section-head center reveal">
           <span class="eyebrow center">Quotes</span>
-          <h2 class="section-title">Confirm pricing before booking.</h2>
+          <h2 class="section-title">Request a garment care quote.</h2>
           <p>
-            Contact the team to confirm service availability, pricing, any pickup or delivery charges
-            and expected timing before a booking is accepted.
+            Use the enquiry form to share garment and pickup details. The team will reply with a quote
+            for review.
           </p>
         </div>
-        <div class="section-head center reveal" style="margin-top: 28px">
-          <a href="#contact" class="btn btn-primary">Ask about garment care</a>
-        </div>
-        <template>
-        <div class="price-grid">
-          <div class="price reveal">
-            <h3>Essential Fabric Care</h3>
-            <div class="amt">₦800<span> – ₦1,000 / kg</span></div>
-            <p class="desc">Everyday basics, machine-washed, dried and neatly folded.</p>
-            <ul>
-              <li>
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.4"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M20 6L9 17l-5-5" /></svg
-                >Wash, dry &amp; fold
-              </li>
-              <li>
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.4"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M20 6L9 17l-5-5" /></svg
-                >Best value for big family loads
-              </li>
-              <li>
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.4"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M20 6L9 17l-5-5" /></svg
-                >Timing confirmed before collection
-              </li>
-              <li>
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.4"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M20 6L9 17l-5-5" /></svg
-                >Pickup charge confirmed at booking
-              </li>
-            </ul>
-            <a href="#contact" class="btn btn-ghost">Book Garment Care</a>
-          </div>
-          <div class="price pop reveal">
-            <span class="ribbon">Most popular</span>
-            <h3>Everyday Garment Care</h3>
-            <div class="amt">₦1,200<span> – ₦1,500 / kg</span></div>
-            <p class="desc">Washed, ironed and folded — our signature everyday service.</p>
-            <ul>
-              <li>
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.4"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M20 6L9 17l-5-5" /></svg
-                >Wash, iron &amp; fold
-              </li>
-              <li>
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.4"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M20 6L9 17l-5-5" /></svg
-                >Stain pre-treatment included
-              </li>
-              <li>
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.4"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M20 6L9 17l-5-5" /></svg
-                >Timing confirmed before collection
-              </li>
-              <li>
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.4"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M20 6L9 17l-5-5" /></svg
-                >Pickup charge confirmed at booking
-              </li>
-            </ul>
-            <a href="#contact" class="btn btn-primary">Book Garment Care</a>
-          </div>
-          <div class="price reveal">
-            <h3>Premium Care</h3>
-            <div class="amt">₦1,800<span> – ₦2,500 / kg</span></div>
-            <p class="desc">Delicates and statement pieces, hand-finished with extra care.</p>
-            <ul>
-              <li>
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.4"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M20 6L9 17l-5-5" /></svg
-                >Hand-wash &amp; delicate care
-              </li>
-              <li>
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.4"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M20 6L9 17l-5-5" /></svg
-                >Steam-press finishing
-              </li>
-              <li>
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.4"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M20 6L9 17l-5-5" /></svg
-                >Timing confirmed before collection
-              </li>
-              <li>
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.4"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M20 6L9 17l-5-5" /></svg
-                >Pickup charge confirmed at booking
-              </li>
-            </ul>
-            <a href="#contact" class="btn btn-ghost">Book Garment Care</a>
-          </div>
-        </div>
-
-        <!-- Per-item price list -->
-        <div class="pl-head reveal" id="pricelist">
-          <span class="eyebrow center">Per-item rates</span>
-          <h3 style="margin-top: 14px">Full price list</h3>
-          <p>Guide prices per item — pick a category. Your exact quote is confirmed at pickup.</p>
-        </div>
-        <div class="ptabs reveal" id="ptabs">
-          <button class="ptab on" data-cat="pl-wash" type="button">Wash &amp; Iron</button>
-          <button class="ptab" data-cat="pl-corp" type="button">Corporate</button>
-          <button class="ptab" data-cat="pl-native" type="button">Native Wear</button>
-          <button class="ptab" data-cat="pl-bed" type="button">Bedding</button>
-          <button class="ptab" data-cat="pl-curtain" type="button">Curtains</button>
-          <button class="ptab" data-cat="pl-special" type="button">Special</button>
-          <button class="ptab" data-cat="pl-iron" type="button">Ironing Only</button>
-        </div>
-
-        <div class="plist on" id="pl-wash">
-          <div class="prow">
-            <span>T-Shirt / Polo</span><span class="dots"></span><b>₦400 – ₦700</b>
-          </div>
-          <div class="prow"><span>Shirt</span><span class="dots"></span><b>₦500 – ₦800</b></div>
-          <div class="prow"><span>Singlet</span><span class="dots"></span><b>₦200 – ₦400</b></div>
-          <div class="prow"><span>Shorts</span><span class="dots"></span><b>₦400 – ₦600</b></div>
-          <div class="prow"><span>Trousers</span><span class="dots"></span><b>₦600 – ₦900</b></div>
-          <div class="prow"><span>Jeans</span><span class="dots"></span><b>₦700 – ₦1,000</b></div>
-          <div class="prow"><span>Skirt</span><span class="dots"></span><b>₦500 – ₦800</b></div>
-          <div class="prow">
-            <span>Gown (Casual)</span><span class="dots"></span><b>₦800 – ₦1,500</b>
-          </div>
-          <div class="prow">
-            <span>Corporate Dress</span><span class="dots"></span><b>₦1,000 – ₦2,000</b>
-          </div>
-        </div>
-        <div class="plist" id="pl-corp">
-          <div class="prow">
-            <span>Suit (2-piece)</span><span class="dots"></span><b>₦3,000 – ₦5,000</b>
-          </div>
-          <div class="prow">
-            <span>Suit (3-piece)</span><span class="dots"></span><b>₦4,000 – ₦6,500</b>
-          </div>
-          <div class="prow">
-            <span>Blazer</span><span class="dots"></span><b>₦2,000 – ₦3,500</b>
-          </div>
-          <div class="prow"><span>Tie</span><span class="dots"></span><b>₦300 – ₦500</b></div>
-        </div>
-        <div class="plist" id="pl-native">
-          <div class="prow">
-            <span>Senator Wear</span><span class="dots"></span><b>₦1,500 – ₦2,500</b>
-          </div>
-          <div class="prow">
-            <span>Agbada</span><span class="dots"></span><b>₦3,000 – ₦6,000</b>
-          </div>
-          <div class="prow">
-            <span>Buba &amp; Sokoto</span><span class="dots"></span><b>₦1,500 – ₦2,500</b>
-          </div>
-          <div class="prow">
-            <span>Ankara Dress</span><span class="dots"></span><b>₦1,500 – ₦3,000</b>
-          </div>
-          <div class="prow">
-            <span>Lace Dress</span><span class="dots"></span><b>₦2,000 – ₦4,500</b>
-          </div>
-        </div>
-        <div class="plist" id="pl-bed">
-          <div class="prow">
-            <span>Pillow Case</span><span class="dots"></span><b>₦300 – ₦500</b>
-          </div>
-          <div class="prow">
-            <span>Bedsheet</span><span class="dots"></span><b>₦700 – ₦1,500</b>
-          </div>
-          <div class="prow">
-            <span>Blanket</span><span class="dots"></span><b>₦2,000 – ₦4,000</b>
-          </div>
-          <div class="prow">
-            <span>Duvet (Single)</span><span class="dots"></span><b>₦3,000 – ₦5,000</b>
-          </div>
-          <div class="prow">
-            <span>Duvet (Double / King)</span><span class="dots"></span><b>₦4,500 – ₦7,500</b>
-          </div>
-          <div class="prow">
-            <span>Mattress Protector</span><span class="dots"></span><b>₦1,500 – ₦3,000</b>
-          </div>
-        </div>
-        <div class="plist" id="pl-curtain">
-          <div class="prow">
-            <span>Small Curtain</span><span class="dots"></span><b>₦1,000 – ₦2,000</b>
-          </div>
-          <div class="prow">
-            <span>Medium Curtain</span><span class="dots"></span><b>₦2,000 – ₦3,500</b>
-          </div>
-          <div class="prow">
-            <span>Large Curtain</span><span class="dots"></span><b>₦3,500 – ₦6,000</b>
-          </div>
-        </div>
-        <div class="plist" id="pl-special">
-          <div class="prow">
-            <span>Wedding Gown</span><span class="dots"></span><b>₦8,000 – ₦25,000</b>
-          </div>
-          <div class="prow">
-            <span>Leather Jacket</span><span class="dots"></span><b>₦3,000 – ₦6,000</b>
-          </div>
-          <div class="prow">
-            <span>Winter Jacket</span><span class="dots"></span><b>₦2,500 – ₦5,000</b>
-          </div>
-          <div class="prow">
-            <span>School Uniform</span><span class="dots"></span><b>₦800 – ₦1,500</b>
-          </div>
-        </div>
-        <div class="plist" id="pl-iron">
-          <div class="prow"><span>Shirt</span><span class="dots"></span><b>₦250 – ₦400</b></div>
-          <div class="prow"><span>Trouser</span><span class="dots"></span><b>₦300 – ₦500</b></div>
-          <div class="prow">
-            <span>Native Wear</span><span class="dots"></span><b>₦700 – ₦1,000</b>
-          </div>
-          <div class="prow"><span>Suit</span><span class="dots"></span><b>₦1,000 – ₦1,500</b></div>
-        </div>
-        <p class="pl-note">
-          Prices are guide ranges. We’ll confirm the current rate and any applicable collection,
-          delivery or priority-service charge with you before the booking is accepted.
-        </p>
-        </template>
       </div>
     </section>
 
@@ -2466,8 +2162,8 @@
       <div class="container contact-grid">
         <div class="contact-info reveal">
           <span class="eyebrow">Get started</span>
-          <h2>Book Garment Care.</h2>
-            <p>Tell us what you need and your preferred pickup details. We’ll confirm service availability, pricing and expected timing before the booking is accepted.</p>
+          <h2>Request garment care.</h2>
+          <p>Share garment details and preferred pickup information in the form.</p>
           <div class="contact-list">
             <div class="cinfo">
               <span class="ic"
@@ -2504,40 +2200,6 @@
                 <b>Email</b><span><!-- EDIT: email -->hello@knotnomad.com</span>
               </div>
             </div>
-            <div class="cinfo">
-              <span class="ic"
-                ><svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.7"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-                  <circle cx="12" cy="10" r="3" /></svg
-              ></span>
-              <div>
-                <b>Service area</b><span>Ask us to confirm availability for your area.</span>
-              </div>
-            </div>
-            <div class="cinfo">
-              <span class="ic"
-                ><svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.7"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <circle cx="12" cy="12" r="9" />
-                  <path d="M12 7v5l3 2" /></svg
-              ></span>
-              <div>
-                <b>Hours</b><span>Contact the team to confirm availability.</span>
-              </div>
-            </div>
           </div>
           <!-- EDIT: WhatsApp number in the link below (wa.me/COUNTRYCODE+NUMBER) -->
           <a
@@ -2555,18 +2217,18 @@
           </a>
         </div>
 
-        <form class="book reveal" id="bookForm" novalidate>
+        <form class="book reveal" id="bookForm" novalidate aria-busy="false">
           <div class="form-success" id="formSuccess" role="status" aria-live="polite" tabindex="-1"></div>
           <div class="form-error" id="formError" role="alert" tabindex="-1"></div>
-          <h3>Start your Garment Care order</h3>
+          <h3>Request garment care</h3>
           <p class="sub">
-            Add your garments and pickup details. We'll email your official quote for approval
-            before collection.
+            Tell us about your garments and preferred pickup details. We’ll confirm available
+            services, pricing and timing before you decide whether to proceed.
           </p>
           <div class="row2">
             <div class="field">
               <label for="name">Full name</label
-              ><input id="name" name="name" type="text" placeholder="Your name" required />
+              ><input id="name" name="name" type="text" autocomplete="name" placeholder="Your name" required />
             </div>
             <div class="field">
               <label for="phone">Phone</label
@@ -2574,6 +2236,7 @@
                 id="phone"
                 name="phone"
                 type="tel"
+                autocomplete="tel"
                 placeholder="Best number to reach you"
                 required
               />
@@ -2581,7 +2244,7 @@
           </div>
           <div class="field">
             <label for="email">Email address</label
-            ><input id="email" name="email" type="email" placeholder="you@example.com" required />
+            ><input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required />
           </div>
           <div class="garment-title">
             <h4>What are we caring for?</h4>
@@ -2677,6 +2340,7 @@
             <div class="field">
               <label for="service">Service</label>
               <select id="service" name="service" required>
+                <option value="" disabled selected>Choose a service</option>
                 <option>Wash, Fold &amp; Package</option>
                 <option>Specialist garment cleaning</option>
                 <option>Steam &amp; Press</option>
@@ -2691,7 +2355,7 @@
           </div>
           <div class="row2">
             <div class="field">
-              <label for="pickupWindow">Pickup time</label
+              <label for="pickupWindow">Preferred pickup time</label
               ><select id="pickupWindow" name="pickupWindow" required>
                 <option value="">Select a window</option>
                 <option>7am – 10am</option>
@@ -2733,39 +2397,13 @@
             ><input id="website" name="website" tabindex="-1" autocomplete="off" />
           </div>
           <button type="submit" class="btn btn-primary btn-lg" id="submitOrder">
-            Start Garment Care Order
+            Send garment care enquiry
           </button>
           <p class="form-note">
-            No payment is taken now. Your request is sent to hello@knotnomad.com and a confirmation
-            is emailed to you.
+            Sending an enquiry does not confirm a booking or take payment. The team will email service
+            availability, pricing and timing for your review.
           </p>
         </form>
-      </div>
-    </section>
-
-    <!-- ===== CTA band ===== -->
-    <section class="section" style="padding-top: 0">
-      <div class="container">
-        <div class="cta-band reveal">
-          <h2>Give your wardrobe the care it deserves.</h2>
-          <p>
-            Share your garments and preferred pickup details. We’ll confirm service, price and timing before you book.
-          </p>
-          <div class="hero-actions">
-            <a
-              href="#contact"
-              class="btn btn-primary btn-lg"
-              style="background: var(--gold); color: var(--ink)"
-              >Schedule a pickup</a
-            >
-            <a
-              href="tel:+2348129894036"
-              class="btn btn-ghost btn-lg"
-              style="border-color: rgba(255, 255, 255, 0.25); color: #fff"
-              >Call us today</a
-            >
-          </div>
-        </div>
       </div>
     </section>
 
@@ -2785,7 +2423,7 @@
               >
             </a>
             <p>
-              Contact the team to confirm garment care service availability, pricing and timing.
+              Garment Care by Knot &amp; Nomad.
             </p>
             <div class="foot-social">
               <a
@@ -2813,9 +2451,8 @@
           </div>
           <div class="foot-col">
             <h4>Company</h4>
-            <a href="#about">About us</a>
             <a href="#process">How it works</a>
-            <a href="#pricing">Quotes</a>
+            <a href="#quotes">Quotes</a>
             <a href="https://knotnomad.com" target="_blank" rel="noopener">Knot &amp; Nomad</a>
             <a href="#contact">Contact</a>
           </div>
@@ -2823,8 +2460,7 @@
             <h4>Get in touch</h4>
             <a href="tel:+2348129894036">+234 812 989 4036</a>
             <a href="mailto:hello@knotnomad.com">hello@knotnomad.com</a>
-            <a href="#contact">Book Garment Care</a>
-            <a href="#pricelist">Price list</a>
+            <a href="#quotes">Request a quote</a>
           </div>
         </div>
         <div class="foot-bottom">
@@ -2843,6 +2479,10 @@
         siteHeader = document.querySelector("header.site"),
         previousBodyOverflow = "";
       function positionNavigation() {
+        if (window.innerWidth > 1120) {
+          closeNavigation(true);
+          return;
+        }
         links.style.top = siteHeader.getBoundingClientRect().bottom + "px";
       }
       function closeNavigation(restoreFocus) {
@@ -2979,6 +2619,7 @@
         }
         button.disabled = true;
         button.textContent = "Sending request…";
+        form.setAttribute("aria-busy", "true");
         try {
           var response = await fetch("/api/laundry-order", {
             method: "POST",
@@ -3001,9 +2642,9 @@
           if (!response.ok)
             throw new Error(result.error || "We could not send your request. Please try again.");
           successEl.textContent =
-            "Request received! Your reference is " +
+            "Request received. Reference " +
             result.reference +
-            ". Check your email while our team prepares your quote.";
+            ". No booking is confirmed and no payment has been taken. The team will reply with service availability and pricing so you can decide whether to proceed.";
           successEl.classList.add("show");
           form.reset();
           quantityInputs.forEach(function (input) {
@@ -3018,22 +2659,9 @@
           errorEl.focus();
         } finally {
           button.disabled = false;
-          button.textContent = "Start Garment Care Order";
+          button.textContent = "Send garment care enquiry";
+          form.setAttribute("aria-busy", "false");
         }
-      });
-
-      // Price list tabs
-      document.querySelectorAll(".ptab").forEach(function (t) {
-        t.addEventListener("click", function () {
-          document.querySelectorAll(".ptab").forEach(function (x) {
-            x.classList.remove("on");
-          });
-          t.classList.add("on");
-          var id = t.getAttribute("data-cat");
-          document.querySelectorAll(".plist").forEach(function (l) {
-            l.classList.toggle("on", l.id === id);
-          });
-        });
       });
 
       // Year
