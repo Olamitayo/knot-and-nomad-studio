@@ -8,10 +8,7 @@ import { cn } from "@/lib/utils";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 
 const searchSchema = z.object({
-  filter: fallback(
-    z.enum(["all", "essentials", "polos", "knitwear", "tailoring", "outerwear"]),
-    "all",
-  ).default("all"),
+  filter: fallback(z.enum(["all", "essentials", "polos", "tailoring"]), "all").default("all"),
 });
 
 export const Route = createFileRoute("/lookbook")({
@@ -22,7 +19,7 @@ export const Route = createFileRoute("/lookbook")({
       {
         name: "description",
         content:
-          "An editorial gallery of Knot & Nomad custom apparel — premium streetwear, sweats, tees and runway pieces, photographed in motion.",
+          "Explore Knot & Nomad editorial looks, from everyday tees and polos to relaxed tailoring.",
       },
       { property: "og:title", content: "Lookbook — Knot & Nomad" },
       { property: "og:description", content: "Editorial visuals from the Knot & Nomad studio." },
@@ -32,7 +29,7 @@ export const Route = createFileRoute("/lookbook")({
   component: Lookbook,
 });
 
-type LookFilter = "essentials" | "polos" | "knitwear" | "tailoring" | "outerwear";
+type LookFilter = "essentials" | "polos" | "tailoring";
 
 type Shot = {
   id: string;
@@ -53,7 +50,7 @@ const shots: Shot[] = [
     id: "01",
     src: encodeURI("/images/lookbook/IMG-KNTNMD 001.png"),
     alt: "Black male model posing in a white tee and relaxed black trousers while taking a selfie.",
-    title: "Self Shot — White Tee",
+    title: "White Tee, Unscripted",
     category: "Everyday Essential",
     description: "Simple utility styling with a crisp white tee and a relaxed trouser silhouette.",
     tags: ["Essential", "Minimal", "Tailored"],
@@ -66,7 +63,7 @@ const shots: Shot[] = [
     id: "02",
     src: encodeURI("/images/lookbook/ChatGPT Image Sep 24, 2026 at 06_52_40 PM (1).png"),
     alt: "Black male model in a deep blue polo with ivory wide-leg trousers and a backpack.",
-    title: "Blue Polo — Motion",
+    title: "Blue Polo in Motion",
     category: "Refined Casual",
     description:
       "A deep blue polo paired with soft white tailoring for a polished everyday statement.",
@@ -80,11 +77,128 @@ const shots: Shot[] = [
     id: "03",
     src: encodeURI("/images/lookbook/9af53bb7-6899-4e34-bc0a-be192c069e03.png"),
     alt: "Black male model in a black tee and burgundy wide-leg trousers taking a selfie portrait.",
-    title: "Muted Contrast — Black Tee",
-    category: "Studio Statement",
+    title: "Black Meets Burgundy",
+    category: "Studio Contrast",
     description: "A tonal black tee with burgundy volume creating a strong, understated contrast.",
     tags: ["Tee", "Monochrome", "Statement"],
     filters: ["essentials", "tailoring"],
+    width: 878,
+    height: 1791,
+    objectPosition: "center bottom",
+  },
+  {
+    id: "04",
+    src: "/images/lookbook/lookbook-04-white-tee-standing.webp",
+    alt: "Model standing in a white T-shirt, relaxed black trousers and black shoes, carrying a brown leather bag.",
+    title: "Ready to Carry",
+    category: "Travel Edit",
+    description: "A white tee and relaxed black trousers styled with a leather carryall.",
+    tags: ["Essential", "Tee", "Travel"],
+    filters: ["essentials", "tailoring"],
+    width: 897,
+    height: 1754,
+    objectPosition: "center bottom",
+  },
+  {
+    id: "05",
+    src: "/images/lookbook/lookbook-05-black-tee-burgundy-seated.webp",
+    alt: "Model seated in a black T-shirt and burgundy trousers against a light studio backdrop.",
+    title: "Burgundy, at Ease",
+    category: "Studio Portrait",
+    description: "A relaxed seated portrait pairing a black tee with burgundy trousers.",
+    tags: ["Tee", "Burgundy", "Studio"],
+    filters: ["essentials", "tailoring"],
+    width: 1024,
+    height: 1536,
+    objectPosition: "center bottom",
+  },
+  {
+    id: "06",
+    src: "/images/lookbook/lookbook-06-black-tee-burgundy-standing.webp",
+    alt: "Model standing in a black T-shirt and burgundy trousers.",
+    title: "Burgundy in Full",
+    category: "Studio Contrast",
+    description: "A full-length view of a black tee styled with burgundy trousers.",
+    tags: ["Tee", "Burgundy", "Tailored"],
+    filters: ["essentials", "tailoring"],
+    width: 878,
+    height: 1792,
+    objectPosition: "center bottom",
+  },
+  {
+    id: "07",
+    src: "/images/lookbook/lookbook-07-white-tee-front.webp",
+    alt: "Model facing forward in a white T-shirt and relaxed black trousers, carrying a brown leather bag.",
+    title: "Clean Lines in White",
+    category: "Everyday Essential",
+    description: "A front-facing look at a white tee and relaxed black trouser pairing.",
+    tags: ["Essential", "Tee", "Minimal"],
+    filters: ["essentials", "tailoring"],
+    width: 896,
+    height: 1755,
+    objectPosition: "center bottom",
+  },
+  {
+    id: "08",
+    src: "/images/lookbook/lookbook-08-white-tee-seated.webp",
+    alt: "Model seated in a white T-shirt and relaxed black trousers with a brown leather bag.",
+    title: "The Off-Duty Edit",
+    category: "Everyday Essential",
+    description: "A seated portrait in a white tee and relaxed black trousers.",
+    tags: ["Essential", "Tee", "Studio"],
+    filters: ["essentials", "tailoring"],
+    width: 1024,
+    height: 1536,
+    objectPosition: "center bottom",
+  },
+  {
+    id: "09",
+    src: "/images/lookbook/lookbook-09-blue-polo-seated.webp",
+    alt: "Model seated in a blue polo and white trousers with a tan backpack.",
+    title: "Blue, at Ease",
+    category: "Refined Casual",
+    description: "A blue polo and white trousers styled with a tan backpack.",
+    tags: ["Polo", "Casual", "Travel"],
+    filters: ["essentials", "polos", "tailoring"],
+    width: 1024,
+    height: 1536,
+    objectPosition: "center bottom",
+  },
+  {
+    id: "10",
+    src: "/images/lookbook/lookbook-10-blue-polo-standing.webp",
+    alt: "Model standing in a blue polo and white trousers with a tan backpack.",
+    title: "The Everyday Polo",
+    category: "Refined Casual",
+    description: "A full-length blue polo look with white trousers and a tan backpack.",
+    tags: ["Polo", "Casual", "Travel"],
+    filters: ["essentials", "polos", "tailoring"],
+    width: 878,
+    height: 1792,
+    objectPosition: "center bottom",
+  },
+  {
+    id: "11",
+    src: "/images/lookbook/lookbook-11-black-tee-burgundy-walking.webp",
+    alt: "Model walking in a black T-shirt and burgundy trousers.",
+    title: "A Step in Burgundy",
+    category: "Studio Contrast",
+    description: "A walking portrait featuring a black tee and burgundy trousers.",
+    tags: ["Tee", "Burgundy", "Motion"],
+    filters: ["essentials", "tailoring"],
+    width: 878,
+    height: 1792,
+    objectPosition: "center bottom",
+  },
+  {
+    id: "12",
+    src: "/images/lookbook/lookbook-12-blue-polo-front.webp",
+    alt: "Model facing forward in a blue polo and white trousers with a tan backpack.",
+    title: "Blue, Considered",
+    category: "Refined Casual",
+    description: "A front-facing view of a blue polo paired with white trousers.",
+    tags: ["Polo", "Casual", "Tailored"],
+    filters: ["essentials", "polos", "tailoring"],
     width: 878,
     height: 1791,
     objectPosition: "center bottom",
@@ -95,9 +209,7 @@ const filterOptions: { value: LookFilter | "all"; label: string }[] = [
   { value: "all", label: "All" },
   { value: "essentials", label: "Essentials" },
   { value: "polos", label: "Polos" },
-  { value: "knitwear", label: "Knitwear" },
   { value: "tailoring", label: "Tailoring" },
-  { value: "outerwear", label: "Outerwear" },
 ];
 
 function Lookbook() {
@@ -148,7 +260,7 @@ function Lookbook() {
           </p>
           <div className="mt-8 flex items-center gap-5 text-[9px] font-bold uppercase tracking-[0.25em] text-[#62594e]">
             <span className="border-l border-[#9d9080] pl-4">SS Capsule</span>
-            <span>03 looks · 01 story</span>
+            <span>12 looks · 01 story</span>
           </div>
         </div>
         <div className="pointer-events-none absolute bottom-0 right-[-1.25rem] z-0 flex h-[58%] w-[68%] items-end justify-center sm:h-[72%] sm:w-[56%] lg:right-[7%] lg:h-[94%] lg:w-[43%]">
@@ -162,7 +274,7 @@ function Lookbook() {
           />
         </div>
         <div className="absolute bottom-5 right-5 z-10 text-right text-[8px] font-bold uppercase tracking-[0.25em] text-[#62594e] sm:bottom-8 sm:right-8 lg:right-16">
-          <span className="block">Look 01 / 03</span>
+          <span className="block">Look 01 / 12</span>
           <span className="mt-1 block font-normal tracking-[0.16em]">Everyday, considered</span>
         </div>
       </section>
@@ -219,7 +331,6 @@ function Lookbook() {
                     key={shot.id}
                     type="button"
                     onClick={() => setSelected(shot)}
-                    aria-label={`Open Look ${shot.id}: ${shot.title}`}
                     data-reveal
                     data-reveal-delay={(position % 4).toString()}
                     className="group text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4"
@@ -320,12 +431,12 @@ function Lookbook() {
               >
                 Customise a similar look <ArrowRight size={16} />
               </Link>
-              <Link
-                to="/shop"
+              <a
+                href="/shop#nomad-circle"
                 className="btn-pill inline-flex items-center gap-2 border-2 border-foreground px-7 py-4 text-xs font-bold uppercase tracking-[0.2em] hover:bg-foreground hover:text-primary-foreground"
               >
-                Shop related pieces
-              </Link>
+                Join for drop updates
+              </a>
             </div>
           </div>
         </div>
