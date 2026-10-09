@@ -15,7 +15,6 @@ import { Route as ShopRouteImport } from './routes/shop'
 import { Route as ReturnsRouteImport } from './routes/returns'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PaymentRouteImport } from './routes/payment'
-import { Route as LookbookRouteImport } from './routes/lookbook'
 import { Route as GarmentCareRouteImport } from './routes/garment-care'
 import { Route as FaqsRouteImport } from './routes/faqs'
 import { Route as DeliveryRouteImport } from './routes/delivery'
@@ -29,10 +28,12 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LookbookIndexRouteImport } from './routes/lookbook.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as WebhooksPaystackRouteImport } from './routes/webhooks/paystack'
 import { Route as ShopSlugRouteImport } from './routes/shop.$slug'
 import { Route as OrderConfirmationReferenceRouteImport } from './routes/order-confirmation.$reference'
+import { Route as LookbookCollectionRouteImport } from './routes/lookbook.$collection'
 import { Route as ApiLaundryOrderRouteImport } from './routes/api/laundry-order'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminProductsRouteImport } from './routes/admin.products'
@@ -69,11 +70,6 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const PaymentRoute = PaymentRouteImport.update({
   id: '/payment',
   path: '/payment',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LookbookRoute = LookbookRouteImport.update({
-  id: '/lookbook',
-  path: '/lookbook',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GarmentCareRoute = GarmentCareRouteImport.update({
@@ -141,6 +137,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LookbookIndexRoute = LookbookIndexRouteImport.update({
+  id: '/lookbook/',
+  path: '/lookbook/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -162,6 +163,11 @@ const OrderConfirmationReferenceRoute =
     path: '/order-confirmation/$reference',
     getParentRoute: () => rootRouteImport,
   } as any)
+const LookbookCollectionRoute = LookbookCollectionRouteImport.update({
+  id: '/lookbook/$collection',
+  path: '/lookbook/$collection',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiLaundryOrderRoute = ApiLaundryOrderRouteImport.update({
   id: '/api/laundry-order',
   path: '/api/laundry-order',
@@ -213,7 +219,6 @@ export interface FileRoutesByFullPath {
   '/delivery': typeof DeliveryRoute
   '/faqs': typeof FaqsRoute
   '/garment-care': typeof GarmentCareRoute
-  '/lookbook': typeof LookbookRoute
   '/payment': typeof PaymentRoute
   '/privacy': typeof PrivacyRoute
   '/returns': typeof ReturnsRoute
@@ -224,10 +229,12 @@ export interface FileRoutesByFullPath {
   '/admin/products': typeof AdminProductsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/api/laundry-order': typeof ApiLaundryOrderRoute
+  '/lookbook/$collection': typeof LookbookCollectionRoute
   '/order-confirmation/$reference': typeof OrderConfirmationReferenceRoute
   '/shop/$slug': typeof ShopSlugRoute
   '/webhooks/paystack': typeof WebhooksPaystackRoute
   '/admin/': typeof AdminIndexRoute
+  '/lookbook/': typeof LookbookIndexRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -245,7 +252,6 @@ export interface FileRoutesByTo {
   '/delivery': typeof DeliveryRoute
   '/faqs': typeof FaqsRoute
   '/garment-care': typeof GarmentCareRoute
-  '/lookbook': typeof LookbookRoute
   '/payment': typeof PaymentRoute
   '/privacy': typeof PrivacyRoute
   '/returns': typeof ReturnsRoute
@@ -256,10 +262,12 @@ export interface FileRoutesByTo {
   '/admin/products': typeof AdminProductsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/api/laundry-order': typeof ApiLaundryOrderRoute
+  '/lookbook/$collection': typeof LookbookCollectionRoute
   '/order-confirmation/$reference': typeof OrderConfirmationReferenceRoute
   '/shop/$slug': typeof ShopSlugRoute
   '/webhooks/paystack': typeof WebhooksPaystackRoute
   '/admin': typeof AdminIndexRoute
+  '/lookbook': typeof LookbookIndexRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -279,7 +287,6 @@ export interface FileRoutesById {
   '/delivery': typeof DeliveryRoute
   '/faqs': typeof FaqsRoute
   '/garment-care': typeof GarmentCareRoute
-  '/lookbook': typeof LookbookRoute
   '/payment': typeof PaymentRoute
   '/privacy': typeof PrivacyRoute
   '/returns': typeof ReturnsRoute
@@ -290,10 +297,12 @@ export interface FileRoutesById {
   '/admin/products': typeof AdminProductsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/api/laundry-order': typeof ApiLaundryOrderRoute
+  '/lookbook/$collection': typeof LookbookCollectionRoute
   '/order-confirmation/$reference': typeof OrderConfirmationReferenceRoute
   '/shop/$slug': typeof ShopSlugRoute
   '/webhooks/paystack': typeof WebhooksPaystackRoute
   '/admin/': typeof AdminIndexRoute
+  '/lookbook/': typeof LookbookIndexRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -314,7 +323,6 @@ export interface FileRouteTypes {
     | '/delivery'
     | '/faqs'
     | '/garment-care'
-    | '/lookbook'
     | '/payment'
     | '/privacy'
     | '/returns'
@@ -325,10 +333,12 @@ export interface FileRouteTypes {
     | '/admin/products'
     | '/admin/settings'
     | '/api/laundry-order'
+    | '/lookbook/$collection'
     | '/order-confirmation/$reference'
     | '/shop/$slug'
     | '/webhooks/paystack'
     | '/admin/'
+    | '/lookbook/'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
@@ -346,7 +356,6 @@ export interface FileRouteTypes {
     | '/delivery'
     | '/faqs'
     | '/garment-care'
-    | '/lookbook'
     | '/payment'
     | '/privacy'
     | '/returns'
@@ -357,10 +366,12 @@ export interface FileRouteTypes {
     | '/admin/products'
     | '/admin/settings'
     | '/api/laundry-order'
+    | '/lookbook/$collection'
     | '/order-confirmation/$reference'
     | '/shop/$slug'
     | '/webhooks/paystack'
     | '/admin'
+    | '/lookbook'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
@@ -379,7 +390,6 @@ export interface FileRouteTypes {
     | '/delivery'
     | '/faqs'
     | '/garment-care'
-    | '/lookbook'
     | '/payment'
     | '/privacy'
     | '/returns'
@@ -390,10 +400,12 @@ export interface FileRouteTypes {
     | '/admin/products'
     | '/admin/settings'
     | '/api/laundry-order'
+    | '/lookbook/$collection'
     | '/order-confirmation/$reference'
     | '/shop/$slug'
     | '/webhooks/paystack'
     | '/admin/'
+    | '/lookbook/'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
     | '/lovable/email/queue/process'
@@ -413,7 +425,6 @@ export interface RootRouteChildren {
   DeliveryRoute: typeof DeliveryRoute
   FaqsRoute: typeof FaqsRoute
   GarmentCareRoute: typeof GarmentCareRoute
-  LookbookRoute: typeof LookbookRoute
   PaymentRoute: typeof PaymentRoute
   PrivacyRoute: typeof PrivacyRoute
   ReturnsRoute: typeof ReturnsRoute
@@ -421,8 +432,10 @@ export interface RootRouteChildren {
   SizeGuideRoute: typeof SizeGuideRoute
   TermsRoute: typeof TermsRoute
   ApiLaundryOrderRoute: typeof ApiLaundryOrderRoute
+  LookbookCollectionRoute: typeof LookbookCollectionRoute
   OrderConfirmationReferenceRoute: typeof OrderConfirmationReferenceRoute
   WebhooksPaystackRoute: typeof WebhooksPaystackRoute
+  LookbookIndexRoute: typeof LookbookIndexRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
@@ -470,13 +483,6 @@ declare module '@tanstack/react-router' {
       path: '/payment'
       fullPath: '/payment'
       preLoaderRoute: typeof PaymentRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lookbook': {
-      id: '/lookbook'
-      path: '/lookbook'
-      fullPath: '/lookbook'
-      preLoaderRoute: typeof LookbookRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/garment-care': {
@@ -570,6 +576,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lookbook/': {
+      id: '/lookbook/'
+      path: '/lookbook'
+      fullPath: '/lookbook/'
+      preLoaderRoute: typeof LookbookIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/': {
       id: '/admin/'
       path: '/'
@@ -596,6 +609,13 @@ declare module '@tanstack/react-router' {
       path: '/order-confirmation/$reference'
       fullPath: '/order-confirmation/$reference'
       preLoaderRoute: typeof OrderConfirmationReferenceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lookbook/$collection': {
+      id: '/lookbook/$collection'
+      path: '/lookbook/$collection'
+      fullPath: '/lookbook/$collection'
+      preLoaderRoute: typeof LookbookCollectionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/laundry-order': {
@@ -690,7 +710,6 @@ const rootRouteChildren: RootRouteChildren = {
   DeliveryRoute: DeliveryRoute,
   FaqsRoute: FaqsRoute,
   GarmentCareRoute: GarmentCareRoute,
-  LookbookRoute: LookbookRoute,
   PaymentRoute: PaymentRoute,
   PrivacyRoute: PrivacyRoute,
   ReturnsRoute: ReturnsRoute,
@@ -698,8 +717,10 @@ const rootRouteChildren: RootRouteChildren = {
   SizeGuideRoute: SizeGuideRoute,
   TermsRoute: TermsRoute,
   ApiLaundryOrderRoute: ApiLaundryOrderRoute,
+  LookbookCollectionRoute: LookbookCollectionRoute,
   OrderConfirmationReferenceRoute: OrderConfirmationReferenceRoute,
   WebhooksPaystackRoute: WebhooksPaystackRoute,
+  LookbookIndexRoute: LookbookIndexRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
