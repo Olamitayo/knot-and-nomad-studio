@@ -6,7 +6,7 @@
     <title>Knot &amp; Nomad Garment Care</title>
     <meta
       name="description"
-      content="Contact Knot &amp; Nomad to confirm garment care services, pricing, pickup options and timing."
+      content="Garment care enquiries for laundry, cleaning, pressing and delicate garments. Services, pricing, timing and pickup availability are confirmed before a booking is accepted."
     />
     <meta name="author" content="Knot &amp; Nomad" />
     <meta name="theme-color" content="#1B1A17" />
@@ -17,14 +17,14 @@
     <meta property="og:title" content="Knot &amp; Nomad Garment Care" />
     <meta
       property="og:description"
-      content="Contact Knot &amp; Nomad to confirm garment care services, pricing, pickup options and timing."
+      content="Garment care enquiries for laundry, cleaning, pressing and delicate garments. Services, pricing, timing and pickup availability are confirmed before a booking is accepted."
     />
     <meta property="og:image" content="https://knotnomad.com/og-knotnomad.png" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Knot &amp; Nomad Garment Care" />
     <meta
       name="twitter:description"
-      content="Contact Knot &amp; Nomad to confirm garment care services, pricing, pickup options and timing."
+      content="Garment care enquiries for laundry, cleaning, pressing and delicate garments. Services, pricing, timing and pickup availability are confirmed before a booking is accepted."
     />
     <meta name="twitter:image" content="https://knotnomad.com/og-knotnomad.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -42,8 +42,8 @@
             knotnomad.com host  ->  opens at knotnomad.com/garment-care
   CONTACTS: phone/WhatsApp/email filled from the Knot & Nomad
             brand config (src/lib/site.ts in the main repo).
-  BUSINESS OWNER REVIEW: confirm guide prices (NGN), service area,
-            pickup charges and operating hours before publishing.
+  SERVICES, PRICING, TIMING AND PICKUP AVAILABILITY ARE CONFIRMED
+            BEFORE A BOOKING IS ACCEPTED.
   Search this file for the word  EDIT:  to find remaining contact fields.
   ============================================================
 -->
@@ -58,7 +58,7 @@
         --line: #e0d8c9;
         --line-soft: #ebe4d7;
         --gold: #b08d57;
-        --gold-deep: #8e6e3c;
+        --gold-deep: #765b32;
         --white: #ffffff;
         --sans:
           "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial,
@@ -211,7 +211,8 @@
           color 0.25s ease,
           border-color 0.25s ease,
           box-shadow 0.25s ease;
-        white-space: nowrap;
+        min-height: 44px;
+        text-align: center;
       }
       .btn svg {
         width: 17px;
@@ -239,11 +240,11 @@
         transform: translateY(-2px);
       }
       .btn-wa {
-        background: #1fa855;
+        background: #176f37;
         color: #fff;
       }
       .btn-wa:hover {
-        background: #178a45;
+        background: #145c2f;
         transform: translateY(-2px);
         box-shadow: var(--shadow-md);
       }
@@ -264,8 +265,8 @@
         align-items: center;
         justify-content: space-between;
         gap: 16px;
-        height: 38px;
-        min-height: 38px;
+        height: 44px;
+        min-height: 44px;
       }
       .topbar a {
         color: #fff;
@@ -274,6 +275,11 @@
       .topbar .tb-right {
         display: flex;
         gap: 22px;
+        align-items: center;
+      }
+      .topbar .tb-right a {
+        min-height: 44px;
+        display: inline-flex;
         align-items: center;
       }
       .topbar .dot {
@@ -356,6 +362,9 @@
         gap: 34px;
       }
       .nav-links a {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
         font-size: 15px;
         font-weight: 500;
         color: var(--ink-soft);
@@ -596,62 +605,6 @@
         font-size: 11px;
         color: var(--stone);
         letter-spacing: 0.02em;
-      }
-
-      .chip {
-        position: absolute;
-        background: var(--white);
-        border: 1px solid var(--line);
-        border-radius: 14px;
-        padding: 11px 15px;
-        box-shadow: var(--shadow-md);
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--ink);
-        display: flex;
-        align-items: center;
-        gap: 9px;
-      }
-      .chip .ic-badge {
-        width: 30px;
-        height: 30px;
-        border-radius: 9px;
-        background: var(--ink);
-        color: var(--gold);
-        display: grid;
-        place-items: center;
-        flex-shrink: 0;
-      }
-      .chip .ic-badge svg {
-        width: 16px;
-        height: 16px;
-      }
-      .chip small {
-        display: block;
-        font-size: 10px;
-        font-weight: 600;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: var(--stone);
-      }
-      .chip.c1 {
-        top: -22px;
-        left: -26px;
-        animation: float 6s ease-in-out infinite;
-      }
-      .chip.c2 {
-        bottom: 26px;
-        right: -30px;
-        animation: float 6s ease-in-out infinite 0.8s;
-      }
-      @keyframes float {
-        0%,
-        100% {
-          transform: translateY(0);
-        }
-        50% {
-          transform: translateY(-9px);
-        }
       }
 
       /* ---------- Marquee / logo trust ---------- */
@@ -1522,8 +1475,8 @@
         gap: 12px;
       }
       .foot-social a {
-        width: 40px;
-        height: 40px;
+        width: 44px;
+        height: 44px;
         border-radius: 10px;
         border: 1px solid rgba(255, 255, 255, 0.14);
         display: grid;
@@ -1549,9 +1502,11 @@
         font-weight: 700;
       }
       .foot-col a {
-        display: block;
+        display: flex;
+        min-height: 44px;
+        align-items: center;
         font-size: 14.5px;
-        margin-bottom: 12px;
+        margin-bottom: 4px;
         color: #b8b0a2;
         transition: 0.2s;
       }
@@ -1572,6 +1527,9 @@
       .foot-bottom a {
         color: var(--gold);
         font-weight: 600;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
       }
       .foot-brand .brand-name b {
         color: #fff;
@@ -1591,7 +1549,7 @@
       }
 
       /* ---------- Responsive ---------- */
-      @media (max-width: 1120px) {
+      @media (max-width: 1250px) {
         .nav-links {
           display: none;
         }
@@ -1638,10 +1596,6 @@
           max-width: 480px;
           margin: 0 auto;
           width: 100%;
-        }
-        .hero-visual .chip {
-          max-width: min(220px, 70vw);
-          overflow-wrap: anywhere;
         }
         .split,
         .contact-grid {
@@ -1696,7 +1650,7 @@
           display: none;
         }
         .topbar .tb-right a {
-          min-height: 24px;
+          min-height: 44px;
           display: inline-flex;
           align-items: center;
         }
@@ -1753,9 +1707,6 @@
         .care-card {
           padding: 24px 18px 22px;
         }
-        .hero-visual .chip {
-          display: none;
-        }
         .care-grid {
           grid-template-columns: repeat(4, 1fr);
           gap: 7px;
@@ -1774,18 +1725,6 @@
         }
         .cc-line {
           font-size: 20px;
-        }
-        .chip {
-          padding: 9px 12px;
-          font-size: 12px;
-        }
-        .chip.c1 {
-          left: 0;
-          top: -16px;
-        }
-        .chip.c2 {
-          right: 0;
-          bottom: 16px;
         }
         .container {
           padding: 0 18px;
@@ -1869,7 +1808,7 @@
           </p>
           <div class="hero-actions">
             <a href="#contact" class="btn btn-primary btn-lg"
-              >Schedule a pickup
+              >Request a garment care quote
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -1886,38 +1825,6 @@
         </div>
 
         <div class="hero-visual reveal">
-          <div class="chip c1">
-            <span class="ic-badge"
-              ><svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path
-                  d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"
-                /></svg
-            ></span>
-            <div><small>Services</small>Laundry and garment care</div>
-          </div>
-          <div class="chip c2">
-            <span class="ic-badge"
-              ><svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <circle cx="12" cy="12" r="9" />
-                <path d="M12 7v5l3 2" /></svg
-            ></span>
-            <div><small>Pickup</small>By arrangement</div>
-          </div>
-
           <div class="care-card">
             <div class="cc-top">
               <div class="cc-brand">Knot &amp; Nomad<span>Garment Care</span></div>
@@ -1940,7 +1847,7 @@
                     <path d="M3.5 8 5.5 4h13l2 4" />
                     <path d="M7 12.5c1.2 1 2.3 1 3.5 0s2.3-1 3.5 0" /></svg
                 ></span>
-                <small>Ask about care</small>
+                <small>Laundry</small>
               </div>
               <div class="care-item">
                 <span class="ic"
@@ -1955,7 +1862,7 @@
                     <rect x="3.5" y="3.5" width="17" height="17" rx="3" />
                     <circle cx="12" cy="12" r="4.6" /></svg
                 ></span>
-                <small>Confirm details</small>
+                <small>Garment cleaning</small>
               </div>
               <div class="care-item">
                 <span class="ic"
@@ -1970,7 +1877,7 @@
                     <path d="M3 15.5h14.5a3 3 0 0 0 0-6H8L3 15.5Z" />
                     <path d="M4 18.5h12.5" /></svg
                 ></span>
-                <small>Service options</small>
+                <small>Pressing</small>
               </div>
               <div class="care-item">
                 <span class="ic"
@@ -1985,7 +1892,7 @@
                     <path d="M12 3.5 20.5 19H3.5L12 3.5Z" />
                     <path d="M9.5 12.5h5M10.5 15.5h3" /></svg
                 ></span>
-                <small>By arrangement</small>
+                <small>Delicates</small>
               </div>
             </div>
           </div>
@@ -1998,11 +1905,8 @@
       <div class="container">
         <div class="section-head reveal">
           <span class="eyebrow">What we do</span>
-          <h2 class="section-title">Services to discuss with the team.</h2>
-          <p>
-            Share details about your items. The team will confirm available services, pricing and
-            timing before a booking is accepted.
-          </p>
+          <h2 class="section-title">Garment care services.</h2>
+          <p>Share the garment details and care requirements in your enquiry.</p>
         </div>
 
         <div class="svc-grid">
@@ -2203,7 +2107,7 @@
           </div>
           <!-- EDIT: WhatsApp number in the link below (wa.me/COUNTRYCODE+NUMBER) -->
           <a
-            href="https://wa.me/2348129894036?text=Hi%20Knot%20%26%20Nomad%20Garment%20Care%2C%20I%27d%20like%20to%20schedule%20a%20pickup."
+            href="https://wa.me/2348129894036?text=Hi%20Knot%20%26%20Nomad%20Garment%20Care%2C%20I%27d%20like%20to%20ask%20about%20garment%20care%20services%20and%20pickup%20availability."
             target="_blank"
             rel="noopener"
             class="btn btn-wa btn-lg"
@@ -2341,11 +2245,11 @@
               <label for="service">Service</label>
               <select id="service" name="service" required>
                 <option value="" disabled selected>Choose a service</option>
-                <option>Wash, Fold &amp; Package</option>
-                <option>Specialist garment cleaning</option>
-                <option>Steam &amp; Press</option>
-                <option>Delicate &amp; specialist care</option>
-                <option>Fabric Care for Business</option>
+                <option>Everyday laundry</option>
+                <option>Garment cleaning</option>
+                <option>Pressing</option>
+                <option>Delicate garments</option>
+                <option>Business enquiry</option>
               </select>
             </div>
             <div class="field">
@@ -2355,22 +2259,24 @@
           </div>
           <div class="row2">
             <div class="field">
-              <label for="pickupWindow">Preferred pickup time</label
-              ><select id="pickupWindow" name="pickupWindow" required>
-                <option value="">Select a window</option>
-                <option>7am – 10am</option>
-                <option>10am – 1pm</option>
-                <option>1pm – 4pm</option>
-                <option>4pm – 7pm</option>
-              </select>
+              <label for="pickupWindow">Preferred pickup window</label>
+              <input
+                id="pickupWindow"
+                name="pickupWindow"
+                type="text"
+                placeholder="Share a preferred time window"
+                required
+              />
             </div>
             <div class="field">
-              <label for="turnaround">Turnaround</label
-              ><select id="turnaround" name="turnaround" required>
-                <option>Standard timing (confirm with team)</option>
-                <option>Priority timing (subject to confirmation)</option>
-                <option>Flexible / no rush</option>
-              </select>
+              <label for="turnaround">Preferred timing</label>
+              <input
+                id="turnaround"
+                name="turnaround"
+                type="text"
+                placeholder="Share your timing preference"
+                required
+              />
             </div>
           </div>
           <div class="field">
@@ -2400,8 +2306,8 @@
             Send garment care enquiry
           </button>
           <p class="form-note">
-            Sending an enquiry does not confirm a booking or take payment. The team will email service
-            availability, pricing and timing for your review.
+            Sending an enquiry does not confirm a booking or take payment. The team will reply with
+            service availability, pricing and timing for your review.
           </p>
         </form>
       </div>
@@ -2427,7 +2333,7 @@
             </p>
             <div class="foot-social">
               <a
-                href="https://wa.me/2348129894036?text=Hi%20Knot%20%26%20Nomad%20Garment%20Care%2C%20I%27d%20like%20to%20schedule%20a%20pickup."
+                href="https://wa.me/2348129894036?text=Hi%20Knot%20%26%20Nomad%20Garment%20Care%2C%20I%27d%20like%20to%20ask%20about%20garment%20care%20services%20and%20pickup%20availability."
                 aria-label="WhatsApp"
                 ><svg viewBox="0 0 24 24" fill="currentColor">
                   <path
@@ -2479,7 +2385,7 @@
         siteHeader = document.querySelector("header.site"),
         previousBodyOverflow = "";
       function positionNavigation() {
-        if (window.innerWidth > 1120) {
+        if (window.innerWidth > 1250) {
           closeNavigation(true);
           return;
         }
@@ -2576,9 +2482,6 @@
       var form = document.getElementById("bookForm");
       var quantityInputs = Array.prototype.slice.call(document.querySelectorAll("[data-item]"));
       var totalEl = document.getElementById("pieceTotal");
-      var minDate = new Date();
-      minDate.setDate(minDate.getDate() + 1);
-      document.getElementById("date").min = minDate.toISOString().slice(0, 10);
       function updateTotal() {
         var total = quantityInputs.reduce(function (sum, input) {
           return sum + (parseInt(input.value, 10) || 0);
@@ -2591,8 +2494,10 @@
       });
       form.addEventListener("submit", async function (e) {
         e.preventDefault();
-        if (!form.checkValidity()) {
-          form.reportValidity();
+        var invalidField = form.querySelector(":invalid");
+        if (invalidField) {
+          invalidField.focus();
+          invalidField.reportValidity();
           return;
         }
         var items = quantityInputs
@@ -2620,21 +2525,22 @@
         button.disabled = true;
         button.textContent = "Sending request…";
         form.setAttribute("aria-busy", "true");
+        var formData = new FormData(form);
         try {
           var response = await fetch("/api/laundry-order", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              name: form.name.value,
-              email: form.email.value,
-              phone: form.phone.value,
-              service: form.service.value,
-              pickupDate: form.date.value,
-              pickupWindow: form.pickupWindow.value,
-              turnaround: form.turnaround.value,
-              address: form.address.value,
-              notes: form.notes.value,
-              website: form.website.value,
+              name: formData.get("name"),
+              email: formData.get("email"),
+              phone: formData.get("phone"),
+              service: formData.get("service"),
+              pickupDate: formData.get("date"),
+              pickupWindow: formData.get("pickupWindow"),
+              turnaround: formData.get("turnaround"),
+              address: formData.get("address"),
+              notes: formData.get("notes"),
+              website: formData.get("website"),
               items: items,
             }),
           });

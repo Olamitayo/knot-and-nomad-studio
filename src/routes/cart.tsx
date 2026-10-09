@@ -5,6 +5,7 @@ import { formatNaira } from "@/lib/format";
 import { Minus, Plus, X, ShoppingBag } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import {
+  hasVerifiedReadyToWearProducts,
   isCatalogueReadyProduct,
   isValidProductColour,
   isValidProductSize,
@@ -30,7 +31,8 @@ function CartPage() {
     const verifyCart = async () => {
       setCartState("checking");
       const currentItems = useCart.getState().items;
-      if (currentItems.length === 0) {
+      if (currentItems.length === 0 || !hasVerifiedReadyToWearProducts()) {
+        if (currentItems.length > 0) useCart.getState().clear();
         if (active) setCartState("ready");
         return;
       }
@@ -134,8 +136,8 @@ function CartPage() {
         <p className="eyebrow mt-6">Ready-to-wear</p>
         <h1 className="mt-3 font-display text-4xl">Your cart is clear.</h1>
         <p className="mx-auto mt-3 max-w-md text-muted-foreground">
-          Ready-to-wear releases are being prepared. Start a custom brief or join Nomad Circle for
-          release updates.
+          Ready-to-wear releases are being prepared, so there are no pieces to purchase right now.
+          Start a custom brief or join Nomad Circle for release updates.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <Link

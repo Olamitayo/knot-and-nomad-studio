@@ -5,7 +5,7 @@ import { useReveal } from "@/hooks/useReveal";
 import { supabase } from "@/integrations/supabase/client";
 import { formatNaira } from "@/lib/format";
 import { whatsappLink } from "@/lib/site";
-import { isCatalogueReadyProduct } from "@/lib/product-data";
+import { hasVerifiedReadyToWearProducts, isCatalogueReadyProduct } from "@/lib/product-data";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -50,6 +50,8 @@ function Home() {
   const ref = useReveal();
   const [featured, setFeatured] = useState<HomeProduct[]>([]);
   useEffect(() => {
+    if (!hasVerifiedReadyToWearProducts()) return;
+
     supabase
       .from("products")
       .select(

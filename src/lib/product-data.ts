@@ -23,6 +23,17 @@ const INVALID_COLOUR_TERMS = /\b(ammonia|cotton|turtle|recommended|samurai)\b/i;
 const UNSUPPORTED_DESCRIPTION_TERMS =
   /\b(premium|luxury|quick[- ]?dry|performance|japanese|three[- ]?needle|ammonia|recommended)\b/i;
 
+// Keep this empty until the studio has verified products for public sale.
+const VERIFIED_READY_TO_WEAR_SLUGS = new Set<string>();
+
+export function isVerifiedReadyToWearSlug(slug: string): boolean {
+  return VERIFIED_READY_TO_WEAR_SLUGS.has(slug);
+}
+
+export function hasVerifiedReadyToWearProducts(): boolean {
+  return VERIFIED_READY_TO_WEAR_SLUGS.size > 0;
+}
+
 export function isValidProductSize(size: string): boolean {
   return VALID_SIZES.has(size);
 }
@@ -32,9 +43,17 @@ export function isValidProductColour(color: string): boolean {
 }
 
 export function isCatalogueReadyProduct(product: Partial<StoreProduct>): boolean {
-  if (!product.slug || PRODUCT_REVIEW_HOLD_REASONS[product.slug]) return false;
+  if (
+    !product.slug ||
+    !isVerifiedReadyToWearSlug(product.slug) ||
+    PRODUCT_REVIEW_HOLD_REASONS[product.slug]
+  )
+    return false;
 
-  const hasValidPrice = Number.isFinite(product.price_ngn) && product.price_ngn > 0;
+  const hasValidPrice =
+    typeof product.price_ngn === "number" &&
+    Number.isFinite(product.price_ngn) &&
+    product.price_ngn > 0;
   const hasStockStatus =
     product.is_sold_out === true ||
     (Number.isFinite(product.stock_level) && (product.stock_level ?? 0) > 0);
