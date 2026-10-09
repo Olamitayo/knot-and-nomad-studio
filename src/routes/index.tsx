@@ -69,8 +69,8 @@ function Home() {
       {/* HERO */}
       <section className="relative isolate min-h-[480px] overflow-hidden bg-[#29231f] text-white sm:min-h-[620px] lg:min-h-[min(820px,calc(100svh-5rem))]">
         <img
-          src="/images/lookbook/PHOTO-2026-07-09-19-39-06.jpg"
-          alt="The Knot & Nomad studio showroom, with a curated garment rail and fitting mirror."
+          src="/images/lookbook/2A10A5D1-4452-4881-93B3-2001C5470260.jpg"
+          alt="Knot & Nomad Lagos studio showroom with garment rails, folded apparel and a fitting room."
           fetchPriority="high"
           className="absolute inset-0 h-full w-full object-cover object-center"
         />
