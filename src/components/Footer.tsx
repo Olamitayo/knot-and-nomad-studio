@@ -44,9 +44,9 @@ export function Footer() {
           <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <p className="eyebrow text-primary-foreground/60">Nomad circle</p>
-              <h3 className="mt-2 font-display text-3xl leading-none sm:text-4xl">
+              <h2 className="mt-2 font-display text-3xl leading-none sm:text-4xl">
                 Design notes. New drops. Early access.
-              </h3>
+              </h2>
             </div>
             <form onSubmit={onSubscribe} className="w-full max-w-xl" aria-busy={loading}>
               <label
@@ -128,16 +128,18 @@ export function Footer() {
             ]}
           />
           <div className="lg:col-span-2">
-            <div className="mt-5 text-xs leading-6 text-primary-foreground/60">
-              <a href={`mailto:${SITE.email}`} className="transition hover:text-accent">
+            <div className="mt-5 flex flex-col text-xs text-primary-foreground/60">
+              <a
+                href={`mailto:${SITE.email}`}
+                className="inline-flex min-h-11 items-center transition hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+              >
                 {SITE.email}
               </a>
-              <br />
               <a
                 href={whatsappLink()}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="transition hover:text-accent"
+                className="inline-flex min-h-11 items-center transition hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
               >
                 WhatsApp support
               </a>
@@ -146,12 +148,12 @@ export function Footer() {
         </div>
         <a
           href="/garment-care"
-          className="mt-14 flex items-center justify-between gap-6 border-y border-primary-foreground/15 py-6 transition hover:border-accent hover:text-accent"
+          className="mt-14 flex items-center justify-between gap-6 border-y border-primary-foreground/15 py-6 transition hover:border-accent hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
         >
           <div>
             <p className="font-display text-xl">Garment Care</p>
             <p className="mt-1 text-sm text-primary-foreground/65">
-              Contact the team to confirm available services, pricing and pickup arrangements.
+              Garment care enquiries for laundry, cleaning and pressing.
             </p>
           </div>
           <span className="text-xs font-bold uppercase tracking-[0.18em]">
@@ -176,7 +178,10 @@ function FooterColumn({ title, links }: { title: string; links: string[][] }) {
       <ul className="mt-5 space-y-2.5 text-xs font-bold uppercase tracking-[0.08em]">
         {links.map(([to, label]) => (
           <li key={`${to}-${label}`}>
-            <Link to={to} className="transition hover:text-accent">
+            <Link
+              to={to}
+              className="inline-flex min-h-11 items-center transition hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+            >
               {label}
             </Link>
           </li>

@@ -17,7 +17,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatNaira } from "@/lib/format";
 import { useCart } from "@/lib/cart";
 import { whatsappLink } from "@/lib/site";
-import { isCatalogueReadyProduct, parseProductData } from "@/lib/product-data";
+import {
+  isCatalogueReadyProduct,
+  isVerifiedReadyToWearSlug,
+  parseProductData,
+} from "@/lib/product-data";
 import { displayPrice, productGroup, type GalleryItem, type StoreProduct } from "@/lib/products";
 
 export const Route = createFileRoute("/shop/$slug")({
@@ -28,6 +32,8 @@ export const Route = createFileRoute("/shop/$slug")({
     ],
   }),
   loader: async ({ params }) => {
+    if (!isVerifiedReadyToWearSlug(params.slug)) throw notFound();
+
     const { data, error } = await supabase
       .from("products")
       .select("*")

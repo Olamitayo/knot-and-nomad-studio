@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Menu, X, ShoppingBag } from "lucide-react";
 import { whatsappLink } from "@/lib/site";
 import { useCart, cartCount } from "@/lib/cart";
+import { hasVerifiedReadyToWearProducts } from "@/lib/product-data";
 import { BrandLogo } from "@/components/BrandLogo";
 
 const nav = [
@@ -65,7 +66,11 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-border/70 bg-background/80 backdrop-blur-xl">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-10">
-        <Link to="/" className="flex items-center" aria-label="KnotNomad home">
+        <Link
+          to="/"
+          className="flex min-h-11 items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+          aria-label="KnotNomad home"
+        >
           <BrandLogo variant="primary" size="md" priority decorative className="hidden sm:block" />
           <BrandLogo variant="monogram" size="md" priority decorative className="sm:hidden" />
         </Link>
@@ -75,7 +80,7 @@ export function Header() {
             <Link
               key={n.to}
               to={n.to}
-              className="text-[0.7rem] font-bold uppercase tracking-[0.18em] text-muted-foreground transition-colors hover:text-accent"
+              className="inline-flex min-h-11 items-center text-[0.7rem] font-bold uppercase tracking-[0.18em] text-muted-foreground transition-colors hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
               activeProps={{ className: "text-foreground" }}
               activeOptions={{ exact: n.to === "/" }}
             >
@@ -85,7 +90,7 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-1.5 sm:gap-2">
-          {count > 0 && (
+          {count > 0 && hasVerifiedReadyToWearProducts() && (
             <Link
               to="/cart"
               className="relative inline-flex h-11 w-11 items-center justify-center transition hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
@@ -102,14 +107,14 @@ export function Header() {
             href={whatsappLink()}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-pill hidden min-h-11 items-center border-2 border-foreground px-4 text-[0.68rem] font-bold uppercase tracking-[0.12em] transition hover:bg-foreground hover:text-primary-foreground xl:inline-flex"
+            className="btn-pill hidden min-h-11 items-center border-2 border-foreground px-4 text-[0.68rem] font-bold uppercase tracking-[0.12em] transition hover:bg-foreground hover:text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 xl:inline-flex"
           >
             WhatsApp
           </a>
 
           <Link
             to="/custom-order"
-            className="btn-pill hidden min-h-11 items-center bg-foreground px-4 text-[0.68rem] font-bold uppercase tracking-[0.12em] text-primary-foreground transition hover:bg-accent hover:text-accent-foreground xl:inline-flex"
+            className="btn-pill hidden min-h-11 items-center bg-foreground px-4 text-[0.68rem] font-bold uppercase tracking-[0.12em] text-primary-foreground transition hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 xl:inline-flex"
           >
             Custom order
           </Link>
@@ -146,7 +151,7 @@ export function Header() {
             <Link
               to="/custom-order"
               onClick={() => setOpen(false)}
-              className="btn-pill inline-flex min-h-11 items-center bg-foreground px-4 py-2 text-[0.58rem] font-bold uppercase tracking-[0.18em] text-primary-foreground"
+              className="btn-pill inline-flex min-h-11 items-center bg-foreground px-4 py-2 text-[0.58rem] font-bold uppercase tracking-[0.18em] text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
             >
               Start a custom order
             </Link>
@@ -168,7 +173,7 @@ export function Header() {
             href={whatsappLink()}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-4 inline-flex min-h-12 items-center justify-center rounded-full border border-foreground px-4 py-3 text-xs font-bold uppercase tracking-[0.16em] text-foreground transition hover:bg-foreground hover:text-primary-foreground"
+            className="mt-4 inline-flex min-h-12 items-center justify-center rounded-full border border-foreground px-4 py-3 text-xs font-bold uppercase tracking-[0.16em] text-foreground transition hover:bg-foreground hover:text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
           >
             WhatsApp us
           </a>
