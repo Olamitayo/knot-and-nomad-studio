@@ -9,7 +9,9 @@
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "test": "node --experimental-strip-types --test tests/custom-order.test.mjs",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.25.5",
@@ -77,6 +79,7 @@
   "devDependencies": {
     "@eslint/js": "^9.32.0",
     "@lovable.dev/vite-tanstack-config": "^1.5.1",
+    "@playwright/test": "^1.64.1",
     "@types/node": "^22.16.5",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",

@@ -31,7 +31,7 @@ export async function sendNotificationEmail(
       .filter(([, value]) => value !== null && value !== undefined && value !== "")
       .map(
         ([label, value]) =>
-          `<p style="margin:0 0 8px"><strong>${escapeHtml(label)}:</strong> ${escapeHtml(String(value))}</p>`,
+          `<p style="margin:0 0 8px"><strong>${escapeHtml(label)}:</strong> <span style="white-space:pre-wrap">${escapeHtml(String(value))}</span></p>`,
       )
       .join("")}
   </div>`;

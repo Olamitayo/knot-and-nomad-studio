@@ -89,6 +89,15 @@ export type Database = {
       };
       custom_orders: {
         Row: {
+          items: Json;
+          is_first_custom_order: boolean | null;
+          consultation_requested: boolean;
+          consultation_status: string | null;
+          consultation_method: string | null;
+          consultation_date: string | null;
+          consultation_time: string | null;
+          consultation_questions: string | null;
+
           additional_notes: string | null;
           ai_idea: string | null;
           budget: string | null;
@@ -108,6 +117,15 @@ export type Database = {
           whatsapp: string;
         };
         Insert: {
+          items?: Json;
+          is_first_custom_order?: boolean | null;
+          consultation_requested?: boolean;
+          consultation_status?: string | null;
+          consultation_method?: string | null;
+          consultation_date?: string | null;
+          consultation_time?: string | null;
+          consultation_questions?: string | null;
+
           additional_notes?: string | null;
           ai_idea?: string | null;
           budget?: string | null;
@@ -127,6 +145,15 @@ export type Database = {
           whatsapp: string;
         };
         Update: {
+          items?: Json;
+          is_first_custom_order?: boolean | null;
+          consultation_requested?: boolean;
+          consultation_status?: string | null;
+          consultation_method?: string | null;
+          consultation_date?: string | null;
+          consultation_time?: string | null;
+          consultation_questions?: string | null;
+
           additional_notes?: string | null;
           ai_idea?: string | null;
           budget?: string | null;
