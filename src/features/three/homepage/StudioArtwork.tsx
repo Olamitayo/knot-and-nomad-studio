@@ -62,7 +62,7 @@ export function StudioArtwork({
       }
       alt={
         kind === "knot"
-          ? "A sculptural black interlocking knot with an ivory KnotNomad signature pattern"
+          ? "A twisted natural rope knot with a dark KnotNomad signature pattern"
           : "Four illustrated garments on two studio clothing racks"
       }
       width={kind === "knot" ? 603 : 1440}

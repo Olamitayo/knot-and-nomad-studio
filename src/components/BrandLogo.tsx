@@ -5,13 +5,13 @@ type BrandLogoTheme = "dark" | "light";
 type BrandLogoSize = "sm" | "md" | "lg";
 
 const dimensions: Record<BrandLogoVariant, { width: number; height: number }> = {
-  primary: { width: 490, height: 225 },
-  signature: { width: 540, height: 260 },
-  monogram: { width: 140, height: 156 },
+  primary: { width: 980, height: 300 },
+  signature: { width: 980, height: 300 },
+  monogram: { width: 300, height: 300 },
 };
 
 const sizes: Record<BrandLogoVariant, Record<BrandLogoSize, string>> = {
-  primary: { sm: "w-24", md: "w-32", lg: "w-44" },
+  primary: { sm: "w-24", md: "w-40 sm:w-44", lg: "w-44" },
   signature: { sm: "w-36", md: "w-52", lg: "w-64" },
   monogram: { sm: "w-8", md: "w-11", lg: "w-14" },
 };
@@ -31,18 +31,10 @@ export function BrandLogo({
   decorative?: boolean;
   className?: string;
 }) {
-  const suffix = theme === "light" ? "-reversed" : "";
-  const file =
-    variant === "monogram"
-      ? `knotnomad-monogram${suffix}.svg`
-      : `knotnomad-logo-${variant}${suffix}.svg`;
+  const suffix = theme === "light" ? "-light" : "";
+  const file = `knot-mark-${variant === "monogram" ? "icon" : "horizontal"}${suffix}.svg`;
   const { width, height } = dimensions[variant];
-  const alt =
-    variant === "signature"
-      ? "KnotNomad — Crafted to travel. Made to last."
-      : variant === "monogram"
-        ? "KnotNomad"
-        : "KnotNomad";
+  const alt = "Knot & Nomad — Rooted in Motion";
 
   return (
     <img
