@@ -23,6 +23,15 @@ export function Header() {
   const count = cartCount(items);
 
   useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 1280px)");
+    const closeOnDesktop = () => {
+      if (desktop.matches) setOpen(false);
+    };
+    desktop.addEventListener("change", closeOnDesktop);
+    return () => desktop.removeEventListener("change", closeOnDesktop);
+  }, []);
+
+  useEffect(() => {
     if (!open) return;
     const menuButton = menuButtonRef.current;
     const previousOverflow = document.body.style.overflow;
@@ -30,12 +39,15 @@ export function Header() {
     document.body.dataset.mobileMenuOpen = "true";
 
     const getFocusable = () =>
-      Array.from(
-        menuRef.current?.querySelectorAll<HTMLElement>(
-          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
-        ) ?? [],
-      );
-    getFocusable()[0]?.focus();
+      [
+        menuButton,
+        ...Array.from(
+          menuRef.current?.querySelectorAll<HTMLElement>(
+            'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+          ) ?? [],
+        ),
+      ].filter((element): element is HTMLElement => element !== null);
+    getFocusable()[1]?.focus();
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -64,8 +76,8 @@ export function Header() {
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/70 bg-background/80 backdrop-blur-xl">
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-10">
+    <header className="sticky top-0 z-50 border-b border-border/70 bg-background/80">
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 backdrop-blur-xl lg:px-10">
         <Link
           to="/"
           className="flex min-h-11 items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
@@ -75,7 +87,7 @@ export function Header() {
           <BrandLogo variant="monogram" size="md" priority decorative className="sm:hidden" />
         </Link>
 
-        <nav className="hidden items-center gap-5 xl:flex">
+        <nav aria-label="Main navigation" className="hidden items-center gap-5 xl:flex">
           {nav.map((n) => (
             <Link
               key={n.to}
@@ -123,7 +135,7 @@ export function Header() {
             ref={menuButtonRef}
             type="button"
             className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card transition hover:border-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent xl:hidden"
-            onClick={() => setOpen(!open)}
+            onClick={() => setOpen((current) => !current)}
             aria-label={open ? "Close navigation" : "Open navigation"}
             aria-controls="mobile-navigation"
             aria-expanded={open}
@@ -163,6 +175,8 @@ export function Header() {
               to={n.to}
               onClick={() => setOpen(false)}
               className="flex min-h-12 items-center justify-between border-b border-border/70 py-3 text-sm font-bold uppercase tracking-[0.14em] text-foreground/80 transition hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              activeProps={{ className: "text-accent" }}
+              activeOptions={{ exact: n.to === "/" }}
             >
               <span>{n.label}</span>
               <span className="text-xs text-muted-foreground">→</span>

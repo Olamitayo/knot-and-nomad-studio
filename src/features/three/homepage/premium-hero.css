@@ -1,0 +1,231 @@
+.premium-hero {
+  --nomad-line: #ffffff26;
+  --nomad-muted: #b9b6af;
+  color: #f2f0e9;
+  background: #232426 url("/images/showroom/charcoal-studio.webp") center top / 100% 400% no-repeat;
+  max-width: none;
+  padding: 0 5%;
+}
+.premium-hero .nomad-hero-top {
+  color: #bfbdb6;
+  padding: 25px 0;
+}
+.premium-hero .nomad-hero-top i {
+  background: #ddd0b5;
+}
+.premium-hero .nomad-coordinate {
+  color: #8e8e8b;
+}
+.premium-hero .nomad-hero-grid {
+  grid-template-columns: 1fr 1.1fr;
+  min-height: 660px;
+}
+.premium-hero .nomad-hero-copy {
+  padding: 60px 0;
+}
+.premium-hero .nomad-eyebrow {
+  color: #d1c7b6;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+}
+.premium-hero h1 {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: clamp(54px, 5.8vw, 98px);
+  letter-spacing: -0.065em;
+  line-height: 1.04;
+  margin: 30px 0;
+}
+.premium-hero h1 em {
+  font-family: Georgia, serif;
+  color: #d3c3a8;
+  font-weight: 400;
+  letter-spacing: -0.06em;
+}
+.premium-hero .nomad-hero-description {
+  font-size: 14px;
+  line-height: 1.9;
+  max-width: 390px;
+  color: #c0bdb6;
+}
+.premium-hero .nomad-button {
+  background: #eee9df;
+  color: #252525;
+  border: 1px solid #eee9df;
+}
+.premium-hero .nomad-button:hover {
+  background: #fffaf0;
+}
+.premium-hero .nomad-link {
+  color: #eeebe3;
+  border-color: #8c877e;
+}
+.premium-hero .nomad-tagline {
+  color: #a8a49a;
+}
+.premium-hero .studio-art-knot {
+  height: 610px;
+  background: transparent;
+}
+.premium-hero .nomad-art-edition {
+  right: 10px;
+  top: 28px;
+  color: #aaa69c;
+  letter-spacing: 0.17em;
+}
+.premium-hero .nomad-art-note {
+  bottom: 22px;
+  left: 25px;
+  right: 15px;
+  color: #aaa69c;
+}
+.premium-hero .nomad-seal {
+  border-color: #ffffff36;
+  color: #ddd6c9;
+}
+.premium-hero .nomad-hero-bottom {
+  color: #aaa69c;
+  padding: 22px 0;
+}
+.premium-hero .nomad-hero-bottom a {
+  color: #ece7dc;
+}
+.premium-hero .studio-art-tools {
+  right: 12px;
+  bottom: 72px;
+}
+.premium-hero .studio-art-tools button {
+  background: #ffffff0c;
+  border-color: #ffffff38;
+  color: #e6e0d5;
+  min-height: 40px;
+  padding: 0 15px;
+}
+.premium-hero .studio-art-tools button:hover {
+  background: #ffffff20;
+}
+.premium-hero .studio-art-error {
+  background: transparent;
+}
+.premium-hero .studio-art-status,
+.premium-hero .studio-art-error > span {
+  color: #dad4c8;
+}
+.premium-hero button:focus-visible,
+.premium-hero a:focus-visible {
+  outline: 2px solid #e4d3b7;
+  outline-offset: 5px;
+}
+.premium-hero + .nomad-brand-strip {
+  background: #1e1f20;
+  color: #bdb8ae;
+  border-top: 1px solid #ffffff15;
+  border-bottom: 1px solid #ffffff15;
+  font-size: 9px;
+  padding: 22px 5%;
+}
+@media (min-width: 1600px) {
+  .premium-hero .nomad-hero-grid {
+    min-height: 760px;
+  }
+  .premium-hero .studio-art-knot {
+    height: 700px;
+  }
+}
+@media (max-width: 1000px) and (min-width: 701px) {
+  .premium-hero .nomad-hero-grid {
+    min-height: 560px;
+  }
+  .premium-hero h1 {
+    font-size: 54px;
+  }
+  .premium-hero .studio-art-knot {
+    height: 500px;
+  }
+  .premium-hero .nomad-actions {
+    gap: 15px;
+  }
+}
+@media (max-width: 700px) {
+  .premium-hero {
+    padding: 0 6%;
+    background-size: 220% 400%;
+  }
+  .premium-hero .nomad-hero-top {
+    font-size: 7px;
+    padding: 20px 0;
+    gap: 10px;
+  }
+  .premium-hero .nomad-hero-grid {
+    min-height: 0;
+  }
+  .premium-hero .nomad-hero-copy {
+    padding: 40px 0 0;
+  }
+  .premium-hero h1 {
+    font-size: clamp(47px, 11.5vw, 73px);
+    line-height: 1.04;
+    margin: 23px 0;
+  }
+  .premium-hero .nomad-hero-description {
+    font-size: 12px;
+  }
+  .premium-hero .nomad-actions {
+    margin-top: 24px;
+    gap: 14px;
+  }
+  .premium-hero .nomad-tagline {
+    display: none;
+  }
+  .premium-hero .nomad-knot-wrap {
+    margin: 15px -4% 0;
+  }
+  .premium-hero .studio-art-knot {
+    height: 390px;
+  }
+  .premium-hero .nomad-art-edition {
+    top: 18px;
+    right: 12px;
+    font-size: 7px;
+  }
+  .premium-hero .nomad-art-note {
+    bottom: 17px;
+    left: 12px;
+    right: 12px;
+    font-size: 11px;
+  }
+  .premium-hero .nomad-seal {
+    width: 43px;
+    height: 43px;
+    font-size: 18px;
+  }
+  .premium-hero .studio-art-tools {
+    bottom: 63px;
+  }
+  .premium-hero .studio-art-tools button {
+    min-height: 36px;
+    font-size: 9px;
+    padding: 0 12px;
+  }
+  .premium-hero .nomad-hero-bottom {
+    font-size: 8px;
+    padding: 20px 0;
+    gap: 18px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .premium-hero .nomad-button {
+    transition: none;
+    transform: none;
+  }
+}
+@media (max-width: 700px) {
+  .premium-hero .nomad-art-note {
+    display: none;
+  }
+  .premium-hero .studio-art-tools {
+    left: 12px;
+    right: auto;
+    bottom: 15px;
+  }
+}

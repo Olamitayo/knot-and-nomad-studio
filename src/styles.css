@@ -136,6 +136,11 @@
     text-decoration: none;
   }
 
+  :where(a, button, input, select, textarea):focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 4px;
+  }
+
   h1,
   h2,
   h3,
@@ -202,6 +207,15 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    .img-lift > img {
+      transition: none;
+    }
+    .img-lift:hover > img {
+      transform: none;
+    }
     [data-reveal] {
       opacity: 1;
       transform: none;
