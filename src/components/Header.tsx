@@ -83,8 +83,7 @@ export function Header() {
           className="flex min-h-11 items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
           aria-label="KnotNomad home"
         >
-          <BrandLogo variant="primary" size="md" priority decorative className="hidden sm:block" />
-          <BrandLogo variant="monogram" size="md" priority decorative className="sm:hidden" />
+          <BrandLogo variant="primary" size="md" priority decorative />
         </Link>
 
         <nav aria-label="Main navigation" className="hidden items-center gap-5 xl:flex">
