@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import {
-  CatmullRomCurve3,
+  CanvasTexture,
+  SRGBColorSpace,
   Curve,
   DataTexture,
   Group,
@@ -14,8 +15,7 @@ import {
   Vector3,
 } from "three";
 
-// Three continuous plies follow one closed trefoil. The rope's relief is real
-// geometry, so its highlights and self-shadowing remain coherent as it moves.
+// A continuous trefoil follows the interlocking silhouette of the brand mark.
 class KnotPath extends Curve<Vector3> {
   constructor() {
     super();
@@ -26,39 +26,42 @@ class KnotPath extends Curve<Vector3> {
     return target.set(radius * Math.cos(2 * a), radius * Math.sin(2 * a), 0.51 * Math.sin(3 * a));
   }
 }
-function buildRope(segments: number) {
-  const path = new KnotPath();
-  path.arcLengthDivisions = segments * 2;
-  const frame = path.computeFrenetFrames(segments, true);
-  return [0, 1, 2].map((ply) => {
-    const points: Vector3[] = [];
-    for (let i = 0; i < segments; i++) {
-      const t = i / segments;
-      const angle = t * Math.PI * 2 * 19 + (ply * Math.PI * 2) / 3;
-      points.push(
-        path
-          .getPointAt(t)
-          .addScaledVector(frame.normals[i], Math.cos(angle) * 0.139)
-          .addScaledVector(frame.binormals[i], Math.sin(angle) * 0.139),
+function signatureTexture() {
+  const canvas = document.createElement("canvas");
+  canvas.width = 2048;
+  canvas.height = 512;
+  const context = canvas.getContext("2d")!;
+  context.fillStyle = "#141516";
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = "#e7e4dc";
+  context.font = "500 26px monospace";
+  context.textAlign = "center";
+  context.textBaseline = "middle";
+  const signature = "KNOT NOMAD 0123456789 ";
+  for (let row = 0; row < 8; row++) {
+    for (let column = 0; column < 64; column++) {
+      context.fillText(
+        signature[(column + row * 7) % signature.length],
+        column * 32 + 16,
+        row * 64 + 32,
       );
     }
-    return new TubeGeometry(
-      new CatmullRomCurve3(points, true, "centripetal"),
-      segments,
-      0.125,
-      12,
-      true,
-    );
-  });
+  }
+  const texture = new CanvasTexture(canvas);
+  texture.colorSpace = SRGBColorSpace;
+  texture.wrapS = texture.wrapT = RepeatWrapping;
+  texture.anisotropy = 4;
+  return texture;
 }
 function fibreTexture(albedo = false) {
-  const size = 128,
+  const size = 256,
     pixels = new Uint8Array(size * size * 4);
   for (let y = 0; y < size; y++)
     for (let x = 0; x < size; x++) {
-      const thread = Math.sin(((y + 0.75 * Math.sin((x * Math.PI) / 16)) * Math.PI) / 8);
+      const thread = Math.sin(((y + 0.6 * Math.sin((x * Math.PI) / 32)) * Math.PI) / 8);
+      const fibre = Math.sin(y * 2.4 + Math.sin(x * 0.19)) * 12;
       const grain = Math.sin(x * 17.3 + y * 41.7) * 9;
-      const value = albedo ? 238 + thread * 12 + grain * 0.3 : 145 + thread * 55 + grain;
+      const value = albedo ? 238 + thread * 12 + grain * 0.3 : 145 + thread * 32 + fibre + grain;
       const index = (y * size + x) * 4;
       pixels[index] = pixels[index + 1] = pixels[index + 2] = value;
       pixels[index + 3] = 255;
@@ -76,9 +79,12 @@ export function PremiumKnot({ motion, medium }: { motion: boolean; medium: boole
   const group = useRef<Group>(null);
   const elapsed = useRef(0);
   const { size, camera } = useThree();
-  const geometry = useMemo(() => buildRope(medium ? 960 : 1536), [medium]);
+  const geometry = useMemo(
+    () => new TubeGeometry(new KnotPath(), medium ? 384 : 768, 0.235, medium ? 24 : 40, true),
+    [medium],
+  );
   const texture = useMemo(() => fibreTexture(), []);
-  const colourTexture = useMemo(() => fibreTexture(true), []);
+  const colourTexture = useMemo(() => signatureTexture(), []);
   useEffect(
     () => () => {
       texture.dispose();
@@ -86,7 +92,7 @@ export function PremiumKnot({ motion, medium }: { motion: boolean; medium: boole
     },
     [texture, colourTexture],
   );
-  useEffect(() => () => geometry.forEach((item) => item.dispose()), [geometry]);
+  useEffect(() => () => geometry.dispose(), [geometry]);
   useEffect(() => {
     // Keep the complete silhouette in view on narrow phones and landscape screens.
     camera.position.set(
@@ -129,22 +135,21 @@ export function PremiumKnot({ motion, medium }: { motion: boolean; medium: boole
   });
   return (
     <>
-      <group ref={group} rotation={[0.27, -0.3, -0.22]} scale={0.92}>
-        {geometry.map((shape, index) => (
-          <mesh key={index} geometry={shape} castShadow receiveShadow>
-            <meshPhysicalMaterial
-              color={["#cbbba0", "#c4b294", "#d1c1a6"][index]}
-              roughness={0.83}
-              metalness={0.015}
-              sheen={0.55}
-              sheenColor="#f3e4cd"
-              sheenRoughness={0.85}
-              map={colourTexture}
-              bumpMap={texture}
-              bumpScale={0.025}
-            />
-          </mesh>
-        ))}
+      <group ref={group} rotation={[0.27, -0.3, -0.22]} scale={0.68}>
+        <mesh geometry={geometry} castShadow receiveShadow>
+          <meshPhysicalMaterial
+            color="#ffffff"
+            roughness={0.57}
+            metalness={0.05}
+            clearcoat={0.12}
+            clearcoatRoughness={0.6}
+            sheen={0.25}
+            sheenColor="#bfc5cf"
+            map={colourTexture}
+            bumpMap={texture}
+            bumpScale={0.005}
+          />
+        </mesh>
       </group>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.9, 0]} receiveShadow>
         <planeGeometry args={[20, 20]} />
