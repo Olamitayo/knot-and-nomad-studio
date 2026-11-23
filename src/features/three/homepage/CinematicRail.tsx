@@ -52,7 +52,12 @@ export function CinematicRail({ onExplore }: { onExplore: (index: number) => voi
             className={`cinema-garment cinema-garment-${index} ${selected === index ? "is-selected" : ""}`}
             style={returning === index ? { pointerEvents: "none" } : undefined}
             onTransitionEnd={(event) => {
-              if (event.target === event.currentTarget && event.propertyName === "transform" && returning === index) setReturning(null);
+              if (
+                event.target === event.currentTarget &&
+                event.propertyName === "transform" &&
+                returning === index
+              )
+                setReturning(null);
             }}
             aria-label={`Inspect ${studioLooks[index].name}`}
             aria-pressed={selected === index}
