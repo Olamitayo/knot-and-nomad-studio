@@ -8,7 +8,7 @@ export function CinematicRail({ onExplore }: { onExplore: (index: number) => voi
   const [returning, setReturning] = useState<number | null>(null);
   useEffect(() => {
     if (returning === null) return;
-    const timer = window.setTimeout(() => setReturning(null), 950);
+    const timer = window.setTimeout(() => setReturning(null), 1150);
     return () => window.clearTimeout(timer);
   }, [returning]);
   const [zoom, setZoom] = useState(false);
@@ -41,6 +41,7 @@ export function CinematicRail({ onExplore }: { onExplore: (index: number) => voi
       </div>
       <h2 id="showroom-heading">Find your thread.</h2>
       <p className="cinema-instruction">Three expressions. One independent spirit.</p>
+      <div className="cinema-spotlight" aria-hidden="true" />
       <div className="cinema-garments" aria-label="Choose a garment to inspect">
         {railAssets.map((asset, index) => (
           <button
@@ -66,6 +67,7 @@ export function CinematicRail({ onExplore }: { onExplore: (index: number) => voi
               setZoom(false);
             }}
           >
+            <span className="cinema-floor-shadow" aria-hidden="true" />
             <img
               src={`/images/showroom/${asset}.webp`}
               alt={`${studioLooks[index].colour} ${studioLooks[index].name.toLowerCase()} on a black wooden hanger`}

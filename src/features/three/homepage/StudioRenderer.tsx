@@ -568,7 +568,7 @@ export default function StudioRenderer(props: ArtworkProps) {
       <hemisphereLight args={["#fff9e9", "#b8a58b", props.kind === "showroom" ? 0.8 : 0.45]} />
       <directionalLight
         position={[-3, 7, 5]}
-        intensity={props.kind === "showroom" ? 2.6 : 3.8}
+        intensity={props.kind === "showroom" ? 2.6 : 2.7}
         castShadow
         shadow-mapSize={[mobile ? 1024 : 2048, mobile ? 1024 : 2048]}
         shadow-camera-left={-7}
@@ -581,7 +581,7 @@ export default function StudioRenderer(props: ArtworkProps) {
       />
       <directionalLight
         position={[5, 2, -3]}
-        intensity={props.kind === "knot" ? 4 : 1.5}
+        intensity={props.kind === "knot" ? 2.2 : 1.5}
         color={props.kind === "knot" ? "#e2ebff" : "#fff2d1"}
       />
       {props.kind === "knot" && (

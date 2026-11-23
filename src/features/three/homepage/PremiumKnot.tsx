@@ -52,13 +52,14 @@ function buildRope(segments: number) {
   });
 }
 function fibreTexture(albedo = false) {
-  const size = 128,
+  const size = 256,
     pixels = new Uint8Array(size * size * 4);
   for (let y = 0; y < size; y++)
     for (let x = 0; x < size; x++) {
-      const thread = Math.sin(((y + 0.75 * Math.sin((x * Math.PI) / 16)) * Math.PI) / 8);
+      const thread = Math.sin(((y + 0.6 * Math.sin((x * Math.PI) / 32)) * Math.PI) / 8);
+      const fibre = Math.sin(y * 2.4 + Math.sin(x * 0.19)) * 12;
       const grain = Math.sin(x * 17.3 + y * 41.7) * 9;
-      const value = albedo ? 238 + thread * 12 + grain * 0.3 : 145 + thread * 55 + grain;
+      const value = albedo ? 238 + thread * 12 + grain * 0.3 : 145 + thread * 32 + fibre + grain;
       const index = (y * size + x) * 4;
       pixels[index] = pixels[index + 1] = pixels[index + 2] = value;
       pixels[index + 3] = 255;
@@ -129,19 +130,19 @@ export function PremiumKnot({ motion, medium }: { motion: boolean; medium: boole
   });
   return (
     <>
-      <group ref={group} rotation={[0.27, -0.3, -0.22]} scale={0.92}>
+      <group ref={group} rotation={[0.27, -0.3, -0.22]} scale={0.68}>
         {geometry.map((shape, index) => (
           <mesh key={index} geometry={shape} castShadow receiveShadow>
             <meshPhysicalMaterial
               color={["#cbbba0", "#c4b294", "#d1c1a6"][index]}
               roughness={0.83}
-              metalness={0.015}
-              sheen={0.55}
+              metalness={0}
+              sheen={0.35}
               sheenColor="#f3e4cd"
               sheenRoughness={0.85}
               map={colourTexture}
               bumpMap={texture}
-              bumpScale={0.025}
+              bumpScale={0.022}
             />
           </mesh>
         ))}

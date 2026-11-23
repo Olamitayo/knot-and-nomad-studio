@@ -2,7 +2,16 @@
   --nomad-line: #ffffff26;
   --nomad-muted: #b9b6af;
   color: #f2f0e9;
-  background: #232426 url("/images/showroom/charcoal-studio.webp") center top / 100% 400% no-repeat;
+  background:
+    linear-gradient(
+      90deg,
+      rgb(17 18 18 / 92%) 0%,
+      rgb(20 21 21 / 75%) 42%,
+      rgb(20 21 21 / 46%) 100%
+    ),
+    linear-gradient(0deg, #1e1f20 0%, transparent 35%),
+    #232426 url("/images/lookbook/2A10A5D1-4452-4881-93B3-2001C5470260.jpg") center / cover
+      no-repeat;
   max-width: none;
   padding: 0 5%;
 }
@@ -149,7 +158,11 @@
 @media (max-width: 700px) {
   .premium-hero {
     padding: 0 6%;
-    background-size: 220% 400%;
+    background-size: cover;
+    background-position:
+      center,
+      center,
+      38% center;
   }
   .premium-hero .nomad-hero-top {
     font-size: 7px;
@@ -228,4 +241,9 @@
     right: auto;
     bottom: 15px;
   }
+}
+
+/* Keep the still-artwork silhouette consistent with the smaller live knot. */
+.premium-hero .studio-art-knot > img {
+  transform: scale(0.74);
 }
