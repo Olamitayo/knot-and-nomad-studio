@@ -244,6 +244,6 @@
 }
 
 /* Keep the still-artwork silhouette consistent with the smaller live knot. */
-.premium-hero .studio-art-knot > img {
+.premium-hero .studio-art-knot .studio-art-poster {
   transform: scale(0.74);
 }
